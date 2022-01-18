@@ -13,9 +13,6 @@ export default {
   name: 'Home',
   components: {
     HelloWorld
-  },
-  created() {
-    console.log(process.env.VUE_APP_PATH, process.env.VUE_APP_API);
   }
 };
 </script>
