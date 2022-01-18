@@ -33,6 +33,7 @@
           />
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
+        <router-link to="/dashboard">dashboard</router-link>
       </div>
     </form>
   </div>
@@ -43,16 +44,22 @@ export default {
   data() {
     return {
       user: {
-        username: '',
-        password: ''
+        username: 'qqqq5953@gmail.com',
+        password: 'andy90343'
       }
     };
   },
   methods: {
     signIn() {
       const api = `${process.env.VUE_APP_API}admin/signin`;
-      console.log('api', api);
-      this.$http.post(api, this.user).then((res) => console.log(res));
+
+      this.$http.post(api, this.user).then((res) => {
+        if (res.data.success) {
+          const { token, expired } = res.data;
+          document.cookie = `hexToken=${token}; expires=${new Date(expired)}`;
+          this.$router.push({ name: 'Products' });
+        }
+      });
     }
   }
 };
