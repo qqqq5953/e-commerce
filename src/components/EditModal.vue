@@ -5,7 +5,7 @@
     tabindex="-1"
     aria-labelledby="modalLabel"
     aria-hidden="true"
-    ref="modal"
+    ref="modalEdit"
   >
     <div class="modal-dialog modal-xl" role="document">
       <div class="modal-content border-0">
@@ -195,17 +195,17 @@ export default {
       }
     }
   },
-  watch: {
-    product() {
-      console.log('watch');
-      this.tempProduct = this.product;
-    }
-  },
   data() {
     return {
       modal: {},
       tempProduct: {}
     };
+  },
+  watch: {
+    product() {
+      console.log('watch');
+      this.tempProduct = this.product;
+    }
   },
   methods: {
     uploadFile() {
@@ -227,7 +227,7 @@ export default {
     }
   },
   mounted() {
-    this.modal = new Modal(this.$refs.modal);
+    this.modal = new Modal(this.$refs.modalEdit);
     // this.modal.show();
   }
 };

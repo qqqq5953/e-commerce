@@ -53,7 +53,7 @@
     @update-product="updateProduct"
   ></EditModal>
   <DeleteModal
-    :product="tempProduct"
+    :product="tempDeleteProduct"
     @delete-product="deleteProduct"
     ref="deleteModal"
   ></DeleteModal>
@@ -72,9 +72,11 @@ export default {
       products: [],
       pagination: {},
       tempProduct: {},
+      tempDeleteProduct: {},
+      isNew: false,
+      // ref
       editModal: {},
-      deleteModal: {},
-      isNew: false
+      deleteModal: {}
     };
   },
   methods: {
@@ -95,12 +97,10 @@ export default {
         this.getProducts();
         this.editModal.hideModal();
       });
-      // this.editModal.hideModal();
     },
     deleteProduct(item) {
-      console.log('deleteProduct', item);
+      console.log('deleteProduct', item.id);
 
-      this.tempProduct = item;
       const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/order/${item.id}`;
 
       this.$http.delete(api).then((res) => {
@@ -116,7 +116,7 @@ export default {
       this.editModal.showModal();
     },
     openDeleteModal(item) {
-      this.tempProduct = { ...item };
+      this.tempDeleteProduct = { ...item };
       this.deleteModal.showModal();
     },
     getProducts() {

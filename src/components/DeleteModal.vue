@@ -5,7 +5,7 @@
     tabindex="-1"
     aria-labelledby="modalLabel"
     aria-hidden="true"
-    ref="modal"
+    ref="modalDetele"
   >
     <div class="modal-dialog modal-xl" role="document">
       <div class="modal-content border-0">
@@ -52,17 +52,7 @@ import Modal from 'bootstrap/js/dist/modal';
 export default {
   props: {
     product: {
-      type: Object,
-      default() {
-        return {};
-      }
-    }
-  },
-  watch: {
-    product() {
-      console.log('watch');
-      this.tempProduct = this.product;
-      console.log('this.tempProduct', this.tempProduct);
+      type: Object
     }
   },
   data() {
@@ -71,10 +61,14 @@ export default {
       tempProduct: {}
     };
   },
+  watch: {
+    product() {
+      console.log('watch');
+      this.tempProduct = this.product;
+      console.log('DeleteModal 頁面，tempProduct：', this.tempProduct);
+    }
+  },
   methods: {
-    test() {
-      console.log('test');
-    },
     showModal() {
       this.modal.show();
     },
@@ -83,8 +77,7 @@ export default {
     }
   },
   mounted() {
-    this.modal = new Modal(this.$refs.modal);
-    // this.modal.show();
+    this.modal = new Modal(this.$refs.modalDetele);
   }
 };
 </script>
