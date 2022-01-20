@@ -24,7 +24,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr v-for="item in products" :key="item.id">
+      <tr :data-num="i" v-for="(item, i) in products" :key="item.id">
         <th scope="row">{{ item.category }}</th>
         <td>{{ item.title }}</td>
         <td>{{ item.origin_price }}</td>
@@ -38,14 +38,14 @@
             <button
               type="button"
               class="btn btn-outline-primary"
-              @click="openModal(false, item)"
+              @click="openModal(false, item, pagination)"
             >
               編輯
             </button>
             <button
               type="button"
               class="btn btn-outline-danger"
-              @click="openDeleteModal(item)"
+              @click="openDeleteModal(item, pagination)"
             >
               刪除
             </button>
@@ -126,8 +126,6 @@ export default {
       });
     },
     updateProduct(item) {
-      this.tempProduct = item;
-
       // 新增
       let api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product`;
       let httpMethod = 'post';
@@ -138,8 +136,17 @@ export default {
         httpMethod = 'put';
       }
 
+      // 存取當前頁面
+      const currentPage = item.pagination.current_page;
+
+      // 刪除 pagination 這個 key
+      delete item.pagination;
+
+      // 剩餘存進 tempProduct
+      this.tempProduct = item;
+
       this.$http[httpMethod](api, { data: this.tempProduct }).then((res) => {
-        this.getProducts(item, '更新');
+        this.getProducts(currentPage, item, '更新');
         this.editModal.hideModal();
       });
     },
@@ -150,18 +157,18 @@ export default {
 
       this.$http.delete(api).then((res) => {
         console.log('delete', res.data);
-        this.getProducts(item, '刪除');
+        this.getProducts(item.current_page, item, '刪除');
         this.deleteModal.hideModal();
       });
     },
-    openModal(isNew, item) {
+    openModal(isNew, item, pagination) {
       if (isNew) this.tempProduct = {};
-      this.tempProduct = { ...item };
+      this.tempProduct = { ...item, pagination };
       this.isNew = isNew;
       this.editModal.showModal();
     },
-    openDeleteModal(item) {
-      this.tempDeleteProduct = { ...item };
+    openDeleteModal(item, pagination) {
+      this.tempDeleteProduct = { ...item, ...pagination };
       this.deleteModal.showModal();
     }
   },

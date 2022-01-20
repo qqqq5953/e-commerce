@@ -2,7 +2,7 @@
   <nav aria-label="Page navigation example">
     <ul class="pagination justify-content-center">
       <!-- 上一頁 -->
-      <li class="page-item" :class="{ disabled: pages.current_page === 1 }">
+      <li class="page-item" :class="{ disabled: !pages.has_pre }">
         <a
           class="page-link"
           href="#"
@@ -24,10 +24,7 @@
         }}</a>
       </li>
       <!-- 下一頁 -->
-      <li
-        class="page-item"
-        :class="{ disabled: pages.current_page >= pages.total_pages }"
-      >
+      <li class="page-item" :class="{ disabled: !pages.has_next }">
         <a
           class="page-link"
           href="#"
