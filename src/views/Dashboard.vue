@@ -1,15 +1,24 @@
 <template>
   <Navbar></Navbar>
-  <div class="container-fluid">
+  <div class="container-fluid position-relative">
     <router-view />
   </div>
+  <ToastMessage></ToastMessage>
 </template>
 
 <script>
+import emitter from '@/methods/emitter';
+import ToastMessage from '@/components/ToastMessage.vue';
 import Navbar from '@/components/Navbar.vue';
 export default {
   components: {
-    Navbar
+    Navbar,
+    ToastMessage
+  },
+  provide() {
+    return {
+      emitter
+    };
   },
   created() {
     // 取出 cookie

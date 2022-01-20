@@ -1,4 +1,5 @@
 <template>
+  <Loading :active="isLoading"></Loading>
   <div class="text-end">
     <button type="button" class="btn btn-primary" @click="openModal(true)">
       新增產品
@@ -67,12 +68,14 @@ export default {
     EditModal,
     DeleteModal
   },
+  inject: ['emitter'],
   data() {
     return {
       products: [],
       pagination: {},
       tempProduct: {},
       isNew: false,
+      isLoading: false,
       // ref
       editModal: {},
       deleteModal: {}
@@ -93,7 +96,7 @@ export default {
       }
 
       this.$http[httpMethod](api, { data: this.tempProduct }).then((res) => {
-        this.getProducts();
+        this.getProducts(item, '更新');
         this.editModal.hideModal();
       });
     },
@@ -104,7 +107,7 @@ export default {
 
       this.$http.delete(api).then((res) => {
         console.log('delete', res.data);
-        this.getProducts();
+        this.getProducts(item, '刪除');
         this.deleteModal.hideModal();
       });
     },
@@ -118,12 +121,38 @@ export default {
       this.tempProduct = { ...item };
       this.deleteModal.showModal();
     },
-    getProducts() {
+    getProducts(product, action) {
       const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/products`;
+      this.isLoading = true;
       this.$http.get(api).then((res) => {
         console.log(res);
-        this.products = res.data.products;
-        this.pagination = res.data.pagination;
+
+        this.isLoading = false;
+        if (res.data.success) {
+          this.products = res.data.products;
+          this.pagination = res.data.pagination;
+        }
+
+        // 畫面刷新時不執行
+        if (!product) return;
+        if (res.data.success) {
+          console.log('傳送成功訊息');
+
+          this.emitter.emit('push-message', {
+            style: 'success',
+            title: product.title,
+            status: `${action}成功`
+          });
+        } else {
+          console.log('接收失敗訊息');
+
+          this.emitter.emit('push-message', {
+            style: 'danger',
+            title: product.title,
+            status: `${action}失敗`,
+            content: res.data.message.join('、')
+          });
+        }
       });
     }
   },
