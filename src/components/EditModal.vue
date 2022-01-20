@@ -5,7 +5,7 @@
     tabindex="-1"
     aria-labelledby="modalLabel"
     aria-hidden="true"
-    ref="modalEdit"
+    ref="modal"
   >
     <div class="modal-dialog modal-xl" role="document">
       <div class="modal-content border-0">
@@ -184,9 +184,11 @@
 </template>
 
 <script>
-import Modal from 'bootstrap/js/dist/modal';
+import modalMixins from '@/mixins/modalMixin';
+
 // /node_modules/
 export default {
+  mixins: [modalMixins],
   props: {
     product: {
       type: Object,
@@ -218,17 +220,7 @@ export default {
       this.$http.post(api, formData).then((res) => {
         if (res.data.success) this.tempProduct.imageUrl = res.data.imageUrl;
       });
-    },
-    showModal() {
-      this.modal.show();
-    },
-    hideModal() {
-      this.modal.hide();
     }
-  },
-  mounted() {
-    this.modal = new Modal(this.$refs.modalEdit);
-    // this.modal.show();
   }
 };
 </script>

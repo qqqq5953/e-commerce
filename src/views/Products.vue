@@ -53,7 +53,7 @@
     @update-product="updateProduct"
   ></EditModal>
   <DeleteModal
-    :product="tempDeleteProduct"
+    :product="tempProduct"
     @delete-product="deleteProduct"
     ref="deleteModal"
   ></DeleteModal>
@@ -72,7 +72,6 @@ export default {
       products: [],
       pagination: {},
       tempProduct: {},
-      tempDeleteProduct: {},
       isNew: false,
       // ref
       editModal: {},
@@ -101,7 +100,7 @@ export default {
     deleteProduct(item) {
       console.log('deleteProduct', item.id);
 
-      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/order/${item.id}`;
+      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product/${item.id}`;
 
       this.$http.delete(api).then((res) => {
         console.log('delete', res.data);
@@ -116,7 +115,7 @@ export default {
       this.editModal.showModal();
     },
     openDeleteModal(item) {
-      this.tempDeleteProduct = { ...item };
+      this.tempProduct = { ...item };
       this.deleteModal.showModal();
     },
     getProducts() {

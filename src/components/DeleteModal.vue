@@ -5,7 +5,7 @@
     tabindex="-1"
     aria-labelledby="modalLabel"
     aria-hidden="true"
-    ref="modalDetele"
+    ref="modal"
   >
     <div class="modal-dialog modal-xl" role="document">
       <div class="modal-content border-0">
@@ -47,9 +47,10 @@
 </template>
 
 <script>
-import Modal from 'bootstrap/js/dist/modal';
+import modalMixins from '@/mixins/modalMixin';
 // /node_modules/
 export default {
+  mixins: [modalMixins],
   props: {
     product: {
       type: Object
@@ -67,17 +68,6 @@ export default {
       this.tempProduct = this.product;
       console.log('DeleteModal 頁面，tempProduct：', this.tempProduct);
     }
-  },
-  methods: {
-    showModal() {
-      this.modal.show();
-    },
-    hideModal() {
-      this.modal.hide();
-    }
-  },
-  mounted() {
-    this.modal = new Modal(this.$refs.modalDetele);
   }
 };
 </script>
