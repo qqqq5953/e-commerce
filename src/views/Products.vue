@@ -5,6 +5,12 @@
       新增產品
     </button>
   </div>
+  <Pagination
+    :pages="pagination"
+    @change-page="getProducts"
+    @previous-page="getProducts"
+    @next-page="getProducts"
+  ></Pagination>
   <!-- table -->
   <table class="table">
     <thead>
@@ -54,7 +60,7 @@
     @update-product="updateProduct"
   ></EditModal>
   <DeleteModal
-    :product="tempProduct"
+    :product="tempDeleteProduct"
     @delete-product="deleteProduct"
     ref="deleteModal"
   ></DeleteModal>
@@ -63,10 +69,12 @@
 <script>
 import EditModal from '@/components/EditModal.vue';
 import DeleteModal from '@/components/DeleteModal.vue';
+import Pagination from '@/components/Pagination.vue';
 export default {
   components: {
     EditModal,
-    DeleteModal
+    DeleteModal,
+    Pagination
   },
   inject: ['emitter'],
   data() {
@@ -74,6 +82,7 @@ export default {
       products: [],
       pagination: {},
       tempProduct: {},
+      tempDeleteProduct: {},
       isNew: false,
       isLoading: false,
       // ref
@@ -82,6 +91,40 @@ export default {
     };
   },
   methods: {
+    getProducts(page, product, action) {
+      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/products?page=${page}`;
+      this.isLoading = true;
+      this.$http.get(api).then((res) => {
+        console.log(res);
+
+        this.isLoading = false;
+        if (res.data.success) {
+          this.products = res.data.products;
+          this.pagination = res.data.pagination;
+        }
+
+        // 畫面刷新及換頁時不執行
+        if (!product) return;
+        if (res.data.success) {
+          console.log('傳送成功訊息');
+
+          this.emitter.emit('push-message', {
+            style: 'success',
+            title: product.title,
+            status: `${action}成功`
+          });
+        } else {
+          console.log('接收失敗訊息');
+
+          this.emitter.emit('push-message', {
+            style: 'danger',
+            title: product.title,
+            status: `${action}失敗`,
+            content: res.data.message.join('、')
+          });
+        }
+      });
+    },
     updateProduct(item) {
       this.tempProduct = item;
 
@@ -118,42 +161,8 @@ export default {
       this.editModal.showModal();
     },
     openDeleteModal(item) {
-      this.tempProduct = { ...item };
+      this.tempDeleteProduct = { ...item };
       this.deleteModal.showModal();
-    },
-    getProducts(product, action) {
-      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/products`;
-      this.isLoading = true;
-      this.$http.get(api).then((res) => {
-        console.log(res);
-
-        this.isLoading = false;
-        if (res.data.success) {
-          this.products = res.data.products;
-          this.pagination = res.data.pagination;
-        }
-
-        // 畫面刷新時不執行
-        if (!product) return;
-        if (res.data.success) {
-          console.log('傳送成功訊息');
-
-          this.emitter.emit('push-message', {
-            style: 'success',
-            title: product.title,
-            status: `${action}成功`
-          });
-        } else {
-          console.log('接收失敗訊息');
-
-          this.emitter.emit('push-message', {
-            style: 'danger',
-            title: product.title,
-            status: `${action}失敗`,
-            content: res.data.message.join('、')
-          });
-        }
-      });
     }
   },
   created() {

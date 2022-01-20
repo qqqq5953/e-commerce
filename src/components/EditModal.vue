@@ -205,8 +205,8 @@ export default {
   },
   watch: {
     product() {
-      console.log('watch');
       this.tempProduct = this.product;
+      console.log('watch', this.tempProduct);
     }
   },
   methods: {
