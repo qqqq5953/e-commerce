@@ -103,7 +103,7 @@ export default {
           this.pagination = res.data.pagination;
         }
 
-        // 畫面刷新及換頁時不執行
+        // 畫面刷新 及 換頁時不執行
         if (!product) return;
         if (res.data.success) {
           console.log('傳送成功訊息');
@@ -137,16 +137,17 @@ export default {
         httpMethod = 'put';
         // 存取當前頁面
         currentPage = item.pagination.current_page;
-
-        // 刪除 pagination 這個 key
-        delete item.pagination;
-
-        // 剩餘存進 tempProduct
-        this.tempProduct = item;
       }
+      // 刪除 pagination 這個 key
+      delete item.pagination;
 
+      // 存進 tempProduct
+      this.tempProduct = item;
+      console.log('updateProduct', this.tempProduct);
+
+      // API
       this.$http[httpMethod](api, { data: this.tempProduct }).then((res) => {
-        this.getProducts(currentPage, item, '更新');
+        this.getProducts(currentPage, item, currentPage ? '更新' : '新增');
         this.editModal.hideModal();
       });
     },
@@ -178,8 +179,6 @@ export default {
   mounted() {
     this.editModal = this.$refs.editModal;
     this.deleteModal = this.$refs.deleteModal;
-    // console.log('this.editModal', this.editModal);
-    // console.log('this.deleteModal', this.deleteModal);
   }
 };
 </script>
