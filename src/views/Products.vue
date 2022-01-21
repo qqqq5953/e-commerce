@@ -1,16 +1,10 @@
 <template>
   <Loading :active="isLoading"></Loading>
-  <div class="text-end">
+  <div class="text-end mt-3">
     <button type="button" class="btn btn-primary" @click="openModal(true)">
       新增產品
     </button>
   </div>
-  <Pagination
-    :pages="pagination"
-    @change-page="getProducts"
-    @previous-page="getProducts"
-    @next-page="getProducts"
-  ></Pagination>
   <!-- table -->
   <table class="table">
     <thead>
@@ -27,8 +21,8 @@
       <tr :data-num="i" v-for="(item, i) in products" :key="item.id">
         <th scope="row">{{ item.category }}</th>
         <td>{{ item.title }}</td>
-        <td>{{ item.origin_price }}</td>
-        <td>{{ item.price }}</td>
+        <td class="text-end">{{ $filters.currency(item.origin_price) }}</td>
+        <td class="text-end">{{ $filters.currency(item.price) }}</td>
         <td>
           <span class="text-success" v-if="item.is_enabled">啟用</span>
           <span class="text-muted" v-else>未啟用</span>
@@ -54,6 +48,12 @@
       </tr>
     </tbody>
   </table>
+  <Pagination
+    :pages="pagination"
+    @change-page="getProducts"
+    @previous-page="getProducts"
+    @next-page="getProducts"
+  ></Pagination>
   <EditModal
     ref="editModal"
     :product="tempProduct"
