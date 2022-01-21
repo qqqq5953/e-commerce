@@ -8,6 +8,7 @@
 
 <script>
 import emitter from '@/methods/emitter';
+import pushMessageState from '@/methods/pushMessageState';
 import ToastMessage from '@/components/ToastMessage.vue';
 import Navbar from '@/components/Navbar.vue';
 export default {
@@ -17,7 +18,8 @@ export default {
   },
   provide() {
     return {
-      emitter
+      emitter,
+      pushMessageState
     };
   },
   created() {

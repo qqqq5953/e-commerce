@@ -21,8 +21,8 @@ export default {
   mounted() {
     this.emitter.on('push-message', (message) => {
       console.log('接收訊息');
-      const { style = 'success', title, status, content } = message;
-      this.messages.push({ style, title, status, content });
+      const { title, style, status, content } = message;
+      this.messages.push({ title, style, status, content });
     });
   }
 };

@@ -5,6 +5,12 @@
       新增產品
     </button>
   </div>
+  <Pagination
+    :pages="pagination"
+    @change-page="getProducts"
+    @previous-page="getProducts"
+    @next-page="getProducts"
+  ></Pagination>
   <!-- table -->
   <table class="table">
     <thead>
@@ -48,12 +54,12 @@
       </tr>
     </tbody>
   </table>
-  <Pagination
+  <!-- <Pagination
     :pages="pagination"
     @change-page="getProducts"
     @previous-page="getProducts"
     @next-page="getProducts"
-  ></Pagination>
+  ></Pagination> -->
   <EditModal
     ref="editModal"
     :product="tempProduct"
@@ -76,7 +82,7 @@ export default {
     DeleteModal,
     Pagination
   },
-  inject: ['emitter'],
+  inject: ['emitter', 'pushMessageState'],
   data() {
     return {
       products: [],
@@ -91,41 +97,23 @@ export default {
     };
   },
   methods: {
-    getProducts(page, product, action) {
-      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/products?page=${page}`;
-      this.isLoading = true;
-      this.$http.get(api).then((res) => {
-        console.log(res);
+    async getProducts(page) {
+      try {
+        this.isLoading = true;
+
+        const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/products?page=${page}`;
+        const response = await this.$http.get(api);
+        console.log('getProducts', response);
+
+        this.products = response.data.products;
+        this.pagination = response.data.pagination;
 
         this.isLoading = false;
-        if (res.data.success) {
-          this.products = res.data.products;
-          this.pagination = res.data.pagination;
-        }
-
-        // 畫面刷新 及 換頁時不執行
-        if (!product) return;
-        if (res.data.success) {
-          console.log('傳送成功訊息');
-
-          this.emitter.emit('push-message', {
-            style: 'success',
-            title: product.title,
-            status: `${action}成功`
-          });
-        } else {
-          console.log('接收失敗訊息');
-
-          this.emitter.emit('push-message', {
-            style: 'danger',
-            title: product.title,
-            status: `${action}失敗`,
-            content: res.data.message.join('、')
-          });
-        }
-      });
+      } catch (err) {
+        console.log(err);
+      }
     },
-    updateProduct(item) {
+    async updateProduct(item) {
       // 新增
       let api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product`;
       let httpMethod = 'post';
@@ -135,32 +123,40 @@ export default {
       if (!this.isNew) {
         api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product/${item.id}`;
         httpMethod = 'put';
+
         // 存取當前頁面
         currentPage = item.pagination.current_page;
       }
+
       // 刪除 pagination 這個 key
       delete item.pagination;
 
-      // 存進 tempProduct
+      // item 存進 tempProduct
       this.tempProduct = item;
-      console.log('updateProduct', this.tempProduct);
 
-      // API
-      this.$http[httpMethod](api, { data: this.tempProduct }).then((res) => {
-        this.getProducts(currentPage, item, currentPage ? '更新' : '新增');
+      try {
+        const response = await this.$http[httpMethod](api, {
+          data: this.tempProduct
+        });
+        await this.getProducts(currentPage);
+
         this.editModal.hideModal();
-      });
+        this.pushMessageState(response, item, currentPage ? '更新' : '新增');
+      } catch (err) {
+        console.log(err);
+      }
     },
-    deleteProduct(item) {
-      console.log('deleteProduct', item.id);
+    async deleteProduct(item) {
+      try {
+        const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product/${item.id}`;
+        const response = await this.$http.delete(api);
+        await this.getProducts(item.current_page);
 
-      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product/${item.id}`;
-
-      this.$http.delete(api).then((res) => {
-        console.log('delete', res.data);
-        this.getProducts(item.current_page, item, '刪除');
         this.deleteModal.hideModal();
-      });
+        this.pushMessageState(response, item, '刪除');
+      } catch (err) {
+        console.log(err);
+      }
     },
     openModal(isNew, item, pagination) {
       if (isNew) this.tempProduct = {};
@@ -175,7 +171,6 @@ export default {
   },
   created() {
     this.getProducts();
-    console.log('products created');
   },
   mounted() {
     this.editModal = this.$refs.editModal;

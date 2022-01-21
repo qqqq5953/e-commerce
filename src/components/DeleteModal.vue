@@ -64,9 +64,8 @@ export default {
   },
   watch: {
     product() {
-      console.log('watch');
       this.tempProduct = this.product;
-      console.log('DeleteModal 頁面，tempProduct：', this.tempProduct);
+      // console.log('DeleteModal 頁面，tempProduct：', this.tempProduct);
     }
   }
 };
