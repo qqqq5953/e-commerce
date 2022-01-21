@@ -11,8 +11,8 @@
       <tr>
         <th scope="col">分類</th>
         <th scope="col">產品名稱</th>
-        <th scope="col">原價</th>
-        <th scope="col">售價</th>
+        <th scope="col" class="text-end">原價</th>
+        <th scope="col" class="text-end">售價</th>
         <th scope="col">是否啟用</th>
         <th scope="col">編輯</th>
       </tr>
@@ -175,6 +175,7 @@ export default {
   },
   created() {
     this.getProducts();
+    console.log('products created');
   },
   mounted() {
     this.editModal = this.$refs.editModal;

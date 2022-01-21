@@ -24,7 +24,7 @@
             >
           </li>
           <li class="nav-item">
-            <router-link class="nav-link" :to="{ name: 'Order' }"
+            <router-link class="nav-link" :to="{ name: 'Orders' }"
               >訂單</router-link
             >
           </li>
