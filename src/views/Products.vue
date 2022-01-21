@@ -131,19 +131,19 @@ export default {
       let httpMethod = 'post';
 
       // 編輯
+      let currentPage;
       if (!this.isNew) {
         api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product/${item.id}`;
         httpMethod = 'put';
+        // 存取當前頁面
+        currentPage = item.pagination.current_page;
+
+        // 刪除 pagination 這個 key
+        delete item.pagination;
+
+        // 剩餘存進 tempProduct
+        this.tempProduct = item;
       }
-
-      // 存取當前頁面
-      const currentPage = item.pagination.current_page;
-
-      // 刪除 pagination 這個 key
-      delete item.pagination;
-
-      // 剩餘存進 tempProduct
-      this.tempProduct = item;
 
       this.$http[httpMethod](api, { data: this.tempProduct }).then((res) => {
         this.getProducts(currentPage, item, '更新');

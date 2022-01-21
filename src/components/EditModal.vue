@@ -74,6 +74,7 @@
                   id="title"
                   placeholder="請輸入標題"
                   v-model="tempProduct.title"
+                  required
                 />
               </div>
 
@@ -86,6 +87,7 @@
                     id="category"
                     placeholder="請輸入分類"
                     v-model="tempProduct.category"
+                    required
                   />
                 </div>
                 <div class="mb-3 col-md-6">
@@ -96,6 +98,7 @@
                     id="unit"
                     placeholder="請輸入單位"
                     v-model="tempProduct.unit"
+                    required
                   />
                 </div>
               </div>
@@ -109,6 +112,7 @@
                     id="origin_price"
                     placeholder="請輸入原價"
                     v-model="tempProduct.origin_price"
+                    required
                   />
                 </div>
                 <div class="mb-3 col-md-6">
@@ -119,6 +123,7 @@
                     id="price"
                     placeholder="請輸入售價"
                     v-model="tempProduct.price"
+                    required
                   />
                 </div>
               </div>
