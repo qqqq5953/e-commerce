@@ -1,11 +1,10 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
-import Home from '../views/Home.vue';
 
 const routes = [
   {
     path: '/',
     name: 'Home',
-    component: Home
+    component: () => import('../views/Home.vue')
   },
   {
     path: '/login',
@@ -31,6 +30,30 @@ const routes = [
         path: 'coupon',
         name: 'Coupon',
         component: () => import('../views/Coupon.vue')
+      }
+    ]
+  },
+  {
+    path: '/user',
+    name: 'UserBoard',
+    component: () => import('../views/user/UserBoard.vue'),
+    children: [
+      {
+        path: 'products',
+        name: 'UserProducts',
+        component: () => import('../views/user/ProductList.vue')
+      },
+      {
+        path: 'product/:productID',
+        name: 'UserProduct',
+        component: () => import('../views/user/Product.vue'),
+        props: (route) => {
+          console.log('route', route);
+          return {
+            // key 可以自訂，要與UserProduct的props變數一致
+            productID: route.params.productID
+          };
+        }
       }
     ]
   }

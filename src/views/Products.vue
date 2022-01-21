@@ -24,7 +24,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr :data-num="i" v-for="(item, i) in products" :key="item.id">
+      <tr v-for="item in products" :key="item.id">
         <th scope="row">{{ item.category }}</th>
         <td>{{ item.title }}</td>
         <td class="text-end">{{ $filters.currency(item.origin_price) }}</td>

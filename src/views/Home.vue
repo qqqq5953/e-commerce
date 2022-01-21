@@ -1,4 +1,6 @@
 <template>
+  <router-link :to="{ name: 'Login' }">Login</router-link> |
+  <router-link :to="{ name: 'UserProducts' }">ProductList</router-link>
   <div class="home">
     <img alt="Vue logo" src="../assets/logo.png" />
     <HelloWorld msg="Welcome to Your Vue.js App" />
