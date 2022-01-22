@@ -7,3 +7,7 @@ export function date(time) {
   const localDate = new Date(time * 1000);
   return localDate.toLocaleDateString();
 }
+
+export function toUnixTimeStamp(date) {
+  return Math.floor(new Date(date).getTime() / 1000);
+}

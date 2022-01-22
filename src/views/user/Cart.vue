@@ -3,8 +3,7 @@
   <table class="table">
     <thead>
       <tr>
-        <th scope="col"></th>
-        <th scope="col">品名</th>
+        <th scope="col" colspan="2" class="text-center">品名</th>
         <th scope="col">數量</th>
         <th scope="col" class="text-end">單價</th>
         <th scope="col" class="text-end">總共</th>

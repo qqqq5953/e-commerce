@@ -14,22 +14,22 @@ const routes = [
   {
     path: '/dashboard',
     name: 'Dashboard',
-    component: () => import('../views/Dashboard.vue'),
+    component: () => import('../views/dashboard/Dashboard.vue'),
     children: [
       {
         path: 'products',
         name: 'Products',
-        component: () => import('../views/Products.vue')
+        component: () => import('../views/dashboard/Products.vue')
       },
       {
         path: 'orders',
         name: 'Orders',
-        component: () => import('../views/Orders.vue')
+        component: () => import('../views/dashboard/Orders.vue')
       },
       {
         path: 'coupon',
         name: 'Coupon',
-        component: () => import('../views/Coupon.vue')
+        component: () => import('../views/dashboard/Coupon.vue')
       }
     ]
   },
@@ -47,6 +47,11 @@ const routes = [
         path: 'products',
         name: 'UserProducts',
         component: () => import('../views/user/ProductList.vue')
+      },
+      {
+        path: 'coupon',
+        name: 'UserCoupon',
+        component: () => import('../views/user/Coupon.vue')
       },
       {
         path: 'product/:productID',
