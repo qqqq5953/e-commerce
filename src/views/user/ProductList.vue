@@ -53,10 +53,6 @@
                 class="spinner-border spinner-grow-sm"
               ></span>
               <span>加到購物車</span>
-              <span
-                class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger"
-                >{{ status.loadingItemsQty }}</span
-              >
             </button>
           </div>
         </td>
@@ -72,8 +68,7 @@ export default {
       products: [],
       cart: [],
       status: {
-        loadingItemsID: '',
-        loadingItemsQty: null
+        loadingItemsID: ''
       },
       isLoading: false
     };
@@ -103,7 +98,6 @@ export default {
         const response = await this.$http.post(api, {
           data: { product_id: id, qty: 1 }
         });
-        this.status.loadingItemsQty = response.data.data.qty;
         this.status.loadingItemsID = {};
         console.log('response.data', response.data);
       } catch (err) {

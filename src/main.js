@@ -4,8 +4,10 @@ import VueAxios from 'vue-axios';
 import App from './App.vue';
 import router from './router';
 import Loading from 'vue3-loading-overlay';
-import 'vue3-loading-overlay/dist/vue3-loading-overlay.css';
 import { currency, date } from '@/methods/filters';
+
+import 'vue3-loading-overlay/dist/vue3-loading-overlay.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
 // bootstrap js載入
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
