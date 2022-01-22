@@ -1,4 +1,6 @@
 <template>
+  <Loading :active="isLoading"></Loading>
+
   <div class="text-end">
     <button
       type="button"
@@ -12,7 +14,8 @@
     <thead>
       <tr>
         <th scope="col">名稱</th>
-        <th scope="col">折扣百分比</th>
+        <th scope="col">代碼</th>
+        <th scope="col" class="text-end">折扣百分比</th>
         <th scope="col">到期日</th>
         <th scope="col">是否套用</th>
         <th scope="col">編輯</th>
@@ -20,8 +23,9 @@
     </thead>
     <tbody>
       <tr v-for="item in coupons" :key="item.id">
-        <th scope="row">{{ item.code }}</th>
-        <td>{{ item.percent }} %</td>
+        <th scope="row">{{ item.title }}</th>
+        <td>{{ item.code }}</td>
+        <td class="text-end">{{ item.percent }} %</td>
         <td>{{ $filters.date(item.due_date) }}</td>
         <td>
           <span class="text-success" v-if="item.is_enabled">啟用</span>
@@ -50,7 +54,7 @@
   </table>
   <CouponModal
     ref="couponModal"
-    :product="tempProduct"
+    :coupon="tempCoupon"
     @update-coupon="updateCoupons"
   ></CouponModal>
 </template>
@@ -65,25 +69,35 @@ export default {
   data() {
     return {
       coupons: [],
-      tempProduct: {},
-      isNew: false
+      tempCoupon: {},
+      isNew: false,
+      isLoading: false
     };
   },
   methods: {
-    openCouponModal(isNew, coupon, pagination) {
-      if (isNew) this.tempProduct = {};
-      this.tempProduct = { ...coupon, pagination };
-      this.isNew = isNew;
+    openCouponModal(isNew, item, pagination) {
+      if (isNew) this.tempCoupon = {};
       this.$refs.couponModal.showModal();
+
+      // 將日期轉換為YYYY-MM-DD
+      const coupon = { ...item };
+      const localDate = this.$filters.date(coupon.due_date);
+      coupon.due_date = this.$filters.formatDate(localDate);
+
+      this.tempCoupon = { ...coupon, pagination };
+      this.isNew = isNew;
     },
     async updateCoupons(coupon) {
-      console.log(
-        'updateCoupons',
-        coupon,
-        this.$filters.toUnixTimeStamp(coupon.due_date)
-      );
+      console.log('updateCoupons coupon', coupon);
       try {
-        const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/coupon`;
+        // 新增
+        let api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/coupon`;
+        let httpMethod = 'post';
+
+        // 編輯
+        api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/coupon/${coupon.id}`;
+        httpMethod = 'put';
+
         const couponDetail = {
           title: coupon.title,
           code: coupon.code,
@@ -91,12 +105,14 @@ export default {
           due_date: this.$filters.toUnixTimeStamp(coupon.due_date),
           is_enabled: coupon.is_enabled
         };
-        const response = await this.$http.post(api, {
+
+        const response = await this.$http[httpMethod](api, {
           data: couponDetail
         });
+
         this.getCoupons();
 
-        console.log('response.data', response);
+        console.log('updateCoupons res', response);
       } catch (err) {
         console.log(err);
       }
@@ -104,9 +120,13 @@ export default {
     },
     async getCoupons() {
       try {
+        this.isLoading = true;
+
         const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/coupons`;
         const response = await this.$http.get(api);
         this.coupons = response.data.coupons;
+
+        this.isLoading = false;
         console.log('response.data', response.data);
       } catch (err) {
         console.log(err);

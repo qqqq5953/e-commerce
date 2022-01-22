@@ -29,7 +29,7 @@
                 class="form-control"
                 id="title"
                 placeholder="請輸入優惠券名稱"
-                v-model="tempProduct.title"
+                v-model="tempCoupon.title"
               />
             </div>
 
@@ -40,7 +40,7 @@
                 class="form-control"
                 id="code"
                 placeholder="請輸入優惠券代碼"
-                v-model="tempProduct.code"
+                v-model="tempCoupon.code"
               />
             </div>
 
@@ -51,7 +51,7 @@
                 class="form-control"
                 id="percent"
                 placeholder="請輸入折扣百分比"
-                v-model.number="tempProduct.percent"
+                v-model.number="tempCoupon.percent"
               />
             </div>
 
@@ -62,7 +62,7 @@
                 class="form-control"
                 id="due_date"
                 placeholder="請輸入到期日"
-                v-model="tempProduct.due_date"
+                v-model="tempCoupon.due_date"
               />
             </div>
 
@@ -73,10 +73,10 @@
                 <input
                   class="form-check-input"
                   type="checkbox"
+                  id="is_enabled"
                   :true-value="1"
                   :false-value="0"
-                  id="is_enabled"
-                  v-model="tempProduct.is_enabled"
+                  v-model="tempCoupon.is_enabled"
                 />
                 <label class="form-check-label" for="is_enabled">
                   是否套用
@@ -96,7 +96,7 @@
           <button
             type="button"
             class="btn btn-primary"
-            @click="$emit('update-coupon', tempProduct)"
+            @click="$emit('update-coupon', tempCoupon)"
           >
             新增
           </button>
@@ -112,7 +112,7 @@ import modalMixins from '@/mixins/modalMixin';
 export default {
   mixins: [modalMixins],
   props: {
-    product: {
+    coupon: {
       type: Object,
       default() {
         return {};
@@ -122,13 +122,13 @@ export default {
   data() {
     return {
       modal: {},
-      tempProduct: {}
+      tempCoupon: {}
     };
   },
   watch: {
-    product() {
-      this.tempProduct = this.product;
-      console.log('watch', this.tempProduct);
+    coupon() {
+      this.tempCoupon = this.coupon;
+      console.log('watch tempCoupon', this.tempCoupon);
     }
   },
   methods: {}
