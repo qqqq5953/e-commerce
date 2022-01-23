@@ -90,10 +90,10 @@ export default {
       tempProduct: {},
       tempDeleteProduct: {},
       isNew: false,
-      isLoading: false,
+      isLoading: false
       // ref
-      editModal: {},
-      deleteModal: {}
+      // editModal: {},
+      // deleteModal: {}
     };
   },
   methods: {
@@ -101,14 +101,16 @@ export default {
       try {
         this.isLoading = true;
 
+        // axios
         const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/products?page=${page}`;
         const response = await this.$http.get(api);
-        console.log('getProducts', response);
 
+        // 儲存回傳資料
         this.products = response.data.products;
         this.pagination = response.data.pagination;
 
         this.isLoading = false;
+        console.log('getProducts', response);
       } catch (err) {
         console.log(err);
       }
@@ -131,16 +133,22 @@ export default {
       // 刪除 pagination 這個 key
       delete item.pagination;
 
-      // item 存進 tempProduct
+      // item 存進 tempProduct（API參數）
       this.tempProduct = item;
 
       try {
+        // axios
         const response = await this.$http[httpMethod](api, {
           data: this.tempProduct
         });
+
+        // 重新渲染畫面
         await this.getProducts(currentPage);
 
-        this.editModal.hideModal();
+        // 關閉modal
+        this.$refs.editModal.hideModal();
+
+        // toast
         this.pushMessageState(response, item, currentPage ? '更新' : '新增');
       } catch (err) {
         console.log(err);
@@ -148,33 +156,46 @@ export default {
     },
     async deleteProduct(item) {
       try {
+        // axios
         const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product/${item.id}`;
         const response = await this.$http.delete(api);
+
+        // 重新渲染畫面
         await this.getProducts(item.current_page);
 
-        this.deleteModal.hideModal();
+        // 關閉modal
+        this.$refs.deleteModal.hideModal();
+
+        // toast
         this.pushMessageState(response, item, '刪除');
       } catch (err) {
         console.log(err);
       }
     },
     openModal(isNew, item, pagination) {
+      // 新增
       if (isNew) this.tempProduct = {};
+
+      // 編輯
       this.tempProduct = { ...item, pagination };
+
+      // 打開 modal
+      this.$refs.editModal.showModal();
+
+      // 儲存modal狀態
       this.isNew = isNew;
-      this.editModal.showModal();
     },
     openDeleteModal(item, pagination) {
       this.tempDeleteProduct = { ...item, ...pagination };
-      this.deleteModal.showModal();
+      this.$refs.deleteModal.showModal();
     }
   },
   created() {
     this.getProducts();
   },
   mounted() {
-    this.editModal = this.$refs.editModal;
-    this.deleteModal = this.$refs.deleteModal;
+    // this.editModal = this.$refs.editModal;
+    // this.deleteModal = this.$refs.deleteModal;
   }
 };
 </script>

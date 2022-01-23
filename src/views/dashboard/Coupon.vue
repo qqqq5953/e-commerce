@@ -81,6 +81,7 @@ export default {
     CouponDeleteModal,
     Pagination
   },
+  inject: ['emitter', 'pushMessageState'],
   data() {
     return {
       coupons: [],
@@ -97,17 +98,26 @@ export default {
       this.$refs.couponDeleteModal.showModal();
     },
     async deleteCoupon(coupon) {
-      console.log('deleteCoupon coupon', coupon);
       try {
-        const currentPage = coupon.current_page;
+        // axios
         const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/coupon/${coupon.id}`;
         const response = await this.$http.delete(api);
+
+        // 取得分頁資料
+        const currentPage = coupon.current_page;
+
+        // 重新渲染畫面
         this.getCoupons(currentPage);
+
+        // 關閉modal
+        this.$refs.couponDeleteModal.hideModal();
+
+        // toast
+        this.pushMessageState(response, coupon, '刪除');
         console.log('deleteCoupon', response);
       } catch (err) {
         console.log(err);
       }
-      this.$refs.couponDeleteModal.hideModal();
     },
     openCouponEditModal(isNew, item, pagination) {
       // 新增
@@ -122,51 +132,64 @@ export default {
         this.tempCoupon = { ...coupon, ...pagination };
       }
 
+      // 打開 modal
       this.$refs.couponEditModal.showModal();
+
+      // 儲存modal狀態
       this.isNew = isNew;
     },
     async updateCoupons(coupon) {
-      console.log('updateCoupons coupon', coupon);
+      // 新增
+      let api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/coupon`;
+      let httpMethod = 'post';
+
+      // 編輯
+      let currentPage;
+      if (!this.isNew) {
+        api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/coupon/${coupon.id}`;
+        httpMethod = 'put';
+
+        // 取得分頁資料
+        currentPage = coupon.current_page;
+      }
+
+      // API參數
+      const couponDetail = {
+        title: coupon.title,
+        code: coupon.code,
+        percent: coupon.percent,
+        due_date: this.$filters.toUnixTimeStamp(coupon.due_date),
+        is_enabled: coupon.is_enabled
+      };
+
       try {
-        // 新增
-        let api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/coupon`;
-        let httpMethod = 'post';
-
-        // 編輯
-        let currentPage;
-        if (!this.isNew) {
-          api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/coupon/${coupon.id}`;
-          httpMethod = 'put';
-
-          currentPage = coupon.current_page;
-        }
-
-        const couponDetail = {
-          title: coupon.title,
-          code: coupon.code,
-          percent: coupon.percent,
-          due_date: this.$filters.toUnixTimeStamp(coupon.due_date),
-          is_enabled: coupon.is_enabled
-        };
-
+        // axios
         const response = await this.$http[httpMethod](api, {
           data: couponDetail
         });
 
-        this.getCoupons(currentPage);
+        // 重新渲染畫面
+        await this.getCoupons(currentPage);
 
-        console.log('updateCoupons res', response);
+        // 關閉modal
+        this.$refs.couponEditModal.hideModal();
+
+        // toast
+        this.pushMessageState(response, coupon, currentPage ? '更新' : '新增');
+        console.log('updateCoupons', response);
       } catch (err) {
         console.log(err);
       }
-      this.$refs.couponEditModal.hideModal();
     },
     async getCoupons(page) {
       try {
         this.isLoading = true;
 
+        // axios
         const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/coupons?page=${page}`;
         const response = await this.$http.get(api);
+
+        // 儲存回傳資料
         this.coupons = response.data.coupons;
         this.pagination = response.data.pagination;
 

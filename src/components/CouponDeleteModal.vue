@@ -48,7 +48,7 @@
 
 <script>
 import modalMixins from '@/mixins/modalMixin';
-// /node_modules/
+
 export default {
   mixins: [modalMixins],
   props: {
@@ -65,7 +65,7 @@ export default {
   watch: {
     coupon() {
       this.tempCoupon = this.coupon;
-      console.log('DeleteModal tempCoupon', this.tempCoupon);
+      // console.log('DeleteModal tempCoupon', this.tempCoupon);
     }
   }
 };

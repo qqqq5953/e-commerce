@@ -12,6 +12,9 @@ export default function (response, product, action) {
 
   const message = typeof response.data.message === 'string' ? [response.data.message] : response.data.message;
 
-  if (response.data.success) emitContent('success', `${action}成功`);
+  if (response.data.success) {
+    emitContent('success', `${action}成功`);
+    return;
+  };
   emitContent('danger', `${action}失敗`, message.join('、'));
 }

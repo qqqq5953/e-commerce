@@ -128,7 +128,7 @@ export default {
   watch: {
     coupon() {
       this.tempCoupon = this.coupon;
-      console.log('watch tempCoupon', this.tempCoupon);
+      // console.log('watch tempCoupon', this.tempCoupon);
     }
   },
   methods: {}
