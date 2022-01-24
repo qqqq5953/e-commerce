@@ -107,7 +107,7 @@ export default {
         const currentPage = coupon.current_page;
 
         // 重新渲染畫面
-        this.getCoupons(currentPage);
+        await this.getCoupons(currentPage);
 
         // 關閉modal
         this.$refs.couponDeleteModal.hideModal();

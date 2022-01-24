@@ -12,9 +12,13 @@
     </thead>
     <tbody>
       <tr v-for="order in orders" :key="order.id">
-        <th scope="row">{{ $filter.date(order.paid_date) }}</th>
+        <th scope="row">{{ $filters.date(order.paid_date) }}</th>
         <td>{{ order.user.email }}</td>
-        <td>{{ order.products }}</td>
+        <td>
+          <div v-for="item in order.products" :key="item.id">
+            {{ item.product.title }}
+          </div>
+        </td>
         <td class="text-end">{{ order.total }}</td>
         <td>
           <div class="form-check form-switch">
@@ -24,6 +28,7 @@
               role="switch"
               id="flexSwitchCheckChecked"
               :checked="order.is_paid"
+              :disabled="!order.is_paid"
               ref="finishPayment"
               @click="onCheckedPayment"
             />
@@ -64,6 +69,10 @@ export default {
       this.isPaid = this.$refs.finishPayment.checked;
     },
     getOrders() {
+      try {
+      } catch (err) {
+        console.log(err);
+      }
       const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/orders`;
       this.$http.get(api).then((res) => {
         console.log('res', res);

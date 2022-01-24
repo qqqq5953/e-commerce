@@ -67,7 +67,7 @@
       </tfoot>
     </table>
   </div>
-  <div class="table-responsive">
+  <!-- <div class="table-responsive">
     <table class="table">
       <thead>
         <tr>
@@ -118,7 +118,7 @@
         </tr>
       </tbody>
     </table>
-  </div>
+  </div> -->
 
   <!-- 優惠券 -->
   <div class="input-group mb-3">
@@ -139,6 +139,99 @@
       套用優惠碼
     </button>
   </div>
+
+  <!-- 送出訂單 -->
+  <Form v-slot="{ errors }" @submit="onSubmit" v-if="cart.length">
+    <!-- <div>error: {{ errors }}</div> -->
+    <!-- <div>values: {{ values }}</div> -->
+
+    <!-- email -->
+    <div class="mb-3">
+      <label for="email" class="form-label">Email*</label>
+
+      <Field
+        id="email"
+        name="email"
+        type="email"
+        class="form-control"
+        :class="{ 'is-invalid': errors['email'] }"
+        placeholder="請輸入 Email"
+        rules="email|required"
+        v-model="form.user.email"
+      >
+      </Field>
+
+      <error-message name="email" class="invalid-feedback"></error-message>
+    </div>
+
+    <!-- name -->
+    <div class="mb-3">
+      <label for="name" class="form-label">姓名*</label>
+
+      <Field
+        id="name"
+        name="name"
+        type="text"
+        class="form-control"
+        :class="{ 'is-invalid': errors['name'] }"
+        placeholder="請輸入姓名"
+        rules="required"
+        v-model="form.user.name"
+      ></Field>
+
+      <error-message name="name" class="invalid-feedback"></error-message>
+    </div>
+
+    <!-- tel -->
+    <div class="mb-3">
+      <label for="tel" class="form-label">手機*</label>
+
+      <Field
+        id="tel"
+        name="tel"
+        type="tel"
+        class="form-control"
+        :class="{ 'is-invalid': errors['tel'] }"
+        placeholder="請輸入手機"
+        rules="numeric|length: 10|required"
+        v-model="form.user.tel"
+      ></Field>
+
+      <error-message name="tel" class="invalid-feedback"></error-message>
+    </div>
+
+    <!-- address -->
+    <div class="mb-3">
+      <label for="address" class="form-label">地址*</label>
+
+      <Field
+        id="address"
+        name="address"
+        type="text"
+        class="form-control"
+        :class="{ 'is-invalid': errors['address'] }"
+        placeholder="請輸入地址"
+        rules="required"
+        v-model="form.user.address"
+      ></Field>
+
+      <error-message name="address" class="invalid-feedback"></error-message>
+    </div>
+
+    <!-- message -->
+    <div class="mb-3">
+      <label for="message" class="form-label">留言</label>
+      <Field
+        id="message"
+        name="message"
+        as="textarea"
+        class="form-control"
+        v-model="form.message"
+      ></Field>
+    </div>
+
+    <button class="btn btn-danger" type="submit">送出訂單</button>
+  </Form>
 </template>
 
 <script>
@@ -152,7 +245,17 @@ export default {
         loadingItemsID: ''
       },
       isLoading: false,
-      isCouponUsed: false
+      isCouponUsed: false,
+      // vee-validate
+      form: {
+        user: {
+          name: 'Andy',
+          email: '123@gmail.com',
+          tel: '0987654321',
+          address: 'asd'
+        },
+        message: ''
+      }
     };
   },
   computed: {
@@ -167,16 +270,43 @@ export default {
     }
   },
   methods: {
+    async onSubmit() {
+      try {
+        this.isLoading = true;
+
+        // axios
+        const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/order`;
+        const order = this.form;
+        const response = await this.$http.post(api, { data: order });
+        console.log('onSubmit', response);
+
+        this.isLoading = false;
+
+        // 轉址
+        this.$router.push({
+          name: 'UserCheckout',
+          params: { orderID: response.data.orderId }
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    },
     async useCoupon() {
       try {
-        const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/coupon`;
+        // 取得優惠券資料
         const coupon = {
           code: this.couponCode
         };
+
+        // axios
+        const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/coupon`;
         const response = await this.$http.post(api, { data: coupon });
         console.log('useCoupon', response);
 
+        // 重新渲染畫面
         await this.getCartProduct();
+
+        // 儲存回傳資料
         this.isCouponUsed = response.data.success;
         this.discountTotal = response.data.data.final_total;
       } catch (err) {
@@ -188,13 +318,17 @@ export default {
         // this.status.loadingItemsID = item.id;
         // this.isLoading = true;
 
+        // 取得優惠券資料
         const cart = {
           product_id: item.product_id,
           qty: item.qty
         };
+        // axios
         const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/cart/${item.id}`;
         const response = await this.$http.put(api, { data: cart });
-        this.getCartProduct();
+
+        // 重新渲染畫面
+        await this.getCartProduct();
 
         // this.status.loadingItemsID = '';
         // this.isLoading = false;
@@ -207,8 +341,11 @@ export default {
       try {
         this.isLoading = true;
 
+        // axios
         const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/cart`;
         const response = await this.$http.get(api);
+
+        // 儲存回傳資料
         this.cart = response.data.data.carts;
 
         this.isLoading = false;
@@ -219,16 +356,23 @@ export default {
       }
     },
     async deleteProduct(item) {
-      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/cart/${item.id}`;
-      const response = await this.$http.delete(api);
-      this.getCartProduct();
-      console.log('deleteProduct', response);
+      try {
+        // axios
+        const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/cart/${item.id}`;
+        await this.$http.delete(api);
+
+        // 重新渲染畫面
+        await this.getCartProduct();
+
+        // const response = await this.$http.delete(api);
+        // console.log('deleteProduct', response);
+      } catch (err) {
+        console.log(err);
+      }
     }
   },
   created() {
     this.getCartProduct();
-    const x = 3.5999999999999996;
-    console.log('rounded', x.toFixed());
   }
 };
 </script>
