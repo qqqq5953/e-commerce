@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="toast-container position-absolute pe-3 end-0"
-    style="bottom: 20px"
-  >
+  <div class="toast-container position-absolute pe-3 end-0" style="top: 70px">
     <Toast v-for="(msg, key) in messages" :key="key" :msg="msg" />
   </div>
 </template>

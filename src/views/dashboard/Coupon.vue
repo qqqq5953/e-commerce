@@ -81,7 +81,7 @@ export default {
     CouponDeleteModal,
     Pagination
   },
-  inject: ['emitter', 'pushMessageState'],
+  inject: ['pushMessageState'],
   data() {
     return {
       coupons: [],

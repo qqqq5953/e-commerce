@@ -1,13 +1,6 @@
 <template>
   <Loading :active="isLoading"></Loading>
-
-  <Pagination
-    :pages="pagination"
-    @change-page="getOrders"
-    @previous-page="getOrders"
-    @next-page="getOrders"
-  ></Pagination>
-  <table class="table">
+  <table class="table mt-5">
     <thead>
       <tr>
         <th scope="col">購買時間</th>
@@ -75,6 +68,13 @@
       </tr>
     </tbody>
   </table>
+
+  <Pagination
+    :pages="pagination"
+    @change-page="getOrders"
+    @previous-page="getOrders"
+    @next-page="getOrders"
+  ></Pagination>
   <OrderEditModal ref="orderEditModal" :order="tempOrder"></OrderEditModal>
   <OrderDeleteModal
     ref="orderDeleteModal"
@@ -94,7 +94,7 @@ export default {
     OrderDeleteModal,
     Pagination
   },
-  inject: ['emitter', 'pushMessageState'],
+  inject: ['pushMessageState'],
   data() {
     return {
       isLoading: false,
@@ -129,6 +129,9 @@ export default {
 
         // 關閉modal
         this.$refs.orderDeleteModal.hideModal();
+
+        // toast
+        this.pushMessageState(response, order, '刪除');
       } catch (err) {}
     },
     async getOrders(page) {
