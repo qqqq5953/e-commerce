@@ -130,7 +130,6 @@ export default {
       this.tempCoupon = this.coupon;
       // console.log('watch tempCoupon', this.tempCoupon);
     }
-  },
-  methods: {}
+  }
 };
 </script>

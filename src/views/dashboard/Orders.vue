@@ -1,4 +1,12 @@
 <template>
+  <Loading :active="isLoading"></Loading>
+
+  <Pagination
+    :pages="pagination"
+    @change-page="getOrders"
+    @previous-page="getOrders"
+    @next-page="getOrders"
+  ></Pagination>
   <table class="table">
     <thead>
       <tr>
@@ -15,9 +23,11 @@
         <th scope="row">{{ $filters.date(order.paid_date) }}</th>
         <td>{{ order.user.email }}</td>
         <td>
-          <div v-for="item in order.products" :key="item.id">
-            {{ item.product.title }}
-          </div>
+          <ul>
+            <li v-for="item in order.products" :key="item.id">
+              {{ item.product.title }}
+            </li>
+          </ul>
         </td>
         <td class="text-end">{{ order.total }}</td>
         <td>
@@ -28,57 +38,118 @@
               role="switch"
               id="flexSwitchCheckChecked"
               :checked="order.is_paid"
-              :disabled="!order.is_paid"
-              ref="finishPayment"
-              @click="onCheckedPayment"
+              disabled
             />
             <label
               class="form-check-label"
               for="flexSwitchCheckChecked"
-              v-if="isPaid"
+              v-if="order.is_paid"
               >已付款</label
             >
             <label class="form-check-label" for="flexSwitchCheckChecked" v-else
               >未付款</label
             >
           </div>
+          <!-- <div :class="{ 'text-success': order.is_paid }">
+            {{ order.is_paid ? '已付款' : '未付款' }}
+          </div> -->
         </td>
         <td>
           <div class="btn-group" role="group">
-            <button type="button" class="btn btn-outline-primary">檢視</button>
-            <button type="button" class="btn btn-outline-danger">刪除</button>
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-primary"
+              @click="openOrderModal(order)"
+            >
+              檢視
+            </button>
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-danger"
+              @click="openOrderDeleteModal(order, pagination)"
+            >
+              刪除
+            </button>
           </div>
         </td>
       </tr>
     </tbody>
   </table>
+  <OrderEditModal ref="orderEditModal" :order="tempOrder"></OrderEditModal>
+  <OrderDeleteModal
+    ref="orderDeleteModal"
+    :order="tempDeleteOrder"
+    @delete-order="deleteOrder"
+  ></OrderDeleteModal>
 </template>
 
 <script>
+import OrderEditModal from '@/components/OrderEditModal.vue';
+import OrderDeleteModal from '@/components/OrderDeleteModal.vue';
+import Pagination from '@/components/Pagination.vue';
+
 export default {
+  components: {
+    OrderEditModal,
+    OrderDeleteModal,
+    Pagination
+  },
+  inject: ['emitter', 'pushMessageState'],
   data() {
     return {
-      isPaid: true,
       isLoading: false,
+      tempOrder: {},
+      tempDeleteOrder: {},
       orders: [],
       pagination: {}
     };
   },
   methods: {
-    onCheckedPayment() {
-      this.isPaid = this.$refs.finishPayment.checked;
+    openOrderModal(order) {
+      this.tempOrder = order;
+      this.$refs.orderEditModal.showModal();
+      console.log('openOrderModal', order);
     },
-    getOrders() {
+    openOrderDeleteModal(order, pagination) {
+      this.tempDeleteOrder = { ...order, ...pagination };
+      this.$refs.orderDeleteModal.showModal();
+    },
+    async deleteOrder(order) {
       try {
+        // axios
+        const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/order/${order.id}`;
+        const response = await this.$http.delete(api);
+        console.log('deleteOrder response', response);
+
+        // 取得分頁資料
+        const currentPage = order.current_page;
+
+        // 重新渲染畫面
+        this.getOrders(currentPage);
+
+        // 關閉modal
+        this.$refs.orderDeleteModal.hideModal();
+      } catch (err) {}
+    },
+    async getOrders(page) {
+      try {
+        this.isLoading = true;
+
+        // axios
+        const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/orders?page=${page}`;
+        const response = await this.$http.get(api);
+
+        // 儲存回傳資料
+        this.orders = response.data.orders;
+        this.pagination = response.data.pagination;
+
+        this.isLoading = false;
+        console.log('getOrders', response);
+        console.log('this.orders', this.orders);
+        console.log('this.pagination', this.pagination);
       } catch (err) {
         console.log(err);
       }
-      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/orders`;
-      this.$http.get(api).then((res) => {
-        console.log('res', res);
-        this.orders = res.data.orders;
-        this.pagination = res.data.pagination;
-      });
     }
   },
   created() {
