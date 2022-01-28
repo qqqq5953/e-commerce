@@ -1,5 +1,5 @@
 <template>
-  <Navbar></Navbar>
+  <AdminNavbar></AdminNavbar>
   <div class="container-fluid position-relative">
     <router-view />
   </div>
@@ -10,10 +10,10 @@
 import emitter from '@/methods/emitter';
 import pushMessageState from '@/methods/pushMessageState';
 import ToastMessage from '@/components/ToastMessage.vue';
-import Navbar from '@/components/Navbar.vue';
+import AdminNavbar from '@/components/AdminNavbar.vue';
 export default {
   components: {
-    Navbar,
+    AdminNavbar,
     ToastMessage
   },
   provide() {

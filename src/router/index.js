@@ -4,7 +4,32 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: () => import('../views/Home.vue')
+    component: () => import('../views/Home.vue'),
+    children: [
+      // {
+      //   path: 'movie/:title',
+      //   name: 'SearchResult',
+      //   component: () => import('../views/SearchResult.vue'),
+      //   props: (route) => {
+      //     // query 跟 params 差在前者不用在path帶參數
+      //     return {
+      //       keywords: route.params.title
+      //     };
+      //   }
+      // }
+      {
+        path: 'movie',
+        name: 'SearchResult',
+        component: () => import('../views/SearchResultTest.vue'),
+        props: (route) => {
+          console.log('route', route);
+          // query 跟 params 差在前者不用在path帶參數
+          return {
+            keywords: route.query.title
+          };
+        }
+      }
+    ]
   },
   {
     path: '/login',

@@ -1,20 +1,17 @@
 <template>
-  <router-link :to="{ name: 'Login' }">Login</router-link> |
-  <router-link :to="{ name: 'UserProducts' }">ProductList</router-link>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
-  </div>
+  <Navbar></Navbar>
+  <router-view></router-view>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue';
+import Navbar from '@/components/Navbar.vue';
 
 export default {
-  name: 'Home',
   components: {
-    HelloWorld
+    Navbar
+  },
+  created() {
+    // console.log('movieID', this.movieID);
   }
 };
 </script>

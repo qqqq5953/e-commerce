@@ -1,7 +1,9 @@
 <template>
-  <nav class="navbar navbar-expand-sm navbar-light bg-light">
+  <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">Navbar</a>
+      <router-link class="navbar-brand nav-link active" to="/"
+        >CMDB</router-link
+      >
       <button
         class="navbar-toggler"
         type="button"
@@ -16,35 +18,108 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <router-link class="nav-link active" to="/">Home</router-link>
+            <router-link class="nav-link disabled" :to="{ name: 'Products' }"
+              >Genres</router-link
+            >
           </li>
-          <li class="nav-item">
-            <router-link class="nav-link" :to="{ name: 'Products' }"
-              >產品</router-link
+          <!-- <li class="nav-item">
+            <router-link class="nav-link" :to="{ name: 'SearchResult' }"
+              >SearchResult</router-link
+            >
+          </li> -->
+          <!-- <li class="nav-item">
+            <router-link class="nav-link disabled" :to="{ name: 'Orders' }"
+              >Watchlist</router-link
             >
           </li>
           <li class="nav-item">
-            <router-link class="nav-link" :to="{ name: 'Orders' }"
-              >訂單</router-link
+            <router-link class="nav-link disabled" :to="{ name: 'Coupon' }"
+              >Cart</router-link
+            >
+          </li> -->
+          <li class="nav-item">
+            <router-link class="nav-link" :to="{ name: 'UserProducts' }"
+              >ProductList</router-link
             >
           </li>
           <li class="nav-item">
-            <router-link class="nav-link" :to="{ name: 'Coupon' }"
-              >優惠券</router-link
+            <router-link class="nav-link" :to="{ name: 'Login' }"
+              >Admin</router-link
             >
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#" @click.prevent="logOut">Logout</a>
           </li>
         </ul>
-        <form class="d-flex">
-          <input
-            class="form-control me-2"
-            type="search"
-            placeholder="Search"
-            aria-label="Search"
-          />
-          <button class="btn btn-outline-success" type="submit">Search</button>
+        <form class="d-flex flex-grow-1">
+          <div class="input-group">
+            <button
+              class="btn btn-outline-secondary dropdown-toggle"
+              type="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              Movie
+            </button>
+            <ul class="dropdown-menu dropdown-menu-dark">
+              <li v-for="genre in searchBy" :key="genre">
+                <button class="dropdown-item" type="button">
+                  {{ genre.displayName }}
+                </button>
+              </li>
+            </ul>
+            <div class="flex-grow-1 position-relative">
+              <input
+                class="form-control h-100"
+                type="search"
+                placeholder="Search"
+                v-model.trim="keywords"
+                @input="filterKeyword"
+                aria-label="Search with dropdown button"
+              />
+              <a
+                href="#"
+                class="position-absolute end-0 top-0 bottom-0 p-4 d-flex align-items-center"
+                @click.prevent="clearKeywords"
+              >
+                <i class="bi bi-x-lg"></i>
+              </a>
+
+              <ul
+                class="text-white list-unstyled position-absolute bg-dark mb-0 start-0 end-0 pt-3 search-list"
+                :class="{ 'd-none': !topEightResult.length }"
+              >
+                <li
+                  class="px-4 py-2 search-item"
+                  v-for="item in topEightResult"
+                  :key="item"
+                >
+                  <a href="#" class="text-decoration-none d-flex">
+                    <img
+                      v-if="item.poster_path"
+                      :src="baseImageUrl + item.poster_path"
+                      class="card-img-top img-fluid d-block"
+                      :alt="item.title"
+                    />
+                    <div class="ms-3 text-light">
+                      <h5 class="text-light mb-0">
+                        {{ item.title || item.name }}
+                      </h5>
+                      <small class="text-light">{{ item.release_date }}</small>
+                    </div>
+                  </a>
+                </li>
+                <li><hr class="dropdown-divider my-0" /></li>
+                <li class="px-4 py-3 search-item">
+                  <a href="#" class="text-light">See all results</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <button
+            class="btn btn-outline-success"
+            type="button"
+            @click="searchMovie"
+          >
+            Search
+          </button>
         </form>
       </div>
     </div>
@@ -53,13 +128,148 @@
 
 <script>
 export default {
+  data() {
+    return {
+      allData: [],
+      baseImageUrl: 'https://image.tmdb.org/t/p/w200',
+      matchedKeyword: [],
+      topEightResult: [],
+      keywords: '',
+      searchBy: [
+        {
+          displayName: 'All',
+          apiKeyword: 'multi'
+        },
+        {
+          displayName: 'Movie',
+          apiKeyword: 'movie'
+        },
+        {
+          displayName: 'TV',
+          apiKeyword: 'tv'
+        },
+        {
+          displayName: 'People',
+          apiKeyword: 'person'
+        }
+      ]
+    };
+  },
   methods: {
-    logOut() {
-      const api = `${process.env.VUE_APP_API}logout`;
-      this.$http.post(api).then((res) => {
-        if (res.data.success) this.$router.push({ name: 'Login' });
+    clearKeywords() {
+      console.log('clearKeywords');
+      console.log('clearKeywords allData', this.allData.length);
+      console.log('clearKeywords matchedKeyword', this.matchedKeyword.length);
+
+      this.keywords = '';
+      this.matchedKeyword = [];
+      this.topEightResult = [];
+      this.allData = [];
+    },
+    async getAllData(page) {
+      if (this.keywords === '') return;
+
+      const response = await this.$http.get(
+        `https://api.themoviedb.org/3/search/movie?api_key=7bbe6005cfda593dc21cceb93eaf9a8e&language=en-US&query=${this.keywords}&page=${page}&include_adult=false`
+      );
+      response.data.results.forEach((item) => {
+        this.allData.push(item);
       });
+    },
+    async filterKeyword() {
+      this.matchedKeyword = [];
+      this.topEightResult = [];
+      this.allData = [];
+
+      if (this.keywords === '') return;
+
+      // 找出該關鍵字總共有幾頁結果
+      const response = await this.$http.get(
+        `https://api.themoviedb.org/3/search/movie?api_key=7bbe6005cfda593dc21cceb93eaf9a8e&language=en-US&query=${this.keywords}&page=1&include_adult=false`
+      );
+      const totalPages = response.data.total_pages;
+
+      // 將所有結果存進 allData
+      for (let page = 1; page <= totalPages; page++) {
+        await this.getAllData(page);
+      }
+
+      // 將 allData 與關鍵字比對
+      this.matchedKeyword = this.allData.filter((item) => {
+        if (item.title) {
+          return item.title
+            .split('-')
+            .join(' ')
+            .toUpperCase()
+            .match(this.keywords.toUpperCase());
+        } else {
+          return item.name
+            .split('-')
+            .join(' ')
+            .toUpperCase()
+            .match(this.keywords.toUpperCase());
+        }
+      });
+      // console.log('filterKeyword allData', this.allData.length);
+      // console.log('filterKeyword matchedKeyword', this.matchedKeyword);
+
+      this.topEightResult = this.matchedKeyword.slice(0, 8);
+      console.log('topEightResult', this.topEightResult);
+
+      // const difference = this.allData.filter(
+      //   (x) => !this.matchedKeyword.includes(x)
+      // );
+      // console.log('difference', difference);
+      // difference.forEach((item) => {
+      //   if (item.title) {
+      //     console.log('title', item.title);
+      //   } else {
+      //     console.log('name', item.name);
+      //   }
+      // });
+    },
+    searchMovie() {
+      // this.$router.push({
+      //   name: 'SearchResult',
+      //   params: {
+      //     title: this.keywords
+      //   }
+      // });
+
+      this.$router.push({
+        name: 'SearchResult',
+        query: {
+          title: this.keywords
+        }
+      });
+      this.clearKeywords();
     }
+  },
+  created() {
+    // this.filterKeyword();
+    // this.getAllData();
   }
 };
 </script>
+
+<style lang="scss" scoped>
+input[type='search']::-webkit-search-cancel-button {
+  display: none;
+}
+
+img {
+  height: 70px;
+  width: 50px;
+  object-fit: cover;
+  // object-position: top center;
+}
+
+.search-list {
+  z-index: 2;
+}
+
+.search-item:hover {
+  background-color: rgba(81, 84, 87, 0.4);
+  // background-color: #55595c;
+}
+</style>
