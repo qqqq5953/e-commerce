@@ -4,9 +4,9 @@
 
     <Pagination
       :pages="pagination"
-      @change-page="getMovie"
-      @previous-page="getMovie"
-      @next-page="getMovie"
+      @change-page="getData"
+      @previous-page="getData"
+      @next-page="getData"
     ></Pagination>
 
     <div class="row">
@@ -58,6 +58,9 @@ export default {
   props: {
     keywords: {
       type: String
+    },
+    genre: {
+      type: String
     }
   },
   data() {
@@ -70,6 +73,7 @@ export default {
       results: [],
       totalResult: '',
       name: '',
+      selectedGenre: '',
       pagination: {}
     };
   },
@@ -77,24 +81,24 @@ export default {
     // keywords() {
     //   console.log('keywords', this.keywords);
     //   this.name = this.keywords;
-    //   this.getMovie();
+    //   this.getData();
     // }
     // '$route.params.id': {
     //   handler: function (id) {
     //     this.name = id;
-    //     // this.getMovie();
+    //     // this.getData();
     //   },
     //   deep: true,
     //   immediate: true
     // }
-    '$route.query.title': {
-      handler: function (title) {
-        this.name = title;
-        this.getMovie();
-      },
-      deep: true,
-      immediate: true
-    }
+    // '$route.query.title': {
+    //   handler: function (title) {
+    //     this.name = title;
+    //     this.getData();
+    //   },
+    //   deep: true,
+    //   immediate: true
+    // }
   },
   methods: {
     sortResultByDate() {
@@ -103,13 +107,13 @@ export default {
       });
       console.log('test', test);
     },
-    async getMovie() {
+    async getData() {
       const response = await this.$http.get(
-        `https://api.themoviedb.org/3/search/movie?api_key=${this.key}&query=${this.name}&page=1`
+        `https://api.themoviedb.org/3/search/${this.selectedGenre}?api_key=${this.key}&query=${this.name}&page=1`
       );
       this.results = response.data.results;
       this.totalResult = response.data.total_results;
-      console.log('getMovie', response);
+      console.log('getData', response);
     },
     async discoverMovie() {
       const response = await this.$http.get(
@@ -173,8 +177,9 @@ export default {
     }
   },
   created() {
-    // console.log('search result created', this.$route.params.id);
-    // this.getMulti();
+    this.name = this.$route.query.title;
+    this.selectedGenre = this.$route.query.genre;
+    this.getData();
   }
 };
 </script>

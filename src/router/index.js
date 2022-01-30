@@ -18,14 +18,25 @@ const routes = [
       //   }
       // }
       {
-        path: 'movie',
+        path: 'search-result',
         name: 'SearchResult',
         component: () => import('../views/SearchResultTest.vue'),
         props: (route) => {
-          console.log('route', route);
           // query 跟 params 差在前者不用在path帶參數
           return {
+            genre: route.query.genre,
             keywords: route.query.title
+          };
+        }
+      },
+      {
+        path: 'movie',
+        name: 'Movie',
+        component: () => import('../views/Movie.vue'),
+        props: (route) => {
+          // query 跟 params 差在前者不用在path帶參數
+          return {
+            name: route.query.title
           };
         }
       }

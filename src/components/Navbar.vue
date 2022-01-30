@@ -56,12 +56,16 @@
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
-              Movie
+              {{ selectedGenre }}
             </button>
             <ul class="dropdown-menu dropdown-menu-dark">
               <li v-for="genre in searchBy" :key="genre">
-                <button class="dropdown-item" type="button">
-                  {{ genre.displayName }}
+                <button
+                  class="dropdown-item"
+                  type="button"
+                  @click="selectGenre(genre)"
+                >
+                  {{ genre }}
                 </button>
               </li>
             </ul>
@@ -72,7 +76,6 @@
                 type="search"
                 placeholder="Search"
                 v-model.trim="keywords"
-                @input="showInputResult"
                 aria-label="Search with dropdown button"
                 ref="searchBar"
               />
@@ -91,31 +94,37 @@
                 ref="searchList"
               >
                 <Loading :active="isLoading" :is-full-page="false"></Loading>
-
-                <li
-                  class="px-4 py-2 search-item"
-                  v-for="item in topEightResult"
-                  :key="item"
-                >
-                  <a href="#" class="text-decoration-none d-flex">
-                    <img
-                      v-if="item.poster_path"
-                      :src="baseImageUrl + item.poster_path"
-                      class="card-img-top img-fluid d-block"
-                      :alt="item.title"
-                    />
-                    <div class="ms-3 text-light">
-                      <h5 class="text-light mb-0">
-                        {{ item.title || item.name }}
-                      </h5>
-                      <small class="text-light">{{ item.release_date }}</small>
-                    </div>
-                  </a>
-                </li>
-                <li><hr class="dropdown-divider my-0" /></li>
-                <li class="px-4 py-3 search-item">
-                  <a href="#" class="text-light">See all results</a>
-                </li>
+                <template v-if="topEightResult.length">
+                  <li
+                    class="px-4 py-2 search-item"
+                    v-for="item in topEightResult"
+                    :key="item"
+                  >
+                    <a href="#" class="text-decoration-none d-flex">
+                      <img
+                        v-if="item.poster_path"
+                        :src="baseImageUrl + item.poster_path"
+                        class="card-img-top img-fluid d-block"
+                        :alt="item.title"
+                      />
+                      <div class="ms-3 text-light">
+                        <h5 class="text-light mb-0">
+                          {{ item.title || item.name }}
+                        </h5>
+                        <small class="text-light">{{
+                          item.release_date
+                        }}</small>
+                      </div>
+                    </a>
+                  </li>
+                  <li><hr class="dropdown-divider my-0" /></li>
+                  <li class="px-4 py-3 search-item">
+                    <a href="#" class="text-light">See all results</a>
+                  </li>
+                </template>
+                <template v-else>
+                  <li class="px-4 pb-3 search-item">no result</li>
+                </template>
               </ul>
             </div>
           </div>
@@ -175,28 +184,41 @@ export default {
       difference: [],
       baseImageUrl: 'https://image.tmdb.org/t/p/w200',
       keywords: '',
-      searchBy: [
-        {
-          displayName: 'All',
-          apiKeyword: 'multi'
-        },
-        {
-          displayName: 'Movie',
-          apiKeyword: 'movie'
-        },
-        {
-          displayName: 'TV',
-          apiKeyword: 'tv'
-        },
-        {
-          displayName: 'People',
-          apiKeyword: 'person'
-        }
-      ],
+      searchBy: ['Movie', 'TV', 'Person'],
+      selectedGenre: '' || 'Movie',
       isLoading: false
     };
   },
+  watch: {
+    keywords() {
+      this.showInputResult();
+    }
+  },
   methods: {
+    validateChinese(text) {
+      return /^[\u4e00-\u9fa5\0-9]/.test(text);
+    },
+    validateEnglish(text) {
+      return /^[ A-Za-z\0-9]/.test(text);
+    },
+    async checkSearchLanguage() {
+      if (this.validateChinese(this.keywords)) {
+        console.log('中文');
+
+        return await this.getPopularData(this.allData, 'zh-TW', 3);
+      } else if (this.validateEnglish(this.keywords)) {
+        console.log('英文');
+
+        return await this.getPopularData(this.allData, 'en-US', 3);
+      } else {
+        console.log('都不是');
+        return undefined;
+      }
+    },
+    selectGenre(genre) {
+      this.selectedGenre = genre;
+      this.clearSearchBar();
+    },
     toggleSearchMenu() {
       window.addEventListener('click', (e) => {
         const target = e.target;
@@ -221,19 +243,21 @@ export default {
       this.topEightResult.splice(0, this.topEightResult.length);
       this.allData.splice(0, this.allData.length);
 
-      console.log('clearKeywords allData', this.allData);
-      console.log('clearKeywords matchedKeyword', this.matchedKeyword);
-      console.log('clearKeywords topEightResult', this.topEightResult);
+      // console.log('clearKeywords allData', this.allData);
+      // console.log('clearKeywords matchedKeyword', this.matchedKeyword);
+      // console.log('clearKeywords topEightResult', this.topEightResult);
     },
     matchKeyword(data) {
       return data.filter((item) => {
         if (item.title) {
+          // console.log('有 title', item.title);
           return item.title
             .split('-')
             .join(' ')
             .toUpperCase()
             .match(this.keywords.toUpperCase());
         } else {
+          // console.log('有 name', item.name);
           return item.name
             .split('-')
             .join(' ')
@@ -247,7 +271,7 @@ export default {
         return b.bySomething - a.bySomething;
       });
     },
-    async getPopularData(dataArray, topPages) {
+    async getPopularData(dataArray, language, topPages) {
       // avoid 422 error
       if (this.keywords === '') return;
 
@@ -255,10 +279,15 @@ export default {
       for (let page = 1; page <= topPages; page++) {
         // avoid 422 error
         if (this.keywords === '') return;
+        this.isLoading = true;
 
+        const genre = this.selectedGenre.toLowerCase();
         const response = await this.$http.get(
-          `https://api.themoviedb.org/3/search/movie?api_key=7bbe6005cfda593dc21cceb93eaf9a8e&language=en-US&query=${this.keywords}&page=${page}&include_adult=false`
+          `https://api.themoviedb.org/3/search/${genre}?api_key=7bbe6005cfda593dc21cceb93eaf9a8e&language=${language}&query=${this.keywords}&page=${page}&include_adult=false`
         );
+
+        this.isLoading = false;
+
         response.data.results.forEach((item) => {
           temp.push(item);
         });
@@ -268,17 +297,21 @@ export default {
       return dataArray[dataArray.length - 1];
     },
     async showInputResult() {
+      if (this.keywords === '') return;
       this.clearArrays();
 
-      if (this.keywords === '') return;
-
-      this.isLoading = true;
-
       // 取得前三頁結果
-      this.finalData = await this.getPopularData(this.allData, 3);
+      this.finalData = await this.checkSearchLanguage();
+
+      // 無結果
+      if (this.finalData === undefined) return;
 
       // 將 finalData 與關鍵字比對
       this.matchedKeyword = this.matchKeyword(this.finalData);
+      if (!this.matchKeyword(this.finalData).length) {
+        // 比對結果如果為空陣列，finalData 直接賦值 matchedKeyword
+        this.matchedKeyword = this.finalData;
+      }
 
       // 依照熱度排名
       this.matchedKeyword = this.sortData(this.matchedKeyword, 'popularity');
@@ -295,8 +328,12 @@ export default {
 
       // 前8
       this.topEightResult = this.noRepeatData.slice(0, 8);
+      console.log('allData', this.allData);
+      console.log('finalData', this.finalData);
+      console.log('noRepeatData', this.noRepeatData);
+      console.log('topEightResult', this.topEightResult);
 
-      this.isLoading = false;
+      // this.isLoading = false;
 
       // this.difference = this.matchedKeyword.filter(
       //   (x) => !this.noRepeatData.includes(x)
@@ -315,6 +352,7 @@ export default {
       this.$router.push({
         name: 'SearchResult',
         query: {
+          genre: this.selectedGenre.toLowerCase(),
           title: this.keywords
         }
       });
