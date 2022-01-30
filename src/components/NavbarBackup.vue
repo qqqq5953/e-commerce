@@ -72,14 +72,12 @@
                 type="search"
                 placeholder="Search"
                 v-model.trim="keywords"
-                @input="showInputResult"
                 aria-label="Search with dropdown button"
-                ref="searchBar"
               />
               <a
                 href="#"
                 class="position-absolute end-0 top-0 bottom-0 p-4 d-flex align-items-center"
-                @click.prevent="clearSearchBar"
+                @click.prevent="clearKeywords"
               >
                 <i class="bi bi-x-lg"></i>
               </a>
@@ -87,8 +85,7 @@
               <!-- 搜尋結果 -->
               <ul
                 class="text-white list-unstyled position-absolute bg-dark mb-0 start-0 end-0 pt-3 search-list"
-                :class="{ 'd-none': !keywords.length }"
-                ref="searchList"
+                :class="{ 'd-none': keywords.length }"
               >
                 <Loading :active="isLoading" :is-full-page="false"></Loading>
 
@@ -133,26 +130,22 @@
 
   <!-- 測試區 -->
   <div class="row">
-    <!-- <div class="col-4">
-      <h3>finalData ({{ finalData.length }})</h3>
-      <div class="" v-for="item in finalData" :key="item.id + 1">
-        {{ item.title || item.name }} | {{ item.popularity }}
+    <div class="col-4">
+      <h3>allData ({{ allData.length }})</h3>
+      <div class="" v-for="item in allData" :key="item.id + 1">
+        {{ item.index }}. {{ item.title || item.name }} | {{ item.popularity }}
       </div>
     </div>
-    <div class="col-4">
+    <!-- <div class="col-4">
       <h3>matchedKeyword ({{ matchedKeyword.length }})</h3>
       <div class="" v-for="item in matchedKeyword" :key="item.id + 2">
-        {{ item.title || item.name }} | {{ item.popularity }}
+        {{ item.index }}. {{ item.title || item.name }} | {{ item.popularity }}
       </div>
     </div>
     <div class="col-4">
-      <h3>noRepeatData ({{ noRepeatData.length }})</h3>
-      <div class="" v-for="item in noRepeatData" :key="item.id">
-        {{ item.title || item.name }} | {{ item.popularity }}
-      </div>
       <h3>topEightResult ({{ topEightResult.length }})</h3>
       <div class="" v-for="item in topEightResult" :key="item.id">
-        {{ item.title || item.name }} | {{ item.popularity }}
+        {{ item.index }}. {{ item.title || item.name }} | {{ item.popularity }}
       </div>
       <hr />
       <h3>difference ({{ difference.length }})</h3>
@@ -168,12 +161,9 @@ export default {
   data() {
     return {
       allData: [],
-      finalData: [],
-      matchedKeyword: [],
-      noRepeatData: [],
-      topEightResult: [],
-      difference: [],
       baseImageUrl: 'https://image.tmdb.org/t/p/w200',
+      matchedKeyword: [],
+      topEightResult: [],
       keywords: '',
       searchBy: [
         {
@@ -193,116 +183,117 @@ export default {
           apiKeyword: 'person'
         }
       ],
-      isLoading: false
+      isLoading: false,
+      difference: []
     };
   },
+  watch: {
+    keywords() {
+      this.filterKeyword();
+    }
+  },
   methods: {
-    toggleSearchMenu() {
-      window.addEventListener('click', (e) => {
-        const target = e.target;
+    closeMenu() {},
+    clearKeywords() {
+      console.log('clearKeywords');
+      console.log('clearKeywords allData', this.allData.length);
+      console.log('clearKeywords matchedKeyword', this.matchedKeyword.length);
 
-        // 點擊 searchBar 以外區域，將 searchList 關閉
-        if (target !== this.$refs.searchBar && this.keywords.length) {
-          this.$refs.searchList.classList.add('d-none');
-        }
-
-        // 點擊 searchBar 區域，將 searchList 打開
-        if (target === this.$refs.searchBar && this.keywords.length) {
-          this.$refs.searchList.classList.remove('d-none');
-        }
-      });
-    },
-    clearSearchBar() {
       this.keywords = '';
-      this.clearArrays();
-    },
-    clearArrays() {
       this.matchedKeyword.splice(0, this.matchedKeyword.length);
       this.topEightResult.splice(0, this.topEightResult.length);
       this.allData.splice(0, this.allData.length);
+      // this.matchedKeyword.length = 0;
+      // this.topEightResult.length = 0;
+      // this.allData.length = 0;
 
       console.log('clearKeywords allData', this.allData);
       console.log('clearKeywords matchedKeyword', this.matchedKeyword);
       console.log('clearKeywords topEightResult', this.topEightResult);
     },
-    matchKeyword(data) {
-      return data.filter((item) => {
-        if (item.title) {
-          return item.title
-            .split('-')
-            .join(' ')
-            .toUpperCase()
-            .match(this.keywords.toUpperCase());
-        } else {
-          return item.name
-            .split('-')
-            .join(' ')
-            .toUpperCase()
-            .match(this.keywords.toUpperCase());
-        }
-      });
-    },
-    sortData(array, bySomething) {
-      return array.sort((a, b) => {
-        return b.bySomething - a.bySomething;
-      });
-    },
-    async getPopularData(dataArray, topPages) {
+    async getAllData(page) {
       // avoid 422 error
       if (this.keywords === '') return;
 
-      const temp = [];
-      for (let page = 1; page <= topPages; page++) {
-        // avoid 422 error
-        if (this.keywords === '') return;
-
-        const response = await this.$http.get(
-          `https://api.themoviedb.org/3/search/movie?api_key=7bbe6005cfda593dc21cceb93eaf9a8e&language=en-US&query=${this.keywords}&page=${page}&include_adult=false`
-        );
-        response.data.results.forEach((item) => {
-          temp.push(item);
-        });
-      }
-
-      dataArray.push(temp);
-      return dataArray[dataArray.length - 1];
+      const response = await this.$http.get(
+        `https://api.themoviedb.org/3/search/movie?api_key=7bbe6005cfda593dc21cceb93eaf9a8e&language=en-US&query=${this.keywords}&page=${page}&include_adult=false`
+      );
+      response.data.results.forEach((item, i) => {
+        this.allData.push({ ...item, index: i });
+      });
     },
-    async showInputResult() {
-      this.clearArrays();
+    async filterKeyword() {
+      this.matchedKeyword.length = 0;
+      this.topEightResult.length = 0;
+      this.allData.length = 0;
 
       if (this.keywords === '') return;
 
-      this.isLoading = true;
+      // this.isLoading = true;
 
-      // 取得前三頁結果
-      this.finalData = await this.getPopularData(this.allData, 3);
+      // 找出該關鍵字總共有幾頁結果
+      const response = await this.$http.get(
+        `https://api.themoviedb.org/3/search/keyword?api_key=7bbe6005cfda593dc21cceb93eaf9a8e&language=en-US&query=${this.keywords}&page=1&include_adult=false`
+      );
+      const totalPages = response.data.total_pages;
+      const totalResults = response.data.total_results;
+      console.log('=======================');
+      console.log('keywords', this.keywords);
+      console.log('totalPages', totalPages);
+      console.log('totalResults', totalResults);
+      console.log('response', response.data.results);
 
-      // 將 finalData 與關鍵字比對
-      this.matchedKeyword = this.matchKeyword(this.finalData);
+      // 將所有結果存進 allData
+      setTimeout(() => {
+        console.log('keywords', this.keywords);
+      }, 1000);
+
+      // for (let page = 1; page <= totalPages; page++) {
+      //   await this.getAllData(page);
+      // }
+      // console.log('filterKeyword allData', this.allData.length);
+
+      // 將 allData 與關鍵字比對
+      // this.matchedKeyword = this.allData.filter((item) => {
+      //   if (item.title) {
+      //     return item.title
+      //       .split('-')
+      //       .join(' ')
+      //       .toUpperCase()
+      //       .match(this.keywords.toUpperCase());
+      //   } else {
+      //     return item.name
+      //       .split('-')
+      //       .join(' ')
+      //       .toUpperCase()
+      //       .match(this.keywords.toUpperCase());
+      //   }
+      // });
+
+      // console.log('filterKeyword allData', this.allData.length);
+      // console.log('filterKeyword matchedKeyword', this.matchedKeyword);
 
       // 依照熱度排名
-      this.matchedKeyword = this.sortData(this.matchedKeyword, 'popularity');
+      // this.matchedKeyword.sort(function (a, b) {
+      //   return b.popularity - a.popularity;
+      // });
 
       // 剔除重複
-      this.noRepeatData = this.matchedKeyword.filter((item, index, arr) => {
-        return (
-          index ===
-          arr.findIndex((element) => {
-            return element.title === item.title;
-          })
-        );
-      });
+      // const result = this.matchedKeyword.filter(function (element, index, arr) {
+      //   return arr.indexOf(element) === index;
+      // });
 
       // 前8
-      this.topEightResult = this.noRepeatData.slice(0, 8);
+      // this.topEightResult = this.matchedKeyword.slice(0, 8);
+      // console.log('topEightResult', this.topEightResult);
 
-      this.isLoading = false;
+      // this.isLoading = false;
 
-      // this.difference = this.matchedKeyword.filter(
-      //   (x) => !this.noRepeatData.includes(x)
+      // this.difference = this.allData.filter(
+      //   (x) => !this.matchedKeyword.includes(x)
       // );
-      // console.log('difference', this.difference);
 
+      // console.log('difference', difference);
       // this.difference.forEach((item) => {
       //   if (item.title) {
       //     console.log('title', item.title);
@@ -312,23 +303,25 @@ export default {
       // });
     },
     searchMovie() {
-      this.$router.push({
-        name: 'SearchResult',
-        query: {
-          title: this.keywords
-        }
-      });
-      this.clearSearchBar();
       // this.$router.push({
       //   name: 'SearchResult',
       //   params: {
       //     title: this.keywords
       //   }
       // });
+
+      this.$router.push({
+        name: 'SearchResult',
+        query: {
+          title: this.keywords
+        }
+      });
+      this.clearKeywords();
     }
   },
-  mounted() {
-    this.toggleSearchMenu();
+  created() {
+    // this.filterKeyword();
+    // this.getAllData();
   }
 };
 </script>
