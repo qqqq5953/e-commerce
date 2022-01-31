@@ -35,8 +35,10 @@ const routes = [
         component: () => import('../views/Movie.vue'),
         props: (route) => {
           // query 跟 params 差在前者不用在path帶參數
+          console.log(route);
           return {
-            name: route.query.title
+            language1: route.query.language,
+            movieID1: route.query.id
           };
         }
       }

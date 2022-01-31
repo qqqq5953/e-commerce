@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+  <nav class="navbar navbar-expand-sm navbar-dark bg-primary">
     <div class="container-fluid">
       <router-link class="navbar-brand nav-link active" to="/"
         >CMDB</router-link
@@ -100,7 +100,14 @@
                     v-for="item in topEightResult"
                     :key="item"
                   >
-                    <a href="#" class="text-decoration-none d-flex">
+                    <router-link
+                      :to="{
+                        name: 'Movie',
+                        query: { language: language, id: item.id }
+                      }"
+                      class="text-decoration-none d-flex"
+                      @click="clearSearchBar"
+                    >
                       <img
                         v-if="item.poster_path"
                         :src="baseImageUrl + item.poster_path"
@@ -115,7 +122,7 @@
                           item.release_date
                         }}</small>
                       </div>
-                    </a>
+                    </router-link>
                   </li>
                   <li><hr class="dropdown-divider my-0" /></li>
                   <li class="px-4 py-3 search-item">
@@ -186,6 +193,7 @@ export default {
       keywords: '',
       searchBy: ['Movie', 'TV', 'Person'],
       selectedGenre: '' || 'Movie',
+      language: '',
       isLoading: false
     };
   },
@@ -202,14 +210,15 @@ export default {
       return /^[ A-Za-z\0-9]/.test(text);
     },
     async checkSearchLanguage() {
+      this.language = '';
       if (this.validateChinese(this.keywords)) {
         console.log('中文');
-
-        return await this.getPopularData(this.allData, 'zh-TW', 3);
+        this.language = 'zh-TW';
+        return await this.getPopularData(this.allData, this.language, 3);
       } else if (this.validateEnglish(this.keywords)) {
         console.log('英文');
-
-        return await this.getPopularData(this.allData, 'en-US', 3);
+        this.language = 'en-US';
+        return await this.getPopularData(this.allData, this.language, 3);
       } else {
         console.log('都不是');
         return undefined;
@@ -328,10 +337,10 @@ export default {
 
       // 前8
       this.topEightResult = this.noRepeatData.slice(0, 8);
-      console.log('allData', this.allData);
-      console.log('finalData', this.finalData);
-      console.log('noRepeatData', this.noRepeatData);
-      console.log('topEightResult', this.topEightResult);
+      // console.log('allData', this.allData);
+      // console.log('finalData', this.finalData);
+      // console.log('noRepeatData', this.noRepeatData);
+      // console.log('topEightResult', this.topEightResult);
 
       // this.isLoading = false;
 

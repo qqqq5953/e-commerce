@@ -1,6 +1,6 @@
 <template>
   <div class="container py-5">
-    <h2>Displaying {{ totalResult }} results for:{{ keywords }}</h2>
+    <h2>Displaying {{ totalResult }} results for: {{ title }}</h2>
 
     <Pagination
       :pages="pagination"
@@ -55,14 +55,14 @@ export default {
   components: {
     Pagination
   },
-  props: {
-    keywords: {
-      type: String
-    },
-    genre: {
-      type: String
-    }
-  },
+  // props: {
+  //   keywords: {
+  //     type: String
+  //   },
+  //   genre: {
+  //     type: String
+  //   }
+  // },
   data() {
     return {
       temp: '',
@@ -72,7 +72,7 @@ export default {
       auth: 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3YmJlNjAwNWNmZGE1OTNkYzIxY2NlYjkzZWFmOWE4ZSIsInN1YiI6IjYxZjBhZGI1YzY2OWFkMDBjZWEzMDVjNCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.n5tebMbjgJK3rlc5_VPmShHCgLujieUY_rhasZD14Hg',
       results: [],
       totalResult: '',
-      name: '',
+      title: '',
       selectedGenre: '',
       pagination: {}
     };
@@ -80,12 +80,12 @@ export default {
   watch: {
     // keywords() {
     //   console.log('keywords', this.keywords);
-    //   this.name = this.keywords;
+    //   this.title = this.keywords;
     //   this.getData();
     // }
     // '$route.params.id': {
     //   handler: function (id) {
-    //     this.name = id;
+    //     this.title = id;
     //     // this.getData();
     //   },
     //   deep: true,
@@ -93,7 +93,7 @@ export default {
     // }
     // '$route.query.title': {
     //   handler: function (title) {
-    //     this.name = title;
+    //     this.title = title;
     //     this.getData();
     //   },
     //   deep: true,
@@ -109,7 +109,7 @@ export default {
     },
     async getData() {
       const response = await this.$http.get(
-        `https://api.themoviedb.org/3/search/${this.selectedGenre}?api_key=${this.key}&query=${this.name}&page=1`
+        `https://api.themoviedb.org/3/search/${this.selectedGenre}?api_key=${this.key}&query=${this.title}&page=1`
       );
       this.results = response.data.results;
       this.totalResult = response.data.total_results;
@@ -177,7 +177,7 @@ export default {
     }
   },
   created() {
-    this.name = this.$route.query.title;
+    this.title = this.$route.query.title;
     this.selectedGenre = this.$route.query.genre;
     this.getData();
   }
