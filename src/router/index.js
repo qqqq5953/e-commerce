@@ -25,20 +25,36 @@ const routes = [
           // query 跟 params 差在前者不用在path帶參數
           return {
             genre: route.query.genre,
-            keywords: route.query.title
+            keywords: route.query.title,
+            language: route.query.language
           };
         }
       },
       {
         path: 'movie',
         name: 'Movie',
-        component: () => import('../views/Movie.vue'),
+        component: () => import('../views/MovieTest.vue'),
         props: (route) => {
           // query 跟 params 差在前者不用在path帶參數
           console.log(route);
           return {
-            language1: route.query.language,
-            movieID1: route.query.id
+            language: route.query.language,
+            id: route.query.id,
+            genre: route.query.genre
+          };
+        }
+      },
+      {
+        path: 'productTest',
+        name: 'Test',
+        component: () => import('../views/productTest.vue'),
+        props: (route) => {
+          // query 跟 params 差在前者不用在path帶參數
+          console.log(route);
+          return {
+            language: route.query.language,
+            movieID: route.query.id,
+            genre: route.query.genre
           };
         }
       }

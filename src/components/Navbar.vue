@@ -103,7 +103,11 @@
                     <router-link
                       :to="{
                         name: 'Movie',
-                        query: { language: language, id: item.id }
+                        query: {
+                          genre: selectedGenre,
+                          language: language,
+                          id: item.id
+                        }
                       }"
                       class="text-decoration-none d-flex"
                       @click="clearSearchBar"
@@ -138,7 +142,7 @@
           <button
             class="btn btn-outline-success"
             type="button"
-            @click="searchMovie"
+            @click="searchButton"
           >
             Search
           </button>
@@ -340,7 +344,7 @@ export default {
       // console.log('allData', this.allData);
       // console.log('finalData', this.finalData);
       // console.log('noRepeatData', this.noRepeatData);
-      // console.log('topEightResult', this.topEightResult);
+      console.log('topEightResult', this.topEightResult);
 
       // this.isLoading = false;
 
@@ -357,12 +361,13 @@ export default {
       //   }
       // });
     },
-    searchMovie() {
+    searchButton() {
       this.$router.push({
         name: 'SearchResult',
         query: {
           genre: this.selectedGenre.toLowerCase(),
-          title: this.keywords
+          title: this.keywords,
+          language: this.language
         }
       });
       this.clearSearchBar();

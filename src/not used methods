@@ -1,0 +1,27 @@
+async getPerson() { const response = await this.$http.get(
+'https://api.themoviedb.org/3/search/person?api_key=7bbe6005cfda593dc21cceb93eaf9a8e&language=en-US&query=Robert%20John%20Downey&page=1&include_adult=false'
+); console.log('getPerson', response); }, async getMulti() { const response =
+await this.$http.get(
+'https://api.themoviedb.org/3/search/multi?api_key=7bbe6005cfda593dc21cceb93eaf9a8e&language=en-US&query=iron&page=1&include_adult=false'
+); console.log('getMulti', response); }, async getGenres() { const response =
+await this.$http.get(
+'https://api.themoviedb.org/3/genre/movie/list?api_key=7bbe6005cfda593dc21cceb93eaf9a8e&language=en-US'
+); console.log('getGenres', response); }, async getKeywords() { const response =
+await this.$http.get(
+'https://api.themoviedb.org/3/movie/1726/keywords?api_key=7bbe6005cfda593dc21cceb93eaf9a8e'
+); console.log('getKeywords', response); }, async getCollections() { const
+response = await this.$http.get(
+'https://api.themoviedb.org/3/search/collection?api_key=7bbe6005cfda593dc21cceb93eaf9a8e&language=en-US&query=fast&page=1'
+); console.log('getCollections', response); }, async getVideo() { const response
+= await this.$http.get(
+'https://api.themoviedb.org/3/movie/1726/videos?api_key=7bbe6005cfda593dc21cceb93eaf9a8e&language=en-US'
+); console.log('getVideo', response); }, async getRecommenations() { const
+response = await this.$http.get(
+'https://api.themoviedb.org/3/movie/1726/recommendations?api_key=7bbe6005cfda593dc21cceb93eaf9a8e&language=en-US&page=1'
+); console.log('getRecommenations', response); }, async getNowPlaying() { const
+response = await this.$http.get(
+'https://api.themoviedb.org/3/movie/now_playing?api_key=7bbe6005cfda593dc21cceb93eaf9a8e&language=en-US&page=1&region=TW'
+); console.log('getNowPlaying', response); }, async getUpcoming() { const
+response = await this.$http.get(
+'https://api.themoviedb.org/3/movie/upcoming?api_key=7bbe6005cfda593dc21cceb93eaf9a8e&language=en-US&page=1&region=TW'
+); console.log('getUpcoming', response); }
