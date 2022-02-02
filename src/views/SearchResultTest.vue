@@ -10,26 +10,28 @@
     ></Pagination>
 
     <ul class="row list-unstyled">
-      <li class="col-8 mb-4" v-for="item in results" :key="item.id">
+      <li class="col-9 mb-4" v-for="item in results" :key="item.id">
         <a
           href="#"
-          class="text-decoration-none"
+          class="text-decoration-none d-block"
           @click.prevent="getCardDetail(item.id)"
         >
-          <div class="card mb-3 border-dark">
-            <div class="row g-0">
-              <div class="col-2">
+          <div class="card mb-3 border-dark" style="height: 250px">
+            <div class="row g-0 h-100">
+              <div class="col-3 h-100">
                 <div class="h-100">
                   <img
                     v-if="item.poster_path"
                     :src="baseImageUrl + item.poster_path"
                     class="card-img-top img-fluid d-block h-100"
+                    style="object-fit: cover"
                     :alt="item.title"
                   />
                 </div>
               </div>
-              <div class="col-10">
-                <div class="card-body">
+              <div class="col-9">
+                <div class="card-body h-100 d-flex flex-column">
+                  <!-- title -->
                   <div class="d-flex align-items-center">
                     <h3 class="card-title mb-1">{{ item.title }}</h3>
                     <small class="ms-auto text-dark flex-shrink-0"
@@ -37,14 +39,16 @@
                     >
                   </div>
 
+                  <!-- overview -->
                   <div class="card-text">
                     <small class="text-dark">{{ item.release_date }}</small>
-                    <div class="mt-3">
-                      <p>{{ item.overview }}</p>
-                      <div class="text-end me-2">
-                        <span> &#171; see more &#187;</span>
-                      </div>
-                    </div>
+
+                    <p class="mt-3">{{ item.overview }}</p>
+                  </div>
+
+                  <!-- see more -->
+                  <div class="text-end mt-auto px-2">
+                    <span> &#171; see more &#187;</span>
                   </div>
                 </div>
               </div>
@@ -93,28 +97,27 @@ export default {
       }
     };
   },
+  computed: {
+    queriesChange() {
+      return `${this.$route.query.language}|${this.$route.query.title}|${this.$route.query.genre}`;
+    }
+  },
   watch: {
-    // keywords() {
-    //   console.log('keywords', this.keywords);
-    //   this.titlePassIn = this.keywords;
-    //   this.getData();
-    // }
-    // '$route.params.id': {
-    //   handler: function (id) {
-    //     this.titlePassIn = id;
-    //     // this.getData();
-    //   },
-    //   deep: true,
-    //   immediate: true
-    // }
-    // '$route.query.title': {
-    //   handler: function (title) {
-    //     this.titlePassIn = title;
-    //     this.getData();
-    //   },
-    //   deep: true,
-    //   immediate: true
-    // }
+    queriesChange(newVal) {
+      const [newLanguage, newTitle, newGenre] = newVal.split('|');
+      console.log('language 變動', newLanguage);
+      console.log('title 變動', newTitle);
+      console.log('genre 變動', newGenre.toLowerCase());
+
+      // 防止跳回首頁會更新資料
+      if (this.$route.name === 'SearchResult') {
+        this.languagePassIn = newLanguage;
+        this.titlePassIn = newTitle;
+        this.genrePassIn = newGenre.toLowerCase();
+
+        this.getData();
+      }
+    }
   },
   methods: {
     getCardDetail(id) {
@@ -133,24 +136,38 @@ export default {
       });
       console.log('test', test);
     },
+    sortData(array, bySomething) {
+      return array.sort((a, b) => {
+        return b[bySomething] - a[bySomething];
+      });
+    },
     async getData(page = 1) {
       const response = await this.$http.get(
         `https://api.themoviedb.org/3/search/${this.genrePassIn}?api_key=${this.key}&query=${this.titlePassIn}&page=${page}`
       );
-      this.results = response.data.results;
       this.totalResult = response.data.total_results;
+      this.results = response.data.results;
+      console.log('getData', this.results);
+
+      this.results = this.sortData(this.results, 'popularity');
 
       // pagination
       this.pagination.total_pages = response.data.total_pages;
       this.pagination.current_page = response.data.page;
+      // 第一頁
+      if (page === 1) {
+        this.pagination.has_pre = false;
+      }
+      // 中間頁
       if (page > 1 && page < this.pagination.total_pages) {
         this.pagination.has_pre = true;
       }
+      // 最後一頁
       if (page === this.pagination.total_pages) {
         this.pagination.has_pre = true;
         this.pagination.has_next = false;
       }
-      console.log('getData', response);
+      // console.log('getData', this.results);
     },
     async discoverMovie() {
       const response = await this.$http.get(
@@ -169,6 +186,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+ul a:hover {
+  .card {
+    background-color: #343a40;
+    background-color: #55595c;
+    color: #fff;
+  }
+
+  & small {
+    color: #fff !important;
+  }
+}
+
 img {
   // height: 500px;
   object-fit: cover;

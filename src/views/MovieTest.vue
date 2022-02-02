@@ -126,7 +126,10 @@
               width="100%"
               height="500px"
               v-if="trailers.length"
-              :src="baseYoutubeUrl + trailers[0].key"
+              :src="
+                baseYoutubeUrl + trailers[0].key ||
+                baseYoutubeUrl + teaser[0].key
+              "
             >
             </iframe>
           </div>
@@ -197,6 +200,7 @@ export default {
         minute: ''
       },
       trailers: [],
+      teasers: [],
       // TV
       seasons: [],
       createdBy: [],
@@ -278,12 +282,23 @@ export default {
       this.posterUrl = response.data.poster_path;
       this.genres = response.data.genres;
       this.overview = response.data.overview;
+
+      // video 分類
       this.arrangeVideoType(response.data.videos.results);
+
+      // 預設呈現 trailers (因為 videoType.trailers.content[0].key 抓不到值)
       this.trailers = response.data.videos.results.filter((item) => {
-        return item.type === 'Trailer'
-          ? item.type === 'Trailer'
-          : item.type === 'Teaser';
+        return item.type === 'Trailer';
       });
+
+      // 如果沒有 trailers 就呈現 teasers
+      this.teasers = response.data.videos.results.filter((item) => {
+        return item.type === 'Teaser';
+      });
+
+      console.log('trailers', this.trailers);
+      console.log('teasers', this.teasers);
+      console.log('videoType', this.videoType);
 
       // console.log('getData', response.data);
       // console.log(
@@ -291,10 +306,6 @@ export default {
       //   this.title,
       //   this.videoType.trailers.content[0].key
       // );
-
-      // const featurette = arr.filter((item) => {
-      //   return item.type === 'Featurette';
-      // });
 
       // console.log('teaser', teaser);
       // console.log('trailer', trailer);

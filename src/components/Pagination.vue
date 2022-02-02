@@ -1,6 +1,6 @@
 <template>
   <nav aria-label="Page navigation example">
-    <ul class="pagination justify-content-center">
+    <ul class="pagination justify-content-center align-items-center">
       <!-- 上一頁 -->
       <li class="page-item" :class="{ disabled: !pages.has_pre }">
         <a
@@ -9,20 +9,25 @@
           @click.prevent="onPreviousPage(pages.current_page)"
           aria-label="Previous"
         >
-          <span aria-hidden="true">&laquo;</span>
+          <i class="bi bi-chevron-double-left fs-2"></i>
         </a>
       </li>
       <!-- 數字 -->
-      <li
-        class="page-item"
-        :class="{ active: page === pages.current_page }"
-        v-for="page in pages.total_pages"
-        :key="page"
-      >
-        <a class="page-link" href="#" @click.prevent="onChangePage(page)">{{
-          page
-        }}</a>
+      <li class="w-50">
+        <ul class="pagination justify-content-center flex-wrap">
+          <li
+            class="page-item"
+            :class="{ active: page === pages.current_page }"
+            v-for="page in pages.total_pages"
+            :key="page"
+          >
+            <a class="page-link" href="#" @click.prevent="onChangePage(page)">{{
+              page
+            }}</a>
+          </li>
+        </ul>
       </li>
+
       <!-- 下一頁 -->
       <li class="page-item" :class="{ disabled: !pages.has_next }">
         <a
@@ -31,7 +36,7 @@
           @click.prevent="onNextPage(pages.current_page)"
           aria-label="Next"
         >
-          <span aria-hidden="true">&raquo;</span>
+          <i class="bi bi-chevron-double-right fs-2"></i>
         </a>
       </li>
     </ul>

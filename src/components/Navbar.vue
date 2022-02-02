@@ -123,14 +123,16 @@
                           {{ item.title || item.name }}
                         </h5>
                         <small class="text-light">{{
-                          item.release_date
+                          item.release_date || item.first_air_date
                         }}</small>
                       </div>
                     </router-link>
                   </li>
                   <li><hr class="dropdown-divider my-0" /></li>
                   <li class="px-4 py-3 search-item">
-                    <a href="#" class="text-light">See all results</a>
+                    <a href="#" class="text-light" @click.prevent="searchButton"
+                      >See all results</a
+                    >
                   </li>
                 </template>
                 <template v-else>
@@ -281,7 +283,7 @@ export default {
     },
     sortData(array, bySomething) {
       return array.sort((a, b) => {
-        return b.bySomething - a.bySomething;
+        return b[bySomething] - a[bySomething];
       });
     },
     async getPopularData(dataArray, language, topPages) {
@@ -334,6 +336,11 @@ export default {
         return (
           index ===
           arr.findIndex((element) => {
+            // for search of TV and Person
+            if (item.name) {
+              return element.name === item.name;
+            }
+            // for search of Movie
             return element.title === item.title;
           })
         );
@@ -341,9 +348,9 @@ export default {
 
       // 前8
       this.topEightResult = this.noRepeatData.slice(0, 8);
-      // console.log('allData', this.allData);
-      // console.log('finalData', this.finalData);
-      // console.log('noRepeatData', this.noRepeatData);
+      console.log('allData', this.allData);
+      console.log('finalData', this.finalData);
+      console.log('noRepeatData', this.noRepeatData);
       console.log('topEightResult', this.topEightResult);
 
       // this.isLoading = false;
