@@ -130,12 +130,7 @@ export default {
         }
       });
     },
-    sortResultByDate() {
-      const test = this.results.sort(function (a, b) {
-        return new Date(b.release_date) - new Date(a.release_date);
-      });
-      console.log('test', test);
-    },
+
     sortData(array, bySomething) {
       return array.sort((a, b) => {
         return b[bySomething] - a[bySomething];

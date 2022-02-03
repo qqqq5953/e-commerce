@@ -1,9 +1,9 @@
 import emitter from '@/methods/emitter';
 
-export default function (response, product, action) {
+export default function (response, item, action) {
   function emitContent(style, status, content) {
     emitter.emit('push-message', {
-      title: product.title,
+      title: item.title,
       style,
       status,
       content

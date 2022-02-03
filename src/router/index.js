@@ -18,6 +18,11 @@ const routes = [
       //   }
       // }
       {
+        path: 'CMDB',
+        name: 'CMDB',
+        component: () => import('../views/CMDB.vue')
+      },
+      {
         path: 'search-result',
         name: 'SearchResult',
         component: () => import('../views/SearchResultTest.vue'),

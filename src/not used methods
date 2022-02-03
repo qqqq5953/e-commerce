@@ -25,3 +25,11 @@ response = await this.$http.get(
 response = await this.$http.get(
 'https://api.themoviedb.org/3/movie/upcoming?api_key=7bbe6005cfda593dc21cceb93eaf9a8e&language=en-US&page=1&region=TW'
 ); console.log('getUpcoming', response); }
+
+
+sortResultByDate() {
+  const test = this.results.sort(function (a, b) {
+    return new Date(b.release_date) - new Date(a.release_date);
+  });
+  console.log('test', test);
+},

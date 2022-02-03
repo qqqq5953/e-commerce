@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar navbar-expand-sm navbar-dark bg-primary">
     <div class="container-fluid">
-      <router-link class="navbar-brand nav-link active" to="/"
+      <router-link class="navbar-brand nav-link active" to="/CMDB"
         >CMDB</router-link
       >
       <button

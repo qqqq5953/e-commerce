@@ -4,8 +4,8 @@
       <header class="text-white d-none">
         <section class="row">
           <div class="col-8">
-            <h1 class="text-white mb-3">{{ title }}</h1>
-            <h2 class="h6 text-white">Original title: {{ originalTitle }}</h2>
+            <h2 class="h1 text-white mb-3">{{ title }}</h2>
+            <h3 class="h6 text-white">Original title: {{ originalTitle }}</h3>
             <span class="fs-6 me-2">{{ releaseDate.split('-')[0] }}</span> |
             <span class="fs-6 ms-2"
               >{{ runTime.hour }}h {{ runTime.minute }}m</span
@@ -13,14 +13,14 @@
           </div>
           <div class="col-4 d-flex align-items-end">
             <div class="ms-auto">
-              <h3 class="h6 text-white text-end">popularity</h3>
+              <h4 class="h6 text-white text-end">popularity</h4>
               <div class="d-block text-end">
                 <i class="fs-4 bi bi-star-fill text-warning me-2"></i>
                 <span class="fs-3">{{ popularity }}</span>
               </div>
             </div>
             <div class="ms-4">
-              <h3 class="h6 text-white text-end">Vote Average</h3>
+              <h4 class="h6 text-white text-end">Vote Average</h4>
               <div class="d-block text-end">
                 <i class="fs-4 bi bi-people-fill text-info me-2"></i>
                 <span class="fs-3">{{ voteAverage }}</span>
@@ -46,11 +46,11 @@
             </div>
 
             <section class="col-8 d-flex flex-column">
-              <h1 class="text-white mb-2">{{ title }}</h1>
-              <h2 class="h6 text-white mb-1">
+              <h2 class="h1 text-white mb-2">{{ title }}</h2>
+              <h3 class="h6 text-white mb-1">
                 Original title:
                 <span class="fw-normal">{{ originalTitle }}</span>
-              </h2>
+              </h3>
               <div>
                 <span class="fs-6 me-2">{{ releaseDate.split('-')[0] }}</span> |
                 <span class="fs-6 ms-2"
