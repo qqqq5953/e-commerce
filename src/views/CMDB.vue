@@ -1,6 +1,7 @@
 <template>
   <div class="bg-dark">
     <div class="container py-5">
+      <!-- Playing Now -->
       <div class="d-flex">
         <h2 class="h1 text-white">Playing Now</h2>
         <!-- 語言切換 -->
@@ -16,16 +17,29 @@
       <section class="overflow-auto my-4">
         <CardVertical :results="nowPlaying"></CardVertical>
       </section>
-      <h2 class="h1 text-white">UpComing</h2>
-      <section class="overflow-auto my-4">
+
+      <!-- UpComing -->
+      <div class="d-flex">
+        <!-- <h2 class="h1 text-white">UpComing</h2> -->
+        <!-- 語言切換 -->
+        <div
+          class="btn-group btn-group-sm ms-auto text-right"
+          role="group"
+          aria-label="Basic outlined example"
+        >
+          <button type="button" class="btn btn-outline-light active">EN</button>
+          <button type="button" class="btn btn-outline-light">CH</button>
+        </div>
+      </div>
+      <!-- <section class="overflow-auto my-4">
         <CardVertical :results="upComing"></CardVertical>
-      </section>
+      </section> -->
     </div>
   </div>
 </template>
 
 <script>
-import CardVertical from '../components/CardVertical.vue';
+import CardVertical from '../components/CardVerticalTest.vue';
 
 export default {
   components: { CardVertical },
