@@ -1,21 +1,26 @@
 <template>
-  <ul class="row flex-nowrap list-unstyled" style="width: 90%">
-    <li class="col-4 movie-poster" v-for="item in results" :key="item.id">
-      <a href="#" class="text-decoration-none">
-        <div class="mb-3 position-relative" style="height: 440px">
+  <ul class="row flex-nowrap list-unstyled" style="width: 90%; height: 435px">
+    <li
+      class="col-4 movie-poster"
+      v-for="item in results"
+      :key="item.id"
+      style="scroll-snap-align: start"
+    >
+      <a href="#" class="d-block text-decoration-none h-100">
+        <div class="position-relative h-100">
           <img
             v-if="item.poster_path"
             :src="baseImageUrl + item.poster_path"
             class="img-fluid d-block h-100 w-100"
             :alt="item.title"
-            style="object-fit: cover; object-position: center top"
+            style="object-fit: cover; object-position: center center"
           />
           <div
             class="movie-intro position-absolute top-0 bottom-0 left-0 right-0 w-100 h-100"
             style="background: rgba(0, 0, 0, 0.7)"
           >
             <div
-              class="d-flex flex-column text-white position-absolute bottom-0 m-auto p-4"
+              class="d-flex flex-column text-white position-absolute bottom-0 m-auto p-4 w-100"
               style="top: 150px"
             >
               <h3 class="text-white text-center">
@@ -75,7 +80,7 @@ export default {
 
 .movie-poster:hover {
   .movie-intro {
-    border: 2px solid white;
+    // border: 2px solid white;
     opacity: 1;
     width: 100%;
   }

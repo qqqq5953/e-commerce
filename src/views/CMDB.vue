@@ -2,8 +2,8 @@
   <div class="bg-dark">
     <div class="container py-5">
       <!-- Playing Now -->
-      <div class="d-flex">
-        <h2 class="h1 text-white">Playing Now</h2>
+      <div class="d-flex align-items-center">
+        <h2 class="h1 text-white mb-0">Playing Now</h2>
         <!-- 語言切換 -->
         <div
           class="btn-group btn-group-sm ms-auto text-right"
@@ -14,13 +14,16 @@
           <button type="button" class="btn btn-outline-light">CH</button>
         </div>
       </div>
-      <section class="overflow-auto my-4">
+      <section
+        class="overflow-auto my-3 card-scrollbar"
+        style="scroll-snap-type: x mandatory"
+      >
         <CardVertical :results="nowPlaying"></CardVertical>
       </section>
 
       <!-- UpComing -->
-      <div class="d-flex">
-        <!-- <h2 class="h1 text-white">UpComing</h2> -->
+      <div class="d-flex align-items-center">
+        <h2 class="h1 text-white mb-0">UpComing</h2>
         <!-- 語言切換 -->
         <div
           class="btn-group btn-group-sm ms-auto text-right"
@@ -31,9 +34,9 @@
           <button type="button" class="btn btn-outline-light">CH</button>
         </div>
       </div>
-      <!-- <section class="overflow-auto my-4">
+      <section class="overflow-auto my-3 card-scrollbar">
         <CardVertical :results="upComing"></CardVertical>
-      </section> -->
+      </section>
     </div>
   </div>
 </template>
@@ -76,7 +79,7 @@ export default {
     },
     async getUpcoming() {
       const response = await this.$http.get(
-        'https://api.themoviedb.org/3/movie/upcoming?api_key=7bbe6005cfda593dc21cceb93eaf9a8e&language=zh-TW&page=1'
+        'https://api.themoviedb.org/3/movie/upcoming?api_key=7bbe6005cfda593dc21cceb93eaf9a8e&language=en-US&page=1'
       );
       this.upComing = response.data.results;
       this.upComing = this.sortData(this.upComing, 'popularity');
@@ -89,3 +92,23 @@ export default {
   }
 };
 </script>
+
+<style lang="scss" scoped>
+.card-scrollbar {
+  &::-webkit-scrollbar {
+    height: 10px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: rgba(85, 89, 92, 1);
+    border-radius: 100vw;
+    margin-inline: 10vw;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(26, 26, 26, 1);
+    border-radius: 100vw;
+    border: 2px solid rgba(85, 89, 92, 1);
+  }
+}
+</style>
