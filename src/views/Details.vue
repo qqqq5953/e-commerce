@@ -73,7 +73,7 @@
               <div class="ms-auto mt-auto mb-3">
                 <div class="d-flex justify-content-between align-items-center">
                   <span>Subscribe:</span>
-                  <span class="h3 text-danger ms-3">NT$270</span>
+                  <span class="h3 text-danger ms-3">NT$330</span>
                 </div>
                 <div class="d-flex justify-content-between align-items-center">
                   <span>Pruchase:</span>

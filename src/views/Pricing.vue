@@ -21,8 +21,8 @@
                   Unlimited access to details of Movies, TV shows and People
                   related to the content
                 </li>
-                <li class="mb-3">5 quotas for Watchlist</li>
-                <li>5 quotas for My Favorite</li>
+                <li class="mb-3">10 quotas for Watchlist</li>
+                <li>10 quotas for My Favorite</li>
               </ul>
               <button
                 type="button"
@@ -48,18 +48,20 @@
                   Unlimited access to details of Movies, TV shows and People
                   related to the content
                 </li>
-                <li class="mb-3">10 quotas for Watchlist</li>
-                <li class="mb-3">10 quotas for My Favorite</li>
+                <li class="mb-3">50 quotas for Watchlist</li>
+                <li class="mb-3">50 quotas for My Favorite</li>
                 <li class="mb-3">
-                  Watch Movies / TV shows with <strong>4K quality</strong>
+                  Access to purchased Movies / TV shows with
+                  <strong>HD quality</strong>
                 </li>
-                <li>Unlimited access to rate the purchased videos</li>
+                <li>Access to rating the purchased Movies / TV shows</li>
+                <li>Watch on 1 screen only</li>
               </ul>
               <button
                 type="button"
                 class="w-100 btn btn-outline-primary mt-auto mb-2"
               >
-                Pick a movie
+                Pick a movie / tv show
               </button>
             </div>
           </div>
@@ -72,7 +74,7 @@
             </div>
             <div class="card-body d-flex flex-column">
               <h1 class="card-title pricing-card-title">
-                NT$270<small class="text-muted fw-light">/month</small>
+                NT$330<small class="text-muted fw-light">/month</small>
               </h1>
               <ul class="mt-3 mb-4 text-start">
                 <li class="mb-3">
@@ -82,12 +84,23 @@
                 <li class="mb-3">50 quotas for Watchlist</li>
                 <li class="mb-3">50 quotas for My Favorite</li>
                 <li class="mb-3">
-                  Watch Movies / TV shows with <strong>4K quality</strong>
+                  Unlimited access to
+                  <strong class="fw-bold">ALL</strong> Movies / TV shows with
+                  <strong class="fw-bold">4K</strong> quality
                 </li>
                 <li class="mb-3">
-                  Unlimited access to rate Movies, TV shows and People
+                  Unlimited access to rating
+                  <strong class="fw-bold">ALL</strong>
+                  Movies, TV shows and People
                 </li>
-                <li>Receive occasional promotions up to 20% discount</li>
+                <li>
+                  Watch on <strong class="fw-bold">2</strong> screens at the
+                  same time
+                </li>
+                <li>
+                  Receive occasional promotions up to
+                  <strong class="fw-bold">20% DISCOUNT</strong>
+                </li>
               </ul>
               <button type="button" class="w-100 btn btn-primary mt-auto mb-2">
                 SUBSCRIBE NOW
@@ -100,7 +113,7 @@
       <h2 class="display-6 text-center mb-4">Compare plans</h2>
 
       <div class="table-responsive">
-        <table class="table text-center">
+        <table class="table text-center align-middle">
           <thead>
             <tr>
               <th style="width: 34%"></th>
@@ -150,23 +163,21 @@
 
           <tbody>
             <tr>
-              <th scope="row" class="text-start">4K quality</th>
+              <th scope="row" class="text-start">Quality</th>
               <td></td>
-              <td>
-                <i class="bi bi-check2 fs-4"></i>
-              </td>
-              <td>
-                <i class="bi bi-check2 fs-4"></i>
-              </td>
+              <td>HD</td>
+              <td>4K</td>
             </tr>
             <tr>
               <th scope="row" class="text-start">Rating</th>
               <td></td>
               <td>
                 <i class="bi bi-check2 fs-4"></i>
+                <div>(Limited)</div>
               </td>
               <td>
                 <i class="bi bi-check2 fs-4"></i>
+                <div>(Unlimited)</div>
               </td>
             </tr>
             <tr>
@@ -175,6 +186,7 @@
               <td></td>
               <td>
                 <i class="bi bi-check2 fs-4"></i>
+                <div>(Up to 20%)</div>
               </td>
             </tr>
           </tbody>
