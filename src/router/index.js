@@ -38,7 +38,7 @@ const routes = [
       {
         path: 'details',
         name: 'Details',
-        component: () => import('../views/MovieTest.vue'),
+        component: () => import('../views/Details.vue'),
         props: (route) => {
           // query 跟 params 差在前者不用在path帶參數
           console.log(route);
