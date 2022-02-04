@@ -69,26 +69,58 @@
                   >{{ item.name }}</span
                 >
               </div>
+              <!-- price -->
+              <div class="ms-auto mt-auto mb-3">
+                <div class="d-flex justify-content-between align-items-center">
+                  <span>Subscribe:</span>
+                  <span class="h3 text-danger ms-3">NT$270</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                  <span>Pruchase:</span>
+                  <span class="text-white ms-3">NT$450</span>
+                </div>
+              </div>
               <!-- PURCHASE or subscribe -->
-              <div class="btn-group mt-auto" role="group">
-                <button type="button" class="btn btn-outline-light">
-                  <i class="bi bi-plus-lg me-2"></i>Watchlist
+              <div class="btn-group" role="group">
+                <button type="button" class="btn btn-outline-light w-50">
+                  <i class="bi bi-plus-lg me-2"></i>
+                  Watchlist
                 </button>
                 <button
                   type="button"
-                  class="btn btn-secondary dropdown-toggle"
+                  class="btn btn-secondary dropdown-toggle w-50"
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
                 >
-                  Subscribe
+                  <i
+                    class="bi bi-cart-check-fill fs-5 me-1"
+                    v-if="selectedPlan !== 'Choose a plan'"
+                  ></i>
+                  {{ selectedPlan }}
                 </button>
                 <ul
                   class="dropdown-menu w-50"
                   aria-labelledby="dropdownMenuButton1"
                 >
-                  <li><a class="dropdown-item" href="#">SUBSCRIBE</a></li>
                   <li>
-                    <a class="dropdown-item" href="#">PURCHASE</a>
+                    <a
+                      class="dropdown-item text-danger text-center fw-bold"
+                      href="#"
+                      @click.prevent="selectPlans('SUBSCRIBE')"
+                    >
+                      <i class="bi bi-arrow-right-circle"></i>
+                      SUBSCRIBE
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      class="dropdown-item text-center"
+                      href="#"
+                      @click.prevent="selectPlans('PURCHASE')"
+                    >
+                      <i class="bi bi-bag"></i>
+                      PURCHASE
+                    </a>
                   </li>
                 </ul>
               </div>
@@ -176,6 +208,8 @@ export default {
       // youtube
       YTkey: 'AIzaSyAii__SjHcD1CNWD4VOpD4adpeaQNT1gSw',
       videoID: '',
+      // 按鈕
+      selectedPlan: '' || 'Choose a plan',
       // TMDB
       key: '7bbe6005cfda593dc21cceb93eaf9a8e',
       baseImageUrl: 'https://image.tmdb.org/t/p/w300',
@@ -219,6 +253,9 @@ export default {
     };
   },
   methods: {
+    selectPlans(plan) {
+      this.selectedPlan = plan;
+    },
     arrangeVideoType(types) {
       types.forEach((item) => {
         if (item.type === 'Clip') {
