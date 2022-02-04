@@ -36,8 +36,8 @@ const routes = [
         }
       },
       {
-        path: 'movie',
-        name: 'Movie',
+        path: 'details',
+        name: 'Details',
         component: () => import('../views/MovieTest.vue'),
         props: (route) => {
           // query 跟 params 差在前者不用在path帶參數
@@ -50,18 +50,9 @@ const routes = [
         }
       },
       {
-        path: 'productTest',
-        name: 'Test',
-        component: () => import('../views/productTest.vue'),
-        props: (route) => {
-          // query 跟 params 差在前者不用在path帶參數
-          console.log(route);
-          return {
-            language: route.query.language,
-            movieID: route.query.id,
-            genre: route.query.genre
-          };
-        }
+        path: 'pricing',
+        name: 'Pricing',
+        component: () => import('../views/Pricing.vue')
       }
     ]
   },

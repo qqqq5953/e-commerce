@@ -18,8 +18,8 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <router-link class="nav-link disabled" :to="{ name: 'Products' }"
-              >Genres</router-link
+            <router-link class="nav-link" :to="{ name: 'Pricing' }"
+              >Pricing</router-link
             >
           </li>
           <!-- <li class="nav-item">
@@ -102,7 +102,7 @@
                   >
                     <router-link
                       :to="{
-                        name: 'Movie',
+                        name: 'Details',
                         query: {
                           genre: selectedGenre,
                           language: language,
@@ -130,7 +130,10 @@
                   </li>
                   <li><hr class="dropdown-divider my-0" /></li>
                   <li class="px-4 py-3 search-item">
-                    <a href="#" class="text-light" @click.prevent="searchButton"
+                    <a
+                      href="#"
+                      class="text-light"
+                      @click.prevent="toSearchResult"
                       >See all results</a
                     >
                   </li>
@@ -144,7 +147,7 @@
           <button
             class="btn btn-outline-success"
             type="button"
-            @click="searchButton"
+            @click="toSearchResult"
           >
             Search
           </button>
@@ -368,7 +371,7 @@ export default {
       //   }
       // });
     },
-    searchButton() {
+    toSearchResult() {
       this.$router.push({
         name: 'SearchResult',
         query: {

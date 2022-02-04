@@ -6,7 +6,11 @@
       :key="item.id"
       style="scroll-snap-align: start"
     >
-      <a href="#" class="d-block text-decoration-none h-100">
+      <a
+        href="#"
+        class="d-block text-decoration-none h-100"
+        @click.prevent="getCardDetail(item.id)"
+      >
         <div class="position-relative h-100">
           <img
             v-if="item.poster_path"
@@ -54,12 +58,28 @@ export default {
   props: {
     results: {
       type: Array
+    },
+    language: {
+      type: String
     }
   },
   data() {
     return {
-      baseImageUrl: 'https://image.tmdb.org/t/p/w300'
+      baseImageUrl: 'https://image.tmdb.org/t/p/w300',
+      genre: 'movie'
     };
+  },
+  methods: {
+    getCardDetail(id) {
+      this.$router.push({
+        name: 'Details',
+        query: {
+          language: this.language,
+          id: id,
+          genre: this.genre
+        }
+      });
+    }
   }
 };
 </script>

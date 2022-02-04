@@ -122,7 +122,7 @@ export default {
   methods: {
     getCardDetail(id) {
       this.$router.push({
-        name: 'Movie',
+        name: 'Details',
         query: {
           language: this.languagePassIn,
           id: id,

@@ -69,7 +69,7 @@
                   >{{ item.name }}</span
                 >
               </div>
-              <!-- buy or subscribe -->
+              <!-- PURCHASE or subscribe -->
               <div class="btn-group mt-auto" role="group">
                 <button type="button" class="btn btn-outline-light">
                   <i class="bi bi-plus-lg me-2"></i>Watchlist
@@ -88,7 +88,7 @@
                 >
                   <li><a class="dropdown-item" href="#">SUBSCRIBE</a></li>
                   <li>
-                    <a class="dropdown-item" href="#">BUY</a>
+                    <a class="dropdown-item" href="#">PURCHASE</a>
                   </li>
                 </ul>
               </div>
@@ -350,7 +350,7 @@ export default {
       console.log('genre 變動', newGenre.toLowerCase());
 
       // 防止跳回首頁會更新資料
-      if (this.$route.name === 'Movie') {
+      if (this.$route.name === 'Details') {
         this.languagePassIn = newLanguage;
         this.idPassIn = newId;
         this.genrePassIn = newGenre.toLowerCase();
