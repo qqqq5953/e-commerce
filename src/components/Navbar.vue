@@ -211,6 +211,7 @@ export default {
       this.showInputResult();
     }
   },
+  inject: ['sortData'],
   methods: {
     validateChinese(text) {
       return /^[\u4e00-\u9fa5\0-9]/.test(text);
@@ -284,11 +285,11 @@ export default {
         }
       });
     },
-    sortData(array, bySomething) {
-      return array.sort((a, b) => {
-        return b[bySomething] - a[bySomething];
-      });
-    },
+    // sortData(array, bySomething) {
+    //   return array.sort((a, b) => {
+    //     return b[bySomething] - a[bySomething];
+    //   });
+    // },
     async getPopularData(dataArray, language, topPages) {
       // avoid 422 error
       if (this.keywords === '') return;

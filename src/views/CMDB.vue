@@ -1,6 +1,39 @@
 <template>
   <div class="bg-dark">
     <div class="container py-5">
+      <div class="row">
+        <!-- <div class="col">
+          <h3 class="text-white">upComing 全 ({{ upComing.length }})</h3>
+          <div class="text-white" v-for="item in upComing" :key="item.id">
+            {{ item.title }} |
+            <span class="bg-info">{{ item.popularity }}</span> |
+            {{ item.release_date }}
+          </div>
+        </div>
+        <div class="col">
+          <h3 class="text-white">upComing 一半 ({{ upComing1.length }})</h3>
+          <div class="text-white" v-for="item in upComing1" :key="item.id">
+            {{ item.title }} |
+            <span class="bg-info">{{ item.popularity }}</span> |
+            {{ item.release_date }}
+          </div>
+        </div>
+        <div class="col">
+          <h3 class="text-white">Top 20 ({{ difference.length }})</h3>
+          <div class="text-white" v-for="item in top20upComing" :key="item.id">
+            {{ item.title }} |
+            <span class="bg-info">{{ item.popularity }}</span> |
+            {{ item.release_date }}
+          </div>
+        </div>
+        <div class="col">
+          <h3 class="text-white">difference ({{ difference.length }})</h3>
+          <div class="text-white" v-for="item in difference" :key="item.id">
+            {{ item.title || item.name }} | {{ item.popularity }}
+          </div>
+        </div> -->
+      </div>
+
       <!-- Playing Now -->
       <div class="d-flex align-items-center">
         <h2 class="h1 text-white mb-0">Now Playing</h2>
@@ -43,7 +76,8 @@
         >
           <button
             type="button"
-            class="btn btn-outline-light active"
+            class="btn btn-outline-light"
+            :class="{ active: language === 'en-US' }"
             @click="switchLanguage('en-US', 'upcoming')"
           >
             EN
@@ -51,14 +85,23 @@
           <button
             type="button"
             class="btn btn-outline-light"
+            :class="{ active: language === 'zh-TW' }"
             @click="switchLanguage('zh-TW', 'upcoming')"
           >
             CH
           </button>
         </div>
       </div>
-      <section class="overflow-auto mt-3 mb-5 card-scrollbar">
-        <CardVertical :results="upComing" :language="language"></CardVertical>
+      <section class="overflow-auto mt-3 mb-5 card-scrollbar position-relative">
+        <Loading
+          :active="isLoading"
+          :is-full-page="false"
+          :background-color="'rgba(255, 255, 255, 0.1)'"
+        ></Loading>
+        <CardVertical
+          :results="top20upComing"
+          :language="language"
+        ></CardVertical>
       </section>
     </div>
   </div>
@@ -79,8 +122,12 @@ export default {
       auth: 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3YmJlNjAwNWNmZGE1OTNkYzIxY2NlYjkzZWFmOWE4ZSIsInN1YiI6IjYxZjBhZGI1YzY2OWFkMDBjZWEzMDVjNCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.n5tebMbjgJK3rlc5_VPmShHCgLujieUY_rhasZD14Hg',
       nowPlaying: [],
       upComing: [],
+      top20upComing: [],
+      // difference: [],
+      // upComing1: [],
       totalResult: '',
       language: 'en-US',
+      isLoading: false,
       pagination: {
         current_page: '',
         total_pages: '',
@@ -95,10 +142,10 @@ export default {
   //   }
   // },
   methods: {
-    switchLanguage(language, movieTpe) {
+    switchLanguage(language, movieType) {
       this.language = language;
-      if (movieTpe === 'now playing') this.getNowPlaying();
-      if (movieTpe === 'upcoming') this.getUpcoming();
+      if (movieType === 'now playing') this.getNowPlaying();
+      if (movieType === 'upcoming') this.getUpcoming();
     },
     async getNowPlaying() {
       const response = await this.$http.get(
@@ -108,13 +155,85 @@ export default {
       this.nowPlaying = this.sortData(this.nowPlaying, 'popularity');
       console.log('getNowPlaying', response);
     },
+    async getAllData(totalPages) {
+      const temp = [];
+      for (let page = 1; page <= totalPages / 2; page++) {
+        const response = await this.$http.get(
+          `https://api.themoviedb.org/3/movie/upcoming?api_key=7bbe6005cfda593dc21cceb93eaf9a8e&language=${this.language}&page=${page}`
+        );
+
+        response.data.results.forEach((item) => {
+          temp.push(item);
+        });
+      }
+      // console.log('temp', temp);
+
+      return temp;
+    },
+    async getAllData1(totalPages) {
+      const temp1 = [];
+      for (let page = 1; page <= totalPages / 2; page++) {
+        const response = await this.$http.get(
+          `https://api.themoviedb.org/3/movie/upcoming?api_key=7bbe6005cfda593dc21cceb93eaf9a8e&language=${this.language}&page=${page}`
+        );
+
+        response.data.results.forEach((item) => {
+          temp1.push(item);
+        });
+      }
+      // console.log('temp1', temp1);
+
+      // this.difference = temp.filter((x) => !this.temp1.includes(x));
+      return temp1;
+    },
     async getUpcoming() {
+      this.isLoading = true;
+
       const response = await this.$http.get(
         `https://api.themoviedb.org/3/movie/upcoming?api_key=7bbe6005cfda593dc21cceb93eaf9a8e&language=${this.language}&page=1`
       );
-      this.upComing = response.data.results;
-      this.upComing = this.sortData(this.upComing, 'popularity');
       console.log('getUpcoming', response);
+
+      // 獲得所有資料
+      const totalPages = response.data.total_pages;
+      const allData = await this.getAllData(totalPages);
+      // const allData1 = await this.getAllData1(totalPages);
+
+      // 獲得今天日期
+      const today = new Date();
+      const dd = String(today.getDate()).padStart(2, '0');
+      const mm = String(today.getMonth() + 1).padStart(2, '0');
+      const yyyy = today.getFullYear();
+      const todayDate = yyyy + '-' + mm + '-' + dd;
+
+      // 測試用
+      // this.upComing1 = allData.filter((item) => {
+      //   return new Date(item.release_date) >= new Date(todayDate);
+      // });
+      // this.upComing1 = allData1.filter((item) => {
+      //   return new Date(item.release_date) >= new Date(todayDate);
+      // });
+
+      // this.difference = this.upComing1.filter(
+      //   (x) => !this.upComing.includes(x)
+      // );
+
+      // 篩選出今天日期以後的電影
+      const filterDate = allData.filter((item) => {
+        return new Date(item.release_date) >= new Date(todayDate);
+      });
+
+      // 依照熱門度排序
+      this.upComing = this.sortData(filterDate, 'popularity');
+
+      // 取前 20
+      this.top20upComing = this.upComing.slice(0, 20);
+
+      this.isLoading = false;
+
+      // console.log('temporary', temporary);
+      // console.log('this.top20upComing', this.top20upComing);
+      // console.log('this.upComing', this.upComing);
     }
   },
   created() {
