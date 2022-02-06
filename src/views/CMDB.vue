@@ -68,9 +68,9 @@
             :class="{
               active: btnState.nowPlaying.language === 'en-US'
             }"
-            @click="switchLanguage('en-US', 'nowPlaying')"
+            @click="switchLanguage('en-US', 'nowPlaying', 'US')"
           >
-            EN
+            US
           </button>
           <button
             type="button"
@@ -78,9 +78,9 @@
             :class="{
               active: btnState.nowPlaying.language === 'zh-TW'
             }"
-            @click="switchLanguage('zh-TW', 'nowPlaying')"
+            @click="switchLanguage('zh-TW', 'nowPlaying', 'TW')"
           >
-            CH
+            TW
           </button>
         </div>
       </div>
@@ -120,9 +120,9 @@
             :class="{
               active: btnState.upComing.language === 'en-US'
             }"
-            @click="switchLanguage('en-US', 'upComing')"
+            @click="switchLanguage('en-US', 'upComing', 'US')"
           >
-            EN
+            US
           </button>
           <button
             type="button"
@@ -130,9 +130,9 @@
             :class="{
               active: btnState.upComing.language === 'zh-TW'
             }"
-            @click="switchLanguage('zh-TW', 'upComing')"
+            @click="switchLanguage('zh-TW', 'upComing', 'TW')"
           >
-            CH
+            TW
           </button>
         </div>
       </div>
@@ -181,6 +181,7 @@ export default {
       nowPlaying1: [],
       totalResult: '',
       language: 'en-US',
+      region: 'US',
       isLoadingNowPlaying: false,
       isLoadingUpComing: false,
       pagination: {
@@ -191,30 +192,30 @@ export default {
       }
     };
   },
-  watch: {
-    // btnState: {
-    //   handler: function () {
-    //     if (this.btnState.nowPlaying.language) {
-    //       console.log('watch videoType', this.videoType.trailers.content[0]);
-    //     }
-    //   },
-    //   deep: true,
-    //   immediate: true
-    // },
-  },
   methods: {
+    async getPopular() {
+      const response = await this.$http.get(
+        `https://api.themoviedb.org/3/movie/popular?api_key=${this.key}&language=en-US&page=1`
+      );
+
+      console.log('getPopular', response);
+    },
     moreResultsOfCMDB(type) {
       this.$router.push({
         name: 'AllResults',
         query: {
           genre: type,
           title: type,
-          language: this.language
+          language: this.language,
+          region: this.region
         }
       });
     },
-    switchLanguage(language, movieType) {
+    switchLanguage(language, movieType, region) {
+      // console.log('this.language', this.language);
+      // console.log('this.region', this.region);
       this.language = language;
+      this.region = region;
 
       if (movieType === 'nowPlaying') {
         this.btnState.nowPlaying.language = language;
@@ -229,21 +230,28 @@ export default {
       this.isLoadingNowPlaying = true;
 
       const response = await this.$http.get(
-        `https://api.themoviedb.org/3/movie/now_playing?api_key=${this.key}&language=${this.language}&page=1`
+        `https://api.themoviedb.org/3/movie/now_playing?api_key=${this.key}&language=${this.language}&region=${this.region}&page=1`
       );
       console.log('getNowPlaying', response);
 
       const totalPages = response.data.total_pages;
-      const allData = await this.getAllNowPlayingData(totalPages);
+      let allData;
+      if (totalPages > 1) {
+        allData = await this.getAllNowPlayingData(totalPages);
+      }
+      allData = response.data.results;
+      console.log('totalPages', totalPages);
+      console.log('allData', allData);
+
       const todayDate = this.getTodayDate();
 
-      // 篩選出今天日期以後的電影
+      // 篩選出今天日期以前的電影
       const filterDate = allData.filter((item) => {
         return new Date(item.release_date) <= new Date(todayDate);
       });
 
       // 按熱門度
-      this.nowPlaying = this.sortData(filterDate, 'popularity');
+      // this.nowPlaying = this.sortData(filterDate, 'popularity');
       // console.log('nowPlaying', this.nowPlaying);
 
       // 以上篩選結果與這兩行（未篩選）結果一樣
@@ -251,15 +259,18 @@ export default {
       // this.nowPlaying = this.sortData(this.nowPlaying, 'popularity');
 
       // 取前 20
-      this.top20nowPlaying = this.nowPlaying.slice(0, 20);
+      this.top20nowPlaying = this.sortData(filterDate, 'popularity').slice(
+        0,
+        20
+      );
 
       this.isLoadingNowPlaying = false;
     },
     async getAllNowPlayingData(totalPages) {
       const temp = [];
-      for (let page = 1; page <= totalPages / 2; page++) {
+      for (let page = 1; page <= totalPages; page++) {
         const response = await this.$http.get(
-          `https://api.themoviedb.org/3/movie/now_playing?api_key=7bbe6005cfda593dc21cceb93eaf9a8e&language=${this.language}&page=${page}`
+          `https://api.themoviedb.org/3/movie/now_playing?api_key=7bbe6005cfda593dc21cceb93eaf9a8e&language=${this.language}&region=${this.region}&page=${page}`
         );
 
         response.data.results.forEach((item) => {
@@ -281,14 +292,13 @@ export default {
       this.isLoadingUpComing = true;
 
       const response = await this.$http.get(
-        `https://api.themoviedb.org/3/movie/upcoming?api_key=${this.key}&language=${this.language}&page=1`
+        `https://api.themoviedb.org/3/movie/upcoming?api_key=${this.key}&language=${this.language}&region=${this.region}&page=1`
       );
       console.log('getUpcoming', response);
 
       // 獲得所有資料
       const totalPages = response.data.total_pages;
       const allData = await this.getAllUpComingData(totalPages);
-      // const allData1 = await this.getAllUpComingData1(totalPages);
 
       // 獲得今天日期
       const todayDate = this.getTodayDate();
@@ -308,9 +318,9 @@ export default {
     },
     async getAllUpComingData(totalPages) {
       const temp = [];
-      for (let page = 1; page <= totalPages / 2; page++) {
+      for (let page = 1; page <= totalPages; page++) {
         const response = await this.$http.get(
-          `https://api.themoviedb.org/3/movie/upcoming?api_key=7bbe6005cfda593dc21cceb93eaf9a8e&language=${this.language}&page=${page}`
+          `https://api.themoviedb.org/3/movie/upcoming?api_key=7bbe6005cfda593dc21cceb93eaf9a8e&language=${this.language}&region=${this.region}&page=${page}`
         );
 
         response.data.results.forEach((item) => {
@@ -325,6 +335,7 @@ export default {
   created() {
     this.getNowPlaying();
     this.getUpcoming();
+    this.getPopular();
   }
 };
 </script>

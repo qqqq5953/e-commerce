@@ -33,7 +33,9 @@
                 <div class="card-body h-100 d-flex flex-column">
                   <!-- title -->
                   <div class="d-flex align-items-center">
-                    <h3 class="card-title mb-1">{{ item.title }}</h3>
+                    <h3 class="card-title mb-1">
+                      {{ item.title || item.name }}
+                    </h3>
                     <small class="ms-auto text-dark flex-shrink-0"
                       >popularity:
                       <span class="fs-5">{{
@@ -78,6 +80,9 @@ export default {
     },
     language: {
       type: String
+    },
+    region: {
+      type: String
     }
   },
   data() {
@@ -91,6 +96,7 @@ export default {
       titlePassIn: '',
       genrePassIn: '',
       languagePassIn: '',
+      regionPassIn: 'TW',
       pagination: {
         current_page: '',
         total_pages: '',
@@ -123,6 +129,13 @@ export default {
     }
   },
   methods: {
+    getTodayDate() {
+      const today = new Date();
+      const dd = String(today.getDate()).padStart(2, '0');
+      const mm = String(today.getMonth() + 1).padStart(2, '0');
+      const yyyy = today.getFullYear();
+      return yyyy + '-' + mm + '-' + dd;
+    },
     getCardDetail(id) {
       this.$router.push({
         name: 'Details',
@@ -134,57 +147,80 @@ export default {
       });
     },
     async getData(page = 1) {
-      let response;
-
-      // 一般搜尋結果
-      if (this.genrePassIn === 'movie' || this.genrePassIn === 'tv') {
-        response = await this.$http.get(
-          `https://api.themoviedb.org/3/search/${this.genrePassIn}?api_key=${this.key}&query=${this.titlePassIn}&page=${page}&language=${this.languagePassIn}`
-        );
-      }
+      const todayDate = this.getTodayDate();
+      let response = [];
+      let filterResultsByDate = [];
 
       // Now playing 結果
       if (this.genrePassIn === 'nowplaying') {
         response = await this.$http.get(
-          `https://api.themoviedb.org/3/movie/now_playing?api_key=${this.key}&language=${this.languagePassIn}&page=${page}`
+          `https://api.themoviedb.org/3/movie/now_playing?api_key=${this.key}&language=${this.languagePassIn}&region=${this.regionPassIn}&page=${page}`
         );
+
+        // 篩選出今天日期以前的電影
+        filterResultsByDate = response.data.results.filter((item) => {
+          return new Date(item.release_date) <= new Date(todayDate);
+        });
       }
 
       // Upcoming 結果
       if (this.genrePassIn === 'upcoming') {
         response = await this.$http.get(
-          `https://api.themoviedb.org/3/movie/upcoming?api_key=7bbe6005cfda593dc21cceb93eaf9a8e&language=${this.language}&page=${page}`
+          `https://api.themoviedb.org/3/movie/upcoming?api_key=${this.key}&language=${this.languagePassIn}&region=${this.regionPassIn}&page=${page}`
         );
+
+        // 篩選出今天日期以後的電影
+        filterResultsByDate = response.data.results.filter((item) => {
+          return new Date(item.release_date) >= new Date(todayDate);
+        });
       }
 
-      this.totalResult = response.data.total_results;
-      this.results = response.data.results;
-      console.log('getData', this.results);
+      // 一般搜尋結果
+      if (this.genrePassIn === 'movie' || this.genrePassIn === 'tv') {
+        response = await this.$http.get(
+          `https://api.themoviedb.org/3/search/${this.genrePassIn}?api_key=${this.key}&query=${this.titlePassIn}&page=${page}&language=${this.languagePassIn}&region=${this.regionPassIn}`
+        );
+
+        filterResultsByDate = response.data.results;
+      }
 
       // 依照熱門度排列
-      this.results = this.sortData(this.results, 'popularity');
+      this.results = this.sortData(filterResultsByDate, 'popularity');
+      console.log('getData', this.results);
 
       // pagination
       this.setPagination(response, page);
 
+      // 總資料筆數
+      this.totalResult = response.data.total_results;
       // console.log('getData', this.results);
     },
     setPagination(response, page) {
+      console.log('page', page);
+      console.log('this.pagination.total_pages', response.data.total_pages);
+
       this.pagination.total_pages = response.data.total_pages;
       this.pagination.current_page = response.data.page;
 
       // 第一頁
-      if (page === 1) {
+      if (page === 1 && page !== this.pagination.total_pages) {
+        // 總頁數不等於一
         this.pagination.has_pre = false;
+        this.pagination.has_next = true;
+      } else {
+        // 總頁數等於一
+        this.pagination.has_pre = false;
+        this.pagination.has_next = false;
       }
 
       // 中間頁
       if (page > 1 && page < this.pagination.total_pages) {
         this.pagination.has_pre = true;
+        this.pagination.has_next = true;
       }
 
       // 最後一頁
-      if (page === this.pagination.total_pages) {
+      if (page === this.pagination.total_pages && page !== 1) {
         this.pagination.has_pre = true;
         this.pagination.has_next = false;
       }
@@ -202,6 +238,7 @@ export default {
     this.titlePassIn = this.keywords;
     this.genrePassIn = this.genre.toLowerCase();
     this.languagePassIn = this.language;
+    this.regionPassIn = this.region;
     this.getData();
 
     // if (this.genrePassIn === 'movie' || this.genrePassIn === 'tv') {

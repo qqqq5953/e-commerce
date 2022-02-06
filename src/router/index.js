@@ -31,7 +31,8 @@ const routes = [
           return {
             genre: route.query.genre,
             keywords: route.query.title,
-            language: route.query.language
+            language: route.query.language,
+            region: route.query.region
           };
         }
       },
