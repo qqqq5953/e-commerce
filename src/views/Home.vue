@@ -6,6 +6,7 @@
 <script>
 import Navbar from '@/components/Navbar.vue';
 import sortData from '@/methods/sortData';
+import emitter from '@/methods/emitter';
 
 export default {
   components: {
@@ -13,7 +14,8 @@ export default {
   },
   provide() {
     return {
-      sortData
+      sortData,
+      emitter
     };
   },
   created() {

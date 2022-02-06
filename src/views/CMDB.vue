@@ -1,6 +1,7 @@
 <template>
   <div class="bg-dark">
     <div class="container py-5">
+      <!-- test -->
       <div class="row">
         <!-- <div class="col">
           <h3 class="text-white">nowPlaying 全 ({{ nowPlaying.length }})</h3>
@@ -45,7 +46,16 @@
 
       <!-- Playing Now -->
       <div class="d-flex align-items-center">
-        <h2 class="h1 text-white mb-0">Now Playing</h2>
+        <h2 class="h1 mb-0">
+          <a
+            href="#"
+            @click.prevent="moreResultsOfCMDB('nowPlaying')"
+            class="text-white text-decoration-none d-block"
+          >
+            Now Playing
+            <i class="bi bi-chevron-right"></i>
+          </a>
+        </h2>
         <!-- 語言切換 -->
         <div
           class="btn-group btn-group-sm ms-auto text-right"
@@ -84,7 +94,16 @@
 
       <!-- UpComing -->
       <div class="d-flex align-items-center">
-        <h2 class="h1 text-white mb-0">UpComing</h2>
+        <h2 class="h1 mb-0">
+          <a
+            href="#"
+            @click.prevent="moreResultsOfCMDB('Upcoming')"
+            class="text-white text-decoration-none d-block"
+          >
+            Upcoming
+            <i class="bi bi-chevron-right"></i>
+          </a>
+        </h2>
         <!-- 語言切換 -->
         <div
           class="btn-group btn-group-sm ms-auto text-right"
@@ -129,14 +148,13 @@ import CardVertical from '../components/CardVerticalTest.vue';
 
 export default {
   components: { CardVertical },
-  inject: ['sortData'],
+  inject: ['sortData', 'emitter'],
   data() {
     return {
       temp: '',
       basrUrl: 'https://api.themoviedb.org/3/',
 
       key: '7bbe6005cfda593dc21cceb93eaf9a8e',
-      auth: 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3YmJlNjAwNWNmZGE1OTNkYzIxY2NlYjkzZWFmOWE4ZSIsInN1YiI6IjYxZjBhZGI1YzY2OWFkMDBjZWEzMDVjNCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.n5tebMbjgJK3rlc5_VPmShHCgLujieUY_rhasZD14Hg',
       nowPlaying: [],
       top20nowPlaying: [],
       upComing: [],
@@ -157,6 +175,16 @@ export default {
     };
   },
   methods: {
+    moreResultsOfCMDB(type) {
+      this.$router.push({
+        name: 'SearchResult',
+        query: {
+          genre: type,
+          title: type,
+          language: this.language
+        }
+      });
+    },
     switchLanguage(language, movieType) {
       this.language = language;
       if (movieType === 'now playing') this.getNowPlaying();
@@ -166,7 +194,7 @@ export default {
       this.isLoading = true;
 
       const response = await this.$http.get(
-        `https://api.themoviedb.org/3/movie/now_playing?api_key=7bbe6005cfda593dc21cceb93eaf9a8e&language=${this.language}&page=1`
+        `https://api.themoviedb.org/3/movie/now_playing?api_key=${this.key}&language=${this.language}&page=1`
       );
       console.log('getNowPlaying', response);
 
@@ -181,6 +209,7 @@ export default {
 
       // 按熱門度
       this.nowPlaying = this.sortData(filterDate, 'popularity');
+      // console.log('nowPlaying', this.nowPlaying);
 
       // 以上篩選結果與這兩行（未篩選）結果一樣
       // this.nowPlaying = response.data.results;
@@ -217,7 +246,7 @@ export default {
       this.isLoading = true;
 
       const response = await this.$http.get(
-        `https://api.themoviedb.org/3/movie/upcoming?api_key=7bbe6005cfda593dc21cceb93eaf9a8e&language=${this.language}&page=1`
+        `https://api.themoviedb.org/3/movie/upcoming?api_key=${this.key}&language=${this.language}&page=1`
       );
       console.log('getUpcoming', response);
 
@@ -284,6 +313,10 @@ export default {
     background-color: rgba(26, 26, 26, 1);
     border-radius: 100vw;
     border: 2px solid rgba(85, 89, 92, 1);
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.7);
+    }
   }
 }
 </style>

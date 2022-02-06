@@ -34,10 +34,10 @@
           <div class="row">
             <!-- poster -->
             <div class="col-4">
-              <div class="rounded-3 border border-2 border-primary">
+              <div class="rounded-3 border border-light">
                 <img
                   v-if="posterUrl"
-                  class="img-fluid"
+                  class="img-fluid rounded-3"
                   style="object-fit: cover"
                   :src="baseImageUrl + posterUrl"
                   :alt="title"

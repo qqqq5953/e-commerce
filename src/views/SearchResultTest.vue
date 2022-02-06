@@ -35,7 +35,10 @@
                   <div class="d-flex align-items-center">
                     <h3 class="card-title mb-1">{{ item.title }}</h3>
                     <small class="ms-auto text-dark flex-shrink-0"
-                      >popularity: {{ item.popularity }}</small
+                      >popularity:
+                      <span class="fs-5">{{
+                        item.popularity.toFixed(0)
+                      }}</span></small
                     >
                   </div>
 
@@ -79,7 +82,6 @@ export default {
   },
   data() {
     return {
-      temp: '',
       basrUrl: 'https://api.themoviedb.org/3/',
       baseImageUrl: 'https://image.tmdb.org/t/p/w200',
       key: '7bbe6005cfda593dc21cceb93eaf9a8e',
@@ -97,6 +99,7 @@ export default {
       }
     };
   },
+  inject: ['sortData', 'emitter'],
   computed: {
     queriesChange() {
       return `${this.$route.query.language}|${this.$route.query.title}|${this.$route.query.genre}`;
@@ -126,43 +129,65 @@ export default {
         query: {
           language: this.languagePassIn,
           id: id,
-          genre: this.genrePassIn
+          genre: this.genrePassIn === 'tv' ? 'tv' : 'movie'
         }
       });
     },
-
-    sortData(array, bySomething) {
-      return array.sort((a, b) => {
-        return b[bySomething] - a[bySomething];
-      });
-    },
     async getData(page = 1) {
-      const response = await this.$http.get(
-        `https://api.themoviedb.org/3/search/${this.genrePassIn}?api_key=${this.key}&query=${this.titlePassIn}&page=${page}`
-      );
+      let response;
+
+      // 一般搜尋結果
+      if (this.genrePassIn === 'movie' || this.genrePassIn === 'tv') {
+        response = await this.$http.get(
+          `https://api.themoviedb.org/3/search/${this.genrePassIn}?api_key=${this.key}&query=${this.titlePassIn}&page=${page}`
+        );
+      }
+
+      // Now playing 結果
+      if (this.genrePassIn === 'nowplaying') {
+        response = await this.$http.get(
+          `https://api.themoviedb.org/3/movie/now_playing?api_key=${this.key}&language=${this.languagePassIn}&page=${page}`
+        );
+      }
+
+      // Upcoming 結果
+      if (this.genrePassIn === 'upcoming') {
+        response = await this.$http.get(
+          `https://api.themoviedb.org/3/movie/upcoming?api_key=7bbe6005cfda593dc21cceb93eaf9a8e&language=${this.language}&page=${page}`
+        );
+      }
+
       this.totalResult = response.data.total_results;
       this.results = response.data.results;
       console.log('getData', this.results);
 
+      // 依照熱門度排列
       this.results = this.sortData(this.results, 'popularity');
 
       // pagination
+      this.setPagination(response, page);
+
+      // console.log('getData', this.results);
+    },
+    setPagination(response, page) {
       this.pagination.total_pages = response.data.total_pages;
       this.pagination.current_page = response.data.page;
+
       // 第一頁
       if (page === 1) {
         this.pagination.has_pre = false;
       }
+
       // 中間頁
       if (page > 1 && page < this.pagination.total_pages) {
         this.pagination.has_pre = true;
       }
+
       // 最後一頁
       if (page === this.pagination.total_pages) {
         this.pagination.has_pre = true;
         this.pagination.has_next = false;
       }
-      // console.log('getData', this.results);
     },
     async discoverMovie() {
       const response = await this.$http.get(
@@ -172,10 +197,15 @@ export default {
     }
   },
   created() {
+    console.log('SearchResult created');
+
     this.titlePassIn = this.keywords;
     this.genrePassIn = this.genre.toLowerCase();
     this.languagePassIn = this.language;
     this.getData();
+
+    // if (this.genrePassIn === 'movie' || this.genrePassIn === 'tv') {
+    // }
   }
 };
 </script>
