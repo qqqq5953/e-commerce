@@ -23,9 +23,9 @@ const routes = [
         component: () => import('../views/CMDB.vue')
       },
       {
-        path: 'search-result',
-        name: 'SearchResult',
-        component: () => import('../views/SearchResultTest.vue'),
+        path: 'all-results',
+        name: 'AllResults',
+        component: () => import('../views/AllResults.vue'),
         props: (route) => {
           // query 跟 params 差在前者不用在path帶參數
           return {

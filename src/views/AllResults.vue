@@ -113,7 +113,7 @@ export default {
       console.log('genre 變動', newGenre.toLowerCase());
 
       // 防止跳回首頁會更新資料
-      if (this.$route.name === 'SearchResult') {
+      if (this.$route.name === 'AllResults') {
         this.languagePassIn = newLanguage;
         this.titlePassIn = newTitle;
         this.genrePassIn = newGenre.toLowerCase();

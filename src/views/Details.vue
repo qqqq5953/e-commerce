@@ -371,15 +371,15 @@ export default {
     }
   },
   watch: {
-    videoType: {
-      handler: function () {
-        if (this.videoType.trailers.content.length) {
-          console.log('watch videoType', this.videoType.trailers.content[0]);
-        }
-      },
-      deep: true,
-      immediate: true
-    },
+    // videoType: {
+    //   handler: function () {
+    //     if (this.videoType.trailers.content.length) {
+    //       console.log('watch videoType', this.videoType.trailers.content[0]);
+    //     }
+    //   },
+    //   deep: true,
+    //   immediate: true
+    // },
     queriesChange(newVal) {
       const [newLanguage, newId, newGenre] = newVal.split('|');
       console.log('language 變動', newLanguage);

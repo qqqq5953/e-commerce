@@ -130,10 +130,7 @@
                   </li>
                   <li><hr class="dropdown-divider my-0" /></li>
                   <li class="px-4 py-3 search-item">
-                    <a
-                      href="#"
-                      class="text-light"
-                      @click.prevent="toSearchResult"
+                    <a href="#" class="text-light" @click.prevent="toAllResult"
                       >See all results</a
                     >
                   </li>
@@ -147,7 +144,7 @@
           <button
             class="btn btn-outline-success"
             type="button"
-            @click="toSearchResult"
+            @click="toAllResult"
           >
             Search
           </button>
@@ -372,9 +369,9 @@ export default {
       //   }
       // });
     },
-    toSearchResult() {
+    toAllResult() {
       this.$router.push({
-        name: 'SearchResult',
+        name: 'AllResults',
         query: {
           genre: this.selectedGenre.toLowerCase(),
           title: this.keywords,
@@ -382,12 +379,6 @@ export default {
         }
       });
       this.clearSearchBar();
-      // this.$router.push({
-      //   name: 'SearchResult',
-      //   params: {
-      //     title: this.keywords
-      //   }
-      // });
     }
   },
   mounted() {

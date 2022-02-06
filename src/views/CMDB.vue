@@ -177,7 +177,7 @@ export default {
   methods: {
     moreResultsOfCMDB(type) {
       this.$router.push({
-        name: 'SearchResult',
+        name: 'AllResults',
         query: {
           genre: type,
           title: type,
