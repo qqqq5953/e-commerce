@@ -34,10 +34,10 @@
           <div class="row">
             <!-- poster -->
             <div class="col-4">
-              <div class="rounded-3 border border-light">
+              <div class="rounded-3 h-100">
                 <img
                   v-if="posterUrl"
-                  class="img-fluid rounded-3"
+                  class="img-fluid rounded-3 h-100"
                   style="object-fit: cover"
                   :src="baseImageUrl + posterUrl"
                   :alt="title"
@@ -63,7 +63,7 @@
               <!-- badge -->
               <div class="d-flex">
                 <span
-                  class="badge rounded-pill border-secondary me-2 mb-3"
+                  class="badge rounded-pill border-secondary me-2"
                   v-for="item in genres"
                   :key="item"
                   >{{ item.name }}</span

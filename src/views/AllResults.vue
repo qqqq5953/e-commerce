@@ -139,7 +139,7 @@ export default {
       // 一般搜尋結果
       if (this.genrePassIn === 'movie' || this.genrePassIn === 'tv') {
         response = await this.$http.get(
-          `https://api.themoviedb.org/3/search/${this.genrePassIn}?api_key=${this.key}&query=${this.titlePassIn}&page=${page}`
+          `https://api.themoviedb.org/3/search/${this.genrePassIn}?api_key=${this.key}&query=${this.titlePassIn}&page=${page}&language=${this.languagePassIn}`
         );
       }
 

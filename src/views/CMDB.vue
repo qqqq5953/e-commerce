@@ -65,16 +65,20 @@
           <button
             type="button"
             class="btn btn-outline-light"
-            :class="{ active: language === 'en-US' }"
-            @click="switchLanguage('en-US', 'now playing')"
+            :class="{
+              active: btnState.nowPlaying.language === 'en-US'
+            }"
+            @click="switchLanguage('en-US', 'nowPlaying')"
           >
             EN
           </button>
           <button
             type="button"
             class="btn btn-outline-light"
-            :class="{ active: language === 'zh-TW' }"
-            @click="switchLanguage('zh-TW', 'now playing')"
+            :class="{
+              active: btnState.nowPlaying.language === 'zh-TW'
+            }"
+            @click="switchLanguage('zh-TW', 'nowPlaying')"
           >
             CH
           </button>
@@ -82,7 +86,7 @@
       </div>
       <section class="overflow-auto mt-3 mb-5 card-scrollbar position-relative">
         <Loading
-          :active="isLoading"
+          :active="isLoadingNowPlaying"
           :is-full-page="false"
           :background-color="'rgba(255, 255, 255, 0.1)'"
         ></Loading>
@@ -97,7 +101,7 @@
         <h2 class="h1 mb-0">
           <a
             href="#"
-            @click.prevent="moreResultsOfCMDB('Upcoming')"
+            @click.prevent="moreResultsOfCMDB('upComing')"
             class="text-white text-decoration-none d-block"
           >
             Upcoming
@@ -113,16 +117,20 @@
           <button
             type="button"
             class="btn btn-outline-light"
-            :class="{ active: language === 'en-US' }"
-            @click="switchLanguage('en-US', 'upcoming')"
+            :class="{
+              active: btnState.upComing.language === 'en-US'
+            }"
+            @click="switchLanguage('en-US', 'upComing')"
           >
             EN
           </button>
           <button
             type="button"
             class="btn btn-outline-light"
-            :class="{ active: language === 'zh-TW' }"
-            @click="switchLanguage('zh-TW', 'upcoming')"
+            :class="{
+              active: btnState.upComing.language === 'zh-TW'
+            }"
+            @click="switchLanguage('zh-TW', 'upComing')"
           >
             CH
           </button>
@@ -130,7 +138,7 @@
       </div>
       <section class="overflow-auto mt-3 mb-5 card-scrollbar position-relative">
         <Loading
-          :active="isLoading"
+          :active="isLoadingUpComing"
           :is-full-page="false"
           :background-color="'rgba(255, 255, 255, 0.1)'"
         ></Loading>
@@ -151,6 +159,14 @@ export default {
   inject: ['sortData', 'emitter'],
   data() {
     return {
+      btnState: {
+        nowPlaying: {
+          language: 'en-US'
+        },
+        upComing: {
+          language: 'en-US'
+        }
+      },
       temp: '',
       basrUrl: 'https://api.themoviedb.org/3/',
 
@@ -165,7 +181,8 @@ export default {
       nowPlaying1: [],
       totalResult: '',
       language: 'en-US',
-      isLoading: false,
+      isLoadingNowPlaying: false,
+      isLoadingUpComing: false,
       pagination: {
         current_page: '',
         total_pages: '',
@@ -173,6 +190,17 @@ export default {
         has_next: true
       }
     };
+  },
+  watch: {
+    // btnState: {
+    //   handler: function () {
+    //     if (this.btnState.nowPlaying.language) {
+    //       console.log('watch videoType', this.videoType.trailers.content[0]);
+    //     }
+    //   },
+    //   deep: true,
+    //   immediate: true
+    // },
   },
   methods: {
     moreResultsOfCMDB(type) {
@@ -187,11 +215,18 @@ export default {
     },
     switchLanguage(language, movieType) {
       this.language = language;
-      if (movieType === 'now playing') this.getNowPlaying();
-      if (movieType === 'upcoming') this.getUpcoming();
+
+      if (movieType === 'nowPlaying') {
+        this.btnState.nowPlaying.language = language;
+        this.getNowPlaying();
+      }
+      if (movieType === 'upComing') {
+        this.btnState.upComing.language = language;
+        this.getUpcoming();
+      }
     },
     async getNowPlaying() {
-      this.isLoading = true;
+      this.isLoadingNowPlaying = true;
 
       const response = await this.$http.get(
         `https://api.themoviedb.org/3/movie/now_playing?api_key=${this.key}&language=${this.language}&page=1`
@@ -218,7 +253,7 @@ export default {
       // 取前 20
       this.top20nowPlaying = this.nowPlaying.slice(0, 20);
 
-      this.isLoading = false;
+      this.isLoadingNowPlaying = false;
     },
     async getAllNowPlayingData(totalPages) {
       const temp = [];
@@ -243,7 +278,7 @@ export default {
       return yyyy + '-' + mm + '-' + dd;
     },
     async getUpcoming() {
-      this.isLoading = true;
+      this.isLoadingUpComing = true;
 
       const response = await this.$http.get(
         `https://api.themoviedb.org/3/movie/upcoming?api_key=${this.key}&language=${this.language}&page=1`
@@ -269,7 +304,7 @@ export default {
       // 取前 20
       this.top20upComing = this.upComing.slice(0, 20);
 
-      this.isLoading = false;
+      this.isLoadingUpComing = false;
     },
     async getAllUpComingData(totalPages) {
       const temp = [];

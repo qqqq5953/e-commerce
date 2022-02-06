@@ -370,6 +370,7 @@ export default {
       // });
     },
     toAllResult() {
+      if (!this.keywords) return;
       this.$router.push({
         name: 'AllResults',
         query: {
