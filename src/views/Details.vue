@@ -82,47 +82,30 @@
               </div>
               <!-- PURCHASE or subscribe -->
               <div class="btn-group" role="group">
-                <button type="button" class="btn btn-outline-light w-50">
+                <button
+                  type="button"
+                  class="btn btn-outline-light text-center fw-light"
+                >
                   <i class="bi bi-plus-lg me-2"></i>
                   Watchlist
                 </button>
                 <button
                   type="button"
-                  class="btn btn-secondary dropdown-toggle w-50"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
+                  class="btn btn-outline-light text-center fw-light"
+                  @click="addProductToCart"
                 >
-                  <i
-                    class="bi bi-cart-check-fill fs-5 me-1"
-                    v-if="selectedPlan !== 'Choose a plan'"
-                  ></i>
-                  {{ selectedPlan }}
+                  <span class="spinner-border spinner-grow-sm"></span>
+                  <i class="bi bi-cart-check fs-5 me-1"></i>
+                  PURCHASE
                 </button>
-                <ul
-                  class="dropdown-menu w-50"
-                  aria-labelledby="dropdownMenuButton1"
+                <button
+                  type="button"
+                  class="btn btn-outline-light text-center text-warning"
                 >
-                  <li>
-                    <a
-                      class="dropdown-item text-danger text-center fw-bold"
-                      href="#"
-                      @click.prevent="selectPlans('SUBSCRIBE')"
-                    >
-                      <i class="bi bi-arrow-right-circle"></i>
-                      SUBSCRIBE
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      class="dropdown-item text-center"
-                      href="#"
-                      @click.prevent="selectPlans('PURCHASE')"
-                    >
-                      <i class="bi bi-bag"></i>
-                      PURCHASE
-                    </a>
-                  </li>
-                </ul>
+                  <span class="spinner-border spinner-grow-sm"></span>
+                  <i class="bi bi-arrow-right-circle"></i>
+                  SUBSCRIBE
+                </button>
               </div>
             </section>
           </div>
@@ -208,8 +191,6 @@ export default {
       // youtube
       YTkey: 'AIzaSyAii__SjHcD1CNWD4VOpD4adpeaQNT1gSw',
       videoID: '',
-      // 按鈕
-      selectedPlan: '' || 'Choose a plan',
       // TMDB
       key: '7bbe6005cfda593dc21cceb93eaf9a8e',
       baseImageUrl: 'https://image.tmdb.org/t/p/w300',
@@ -249,13 +230,14 @@ export default {
       voteAverage: '',
       posterUrl: '',
       genres: [],
-      overview: ''
+      overview: '',
+      // add to Cartstatus: {
+      status: {
+        loadingItemsID: ''
+      }
     };
   },
   methods: {
-    selectPlans(plan) {
-      this.selectedPlan = plan;
-    },
     arrangeVideoType(types) {
       types.forEach((item) => {
         if (item.type === 'Clip') {
@@ -277,7 +259,6 @@ export default {
       this.title = response.data.title;
       this.originalTitle = response.data.original_title;
       this.releaseDate = response.data.release_date;
-      this.imdbID = response.data.imdb_id;
 
       this.runTime.hour = Math.floor(response.data.runtime / 60);
       this.runTime.minute = response.data.runtime % 60;
@@ -300,6 +281,19 @@ export default {
       this.biography = response.data.biography;
       this.birthday = response.data.birthday;
       this.profileImgage = response.data.profileI_path;
+    },
+    async addProductToCart() {
+      try {
+        this.status.loadingItemsID = this.idPassIn;
+        const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/cart`;
+        const response = await this.$http.post(api, {
+          data: { product_id: this.idPassIn, qty: 1 }
+        });
+        this.status.loadingItemsID = {};
+        console.log('addProductToCart', response.data);
+      } catch (err) {
+        console.log(err);
+      }
     },
     async getData() {
       const response = await this.$http.get(

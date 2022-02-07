@@ -29,7 +29,9 @@
                   type="text"
                   class="form-control"
                   id="image"
+                  ref="imageInput"
                   placeholder="請輸入圖片連結"
+                  v-model="tempProduct.imageUrl"
                 />
               </div>
               <div class="mb-3">
