@@ -157,12 +157,15 @@ export default {
           const genre = item.category.split('|')[1];
           return genre === 'nowplaying';
         });
-      } else {
+      } else if (this.genrePassIn === 'upcoming') {
         // 首頁傳來為 Upcoming
         this.products = response.data.products.filter((item) => {
           const genre = item.category.split('|')[1];
           return genre === 'upcoming';
         });
+      } else {
+        // see all results
+        this.products = response.data.products;
       }
 
       this.isLoading = false;

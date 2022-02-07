@@ -58,11 +58,11 @@ export default {
     moreResultsOfCMDB(genre) {
       this.$router.push({ name: 'UserProducts', params: { genre } });
     },
-    async getProducts(page = 1) {
+    async getProducts() {
       this.isLoading = true;
 
       // api
-      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/products?page=${page}`;
+      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/products/all`;
       const response = await this.$http.get(api).catch((err) => {
         console.log(err);
       });

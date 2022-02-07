@@ -24,26 +24,6 @@
               >Pricing</router-link
             >
           </li>
-          <!-- <li class="nav-item">
-            <router-link class="nav-link" :to="{ name: 'SearchResult' }"
-              >SearchResult</router-link
-            >
-          </li> -->
-          <!-- <li class="nav-item">
-            <router-link class="nav-link disabled" :to="{ name: 'Orders' }"
-              >Watchlist</router-link
-            >
-          </li>
-          <li class="nav-item">
-            <router-link class="nav-link disabled" :to="{ name: 'Coupon' }"
-              >Cart</router-link
-            >
-          </li> -->
-          <!-- <li class="nav-item">
-            <router-link class="nav-link" :to="{ name: 'UserProducts' }"
-              >ProductList</router-link
-            >
-          </li> -->
           <li class="nav-item">
             <router-link class="nav-link" :to="{ name: 'Login' }"
               >Admin</router-link
@@ -80,6 +60,7 @@
                 v-model.trim="keywords"
                 aria-label="Search with dropdown button"
                 ref="searchBar"
+                @input="searchInput"
               />
               <a
                 href="#"
@@ -89,43 +70,41 @@
                 <i class="bi bi-x-lg"></i>
               </a>
 
-              <!-- 搜尋結果 -->
+              <!-- 搜尋結果 :class="{ 'd-none': !keywords.length }"-->
               <ul
                 class="text-white list-unstyled position-absolute bg-dark mb-0 start-0 end-0 pt-3 search-list"
-                :class="{ 'd-none': !keywords.length }"
                 ref="searchList"
+                v-if="keywords"
               >
                 <Loading :active="isLoading" :is-full-page="false"></Loading>
-                <template v-if="topEightResult.length">
+                <template v-if="match.length">
                   <li
                     class="px-4 py-2 search-item"
-                    v-for="item in topEightResult"
+                    v-for="item in match"
                     :key="item"
                   >
                     <router-link
                       :to="{
-                        name: 'Details',
-                        query: {
-                          genre: selectedGenre,
-                          language: language,
-                          id: item.id
+                        name: 'UserProduct',
+                        params: {
+                          productID: item.id
                         }
                       }"
                       class="text-decoration-none d-flex"
                       @click="clearSearchBar"
                     >
                       <img
-                        v-if="item.poster_path"
-                        :src="baseImageUrl + item.poster_path"
+                        v-if="item.imageUrl"
+                        :src="item.imageUrl"
                         class="card-img-top img-fluid d-block"
                         :alt="item.title"
                       />
                       <div class="ms-3 text-light">
                         <h5 class="text-light mb-0">
-                          {{ item.title || item.name }}
+                          {{ item.title }}
                         </h5>
                         <small class="text-light">{{
-                          item.release_date || item.first_air_date
+                          item.content.split('|')[2]
                         }}</small>
                       </div>
                     </router-link>
@@ -143,13 +122,6 @@
               </ul>
             </div>
           </div>
-          <button
-            class="btn btn-outline-success"
-            type="button"
-            @click="toAllResult"
-          >
-            Search
-          </button>
         </form>
       </div>
     </div>
@@ -191,47 +163,46 @@
 export default {
   data() {
     return {
-      allData: [],
-      finalData: [],
-      matchedKeyword: [],
-      noRepeatData: [],
-      topEightResult: [],
-      difference: [],
       baseImageUrl: 'https://image.tmdb.org/t/p/w200',
       keywords: '',
       searchBy: ['Movie', 'TV', 'Person'],
       selectedGenre: '' || 'Movie',
       language: '',
-      isLoading: false
+      isLoading: false,
+      // new
+      products: [],
+      match: []
     };
   },
-  watch: {
-    keywords() {
-      this.showInputResult();
-    }
-  },
-  inject: ['sortData'],
   methods: {
-    validateChinese(text) {
-      return /^[\u4e00-\u9fa5\0-9]/.test(text);
+    async getProducts() {
+      this.isLoading = true;
+
+      // api
+      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/products/all`;
+      const response = await this.$http.get(api).catch((err) => {
+        console.log(err);
+      });
+      console.log('res', response.data);
+
+      // 儲存資料
+      this.products = response.data.products;
+
+      this.isLoading = false;
     },
-    validateEnglish(text) {
-      return /^[ A-Za-z\0-9]/.test(text);
-    },
-    async checkSearchLanguage() {
-      this.language = '';
-      if (this.validateChinese(this.keywords)) {
-        console.log('中文');
-        this.language = 'zh-TW';
-        return await this.getPopularData(this.allData, this.language, 3);
-      } else if (this.validateEnglish(this.keywords)) {
-        console.log('英文');
-        this.language = 'en-US';
-        return await this.getPopularData(this.allData, this.language, 3);
-      } else {
-        console.log('都不是');
-        return undefined;
-      }
+    searchInput() {
+      if (!this.keywords) return;
+
+      this.match = this.products.filter((item) => {
+        if (item.title) {
+          // console.log('有 title', item.title);
+          return item.title
+            .split('-')
+            .join(' ')
+            .toUpperCase()
+            .match(this.keywords.toUpperCase());
+        }
+      });
     },
     selectGenre(genre) {
       this.selectedGenre = genre;
@@ -254,131 +225,13 @@ export default {
     },
     clearSearchBar() {
       this.keywords = '';
-      this.clearArrays();
-    },
-    clearArrays() {
-      this.matchedKeyword.splice(0, this.matchedKeyword.length);
-      this.topEightResult.splice(0, this.topEightResult.length);
-      this.allData.splice(0, this.allData.length);
-
-      // console.log('clearKeywords allData', this.allData);
-      // console.log('clearKeywords matchedKeyword', this.matchedKeyword);
-      // console.log('clearKeywords topEightResult', this.topEightResult);
-    },
-    matchKeyword(data) {
-      return data.filter((item) => {
-        if (item.title) {
-          // console.log('有 title', item.title);
-          return item.title
-            .split('-')
-            .join(' ')
-            .toUpperCase()
-            .match(this.keywords.toUpperCase());
-        } else {
-          // console.log('有 name', item.name);
-          return item.name
-            .split('-')
-            .join(' ')
-            .toUpperCase()
-            .match(this.keywords.toUpperCase());
-        }
-      });
-    },
-    // sortData(array, bySomething) {
-    //   return array.sort((a, b) => {
-    //     return b[bySomething] - a[bySomething];
-    //   });
-    // },
-    async getPopularData(dataArray, language, topPages) {
-      // avoid 422 error
-      if (this.keywords === '') return;
-
-      const temp = [];
-      for (let page = 1; page <= topPages; page++) {
-        // avoid 422 error
-        if (this.keywords === '') return;
-        this.isLoading = true;
-
-        const genre = this.selectedGenre.toLowerCase();
-        const response = await this.$http.get(
-          `https://api.themoviedb.org/3/search/${genre}?api_key=7bbe6005cfda593dc21cceb93eaf9a8e&language=${language}&query=${this.keywords}&page=${page}&include_adult=false`
-        );
-
-        this.isLoading = false;
-
-        response.data.results.forEach((item) => {
-          temp.push(item);
-        });
-      }
-
-      dataArray.push(temp);
-      return dataArray[dataArray.length - 1];
-    },
-    async showInputResult() {
-      if (this.keywords === '') return;
-      this.clearArrays();
-
-      // 取得前三頁結果
-      this.finalData = await this.checkSearchLanguage();
-
-      // 無結果
-      if (this.finalData === undefined) return;
-
-      // 將 finalData 與關鍵字比對
-      this.matchedKeyword = this.matchKeyword(this.finalData);
-      if (!this.matchKeyword(this.finalData).length) {
-        // 比對結果如果為空陣列，finalData 直接賦值 matchedKeyword
-        this.matchedKeyword = this.finalData;
-      }
-
-      // 依照熱度排名
-      this.matchedKeyword = this.sortData(this.matchedKeyword, 'popularity');
-
-      // 剔除重複
-      this.noRepeatData = this.matchedKeyword.filter((item, index, arr) => {
-        return (
-          index ===
-          arr.findIndex((element) => {
-            // for search of TV and Person
-            if (item.name) {
-              return element.name === item.name;
-            }
-            // for search of Movie
-            return element.title === item.title;
-          })
-        );
-      });
-
-      // 前8
-      this.topEightResult = this.noRepeatData.slice(0, 8);
-      console.log('allData', this.allData);
-      console.log('finalData', this.finalData);
-      console.log('noRepeatData', this.noRepeatData);
-      console.log('topEightResult', this.topEightResult);
-
-      // this.isLoading = false;
-
-      // this.difference = this.matchedKeyword.filter(
-      //   (x) => !this.noRepeatData.includes(x)
-      // );
-      // console.log('difference', this.difference);
-
-      // this.difference.forEach((item) => {
-      //   if (item.title) {
-      //     console.log('title', item.title);
-      //   } else {
-      //     console.log('name', item.name);
-      //   }
-      // });
     },
     toAllResult() {
       if (!this.keywords) return;
       this.$router.push({
-        name: 'AllResults',
-        query: {
-          genre: this.selectedGenre.toLowerCase(),
-          title: this.keywords,
-          language: this.language
+        name: 'UserProducts',
+        params: {
+          genre: 'all'
         }
       });
       this.clearSearchBar();
@@ -386,6 +239,7 @@ export default {
   },
   mounted() {
     this.toggleSearchMenu();
+    this.getProducts();
   }
 };
 </script>
