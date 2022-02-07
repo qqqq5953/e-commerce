@@ -8,10 +8,11 @@
     >
       新增產品
     </button>
-  </div>
-  <div class="text-end mt-3">
-    <button type="button" class="btn btn-danger" @click="getNowPlaying">
-      快速新增產品
+    <button type="button" class="btn btn-success" @click="getNowPlaying">
+      快速新增 NowPlaying
+    </button>
+    <button type="button" class="btn btn-danger" @click="getUpcoming">
+      快速新增 upComing
     </button>
   </div>
   <Pagination
@@ -112,6 +113,151 @@ export default {
     };
   },
   methods: {
+    async getNowPlaying() {
+      const response = await this.$http.get(
+        `https://api.themoviedb.org/3/movie/now_playing?api_key=${this.key}&language=${this.language}&region=${this.region}&page=1`
+      );
+      console.log('getNowPlaying', response);
+
+      const totalPages = response.data.total_pages;
+
+      let allData;
+      if (totalPages > 1) {
+        allData = await this.getAllNowPlayingData();
+      } else {
+        allData = response.data.results;
+      }
+      console.log('totalPages', totalPages);
+      console.log('allData', allData);
+
+      const todayDate = this.getTodayDate();
+
+      // 篩選出今天日期以前的電影
+      const filterDate = allData.filter((item) => {
+        return new Date(item.release_date) <= new Date(todayDate);
+      });
+
+      // 取前 20
+      this.top20nowPlaying = this.sortData(filterDate, 'popularity').slice(
+        0,
+        20
+      );
+
+      // 暫時 for 快速新增
+      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product`;
+
+      for (let i = 0; i < 2; i++) {
+        this.tempProduct = {};
+        this.tempProduct.title = this.top20nowPlaying[i].title;
+        this.tempProduct.category = 'movie|nowplaying';
+        this.tempProduct.origin_price = 330;
+        this.tempProduct.price = 300;
+        this.tempProduct.unit = '月';
+        this.tempProduct.description = this.top20nowPlaying[i].overview;
+        this.tempProduct.is_enabled = true;
+        this.tempProduct.imageUrl =
+          this.baseImageUrl + this.top20nowPlaying[i].poster_path;
+        // 透過content傳送其餘資料
+        this.tempProduct.content = `${this.top20nowPlaying[i].id}|${this.top20nowPlaying[i].popularity}|${this.top20nowPlaying[i].release_date}`;
+        const response = await this.$http.post(api, {
+          data: this.tempProduct
+        });
+
+        console.log('測試寫入', response);
+      }
+
+      // 重新渲染畫面
+      await this.getProducts();
+    },
+    async getAllNowPlayingData() {
+      const temp = [];
+      for (let page = 1; page <= 2; page++) {
+        const response = await this.$http.get(
+          `https://api.themoviedb.org/3/movie/now_playing?api_key=7bbe6005cfda593dc21cceb93eaf9a8e&language=${this.language}&region=${this.region}&page=${page}`
+        );
+
+        response.data.results.forEach((item) => {
+          temp.push(item);
+        });
+      }
+      // console.log('temp', temp);
+
+      return temp;
+    },
+    async getUpcoming() {
+      this.isLoadingUpComing = true;
+
+      const response = await this.$http.get(
+        `https://api.themoviedb.org/3/movie/upcoming?api_key=${this.key}&language=${this.language}&region=${this.region}&page=1`
+      );
+      console.log('getUpcoming', response);
+
+      // 獲得所有資料
+      const totalPages = response.data.total_pages;
+      const allData = await this.getAllUpComingData(totalPages);
+
+      // 獲得今天日期
+      const todayDate = this.getTodayDate();
+
+      // 篩選出今天日期以後的電影
+      const filterDate = allData.filter((item) => {
+        return new Date(item.release_date) >= new Date(todayDate);
+      });
+
+      // 依照熱門度排序
+      this.upComing = this.sortData(filterDate, 'popularity');
+
+      // 取前 20
+      this.top20upComing = this.upComing.slice(0, 20);
+
+      // 暫時 for 快速新增
+      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product`;
+
+      for (let i = 0; i < 2; i++) {
+        this.tempProduct = {};
+        this.tempProduct.title = this.top20upComing[i].title;
+        this.tempProduct.category = 'movie|upcoming';
+        this.tempProduct.origin_price = 330;
+        this.tempProduct.price = 300;
+        this.tempProduct.unit = '月';
+        this.tempProduct.description = this.top20upComing[i].overview;
+        this.tempProduct.is_enabled = true;
+        this.tempProduct.imageUrl =
+          this.baseImageUrl + this.top20upComing[i].poster_path;
+        // 透過content傳送其餘資料
+        this.tempProduct.content = `${this.top20upComing[i].id}|${this.top20upComing[i].popularity}|${this.top20upComing[i].release_date}`;
+        const response = await this.$http.post(api, {
+          data: this.tempProduct
+        });
+
+        console.log('測試寫入', response);
+      }
+
+      // 重新渲染畫面
+      await this.getProducts();
+    },
+    async getAllUpComingData(totalPages) {
+      const temp = [];
+      for (let page = 1; page <= totalPages; page++) {
+        const response = await this.$http.get(
+          `https://api.themoviedb.org/3/movie/upcoming?api_key=7bbe6005cfda593dc21cceb93eaf9a8e&language=${this.language}&region=${this.region}&page=${page}`
+        );
+
+        response.data.results.forEach((item) => {
+          temp.push(item);
+        });
+      }
+      // console.log('temp', temp);
+
+      return temp;
+    },
+    getTodayDate() {
+      const today = new Date();
+      const dd = String(today.getDate()).padStart(2, '0');
+      const mm = String(today.getMonth() + 1).padStart(2, '0');
+      const yyyy = today.getFullYear();
+      return yyyy + '-' + mm + '-' + dd;
+    },
     async getProducts(page) {
       try {
         this.isLoading = true;
@@ -168,84 +314,6 @@ export default {
       } catch (err) {
         console.log(err);
       }
-    },
-    async getNowPlaying() {
-      const response = await this.$http.get(
-        `https://api.themoviedb.org/3/movie/now_playing?api_key=${this.key}&language=${this.language}&region=${this.region}&page=1`
-      );
-      console.log('getNowPlaying', response);
-
-      const totalPages = response.data.total_pages;
-
-      let allData;
-      if (totalPages > 1) {
-        allData = await this.getAllNowPlayingData();
-      } else {
-        allData = response.data.results;
-      }
-      console.log('totalPages', totalPages);
-      console.log('allData', allData);
-
-      const todayDate = this.getTodayDate();
-
-      // 篩選出今天日期以前的電影
-      const filterDate = allData.filter((item) => {
-        return new Date(item.release_date) <= new Date(todayDate);
-      });
-
-      // 取前 20
-      this.top20nowPlaying = this.sortData(filterDate, 'popularity').slice(
-        0,
-        20
-      );
-
-      // let tempArr = [];
-      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product`;
-
-      for (let i = 0; i < 2; i++) {
-        this.tempProduct = {};
-        this.tempProduct.title = this.top20nowPlaying[i].title;
-        this.tempProduct.category = 'movie|nowplaying';
-        this.tempProduct.origin_price = 330;
-        this.tempProduct.price = 300;
-        this.tempProduct.unit = '月';
-        this.tempProduct.description = this.top20nowPlaying[i].overview;
-        this.tempProduct.is_enabled = true;
-        this.tempProduct.imageUrl =
-          this.baseImageUrl + this.top20nowPlaying[i].poster_path;
-        // 透過content傳送其餘資料
-        this.tempProduct.content = `${this.top20nowPlaying[i].id}|${this.top20nowPlaying[i].popularity}|${this.top20nowPlaying[i].release_date}`;
-        const response = await this.$http.post(api, {
-          data: this.tempProduct
-        });
-
-        console.log('測試寫入', response);
-      }
-
-      // 重新渲染畫面
-      await this.getProducts();
-    },
-    async getAllNowPlayingData() {
-      const temp = [];
-      for (let page = 1; page <= 2; page++) {
-        const response = await this.$http.get(
-          `https://api.themoviedb.org/3/movie/now_playing?api_key=7bbe6005cfda593dc21cceb93eaf9a8e&language=${this.language}&region=${this.region}&page=${page}`
-        );
-
-        response.data.results.forEach((item) => {
-          temp.push(item);
-        });
-      }
-      // console.log('temp', temp);
-
-      return temp;
-    },
-    getTodayDate() {
-      const today = new Date();
-      const dd = String(today.getDate()).padStart(2, '0');
-      const mm = String(today.getMonth() + 1).padStart(2, '0');
-      const yyyy = today.getFullYear();
-      return yyyy + '-' + mm + '-' + dd;
     },
     async deleteProduct(item) {
       try {

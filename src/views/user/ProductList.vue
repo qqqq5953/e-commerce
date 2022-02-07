@@ -38,22 +38,10 @@
             <button
               type="button"
               class="btn btn-outline-secondary"
-              @click="getProduct(item.id)"
+              @click="getProductDetails(item.id)"
             >
               查看更多
             </button>
-            <!-- <button
-              type="button"
-              class="btn btn-outline-danger position-relative"
-              @click="addProductToCart(item.id)"
-              :disabled="status.loadingItemsID === item.id"
-            >
-              <span
-                v-if="status.loadingItemsID === item.id"
-                class="spinner-border spinner-grow-sm"
-              ></span>
-              <span>加到購物車</span>
-            </button> -->
           </div>
         </td>
       </tr>
@@ -71,7 +59,7 @@
         <a
           href="#"
           class="text-decoration-none d-block"
-          @click.prevent="getProduct(item.id)"
+          @click.prevent="getProductDetails(item.id)"
         >
           <div class="card mb-3 border-dark" style="height: 250px">
             <div class="row g-0 h-100">
@@ -146,32 +134,23 @@ export default {
   },
   methods: {
     async getProducts(page = 1) {
-      // this.isLoading = true;
+      this.isLoading = true;
+
+      // api
       const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/products?page=${page}`;
       const response = await this.$http.get(api).catch((err) => {
         console.log(err);
       });
+
+      // 資料存入
       this.products = response.data.products;
       this.pagination = response.data.pagination;
 
+      this.isLoading = false;
       console.log('res', response.data);
-      // this.isLoading = false;
     },
-    getProduct(id) {
+    getProductDetails(id) {
       this.$router.push({ name: 'UserProduct', params: { productID: id } });
-    },
-    async addProductToCart(id) {
-      try {
-        this.status.loadingItemsID = id;
-        const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/cart`;
-        const response = await this.$http.post(api, {
-          data: { product_id: id, qty: 1 }
-        });
-        this.status.loadingItemsID = {};
-        console.log('response.data', response.data);
-      } catch (err) {
-        console.log(err);
-      }
     }
   },
   created() {

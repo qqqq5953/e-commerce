@@ -1,4 +1,5 @@
 <template>
+  <Loading :active="isLoading"></Loading>
   <div class="bg-dark">
     <div class="container py-5">
       <header class="text-white d-none">
@@ -70,40 +71,16 @@
                 >
               </div>
               <!-- price -->
-              <div class="ms-auto mt-auto mb-3">
-                <div class="d-flex justify-content-between align-items-center">
-                  <span>Subscribe:</span>
-                  <span class="h3 text-danger ms-3">NT$330</span>
-                </div>
-                <!-- month -->
-                <div class="d-flex align-items-center">
-                  <label for="subscribeMonth" class="form-label mb-0"
-                    >Subscribe Month:</label
-                  >
-                  <input
-                    type="number"
-                    class="form-control ms-auto w-25 form-control-sm"
-                    id="subscribeMonth"
-                    min="1"
-                    v-model.trim="subscribeMonth"
-                    aria-describedby="subscribeMonth"
-                  />
-                </div>
-                <div id="subscribeMonthNote" class="form-text">
-                  Get coupon for subscription of 12-month
-                  <i class="bi bi-arrow-up"></i>
-                </div>
-                <!-- Coupib -->
-                <!-- <div
-                  class="d-flex align-items-center mt-2"
-                  v-if="subscribeMonth >= 12"
-                >
-                  <span>Coupon:</span>
-                  <span class="badge bg-primary fs-4 ms-auto">CMDB_TEN</span>
-                </div> -->
+
+              <div
+                class="d-flex justify-content-between align-items-center ms-auto mt-auto mb-3"
+                v-if="nowOrUpcoming === 'nowplaying'"
+              >
+                <span>Subscribe:</span>
+                <span class="h3 text-danger ms-3">NT$330</span>
               </div>
               <!-- PURCHASE or subscribe -->
-              <div class="btn-group" role="group">
+              <div class="btn-group mt-auto" role="group">
                 <button
                   type="button"
                   class="btn btn-outline-light text-center fw-light"
@@ -116,6 +93,7 @@
                   class="btn btn-outline-light text-center text-warning"
                   :disabled="status.loadingItemsID === productID"
                   @click="addProductToCart"
+                  v-if="nowOrUpcoming === 'nowplaying'"
                 >
                   <span
                     class="spinner-border spinner-grow-sm"
@@ -130,6 +108,24 @@
         </section>
 
         <aside class="col-3">
+          <div class="row mb-3">
+            <!-- popularity -->
+            <div class="col d-flex flex-column">
+              <h4 class="h6 text-white text-end">popularity</h4>
+              <div class="text-end mt-auto">
+                <i class="bi bi-star-fill text-warning me-2"></i>
+                <span>{{ popularity }}</span>
+              </div>
+            </div>
+            <!-- vote -->
+            <div class="col d-flex flex-column">
+              <h4 class="h6 text-white text-end">Vote Average</h4>
+              <div class="text-end mt-auto">
+                <i class="bi bi-people-fill text-info me-2"></i>
+                <span>{{ voteAverage }}</span>
+              </div>
+            </div>
+          </div>
           <ul
             class="d-flex flex-column justify-content-between list-unstyled more-video-list"
           >
@@ -204,6 +200,7 @@ export default {
       key: '7bbe6005cfda593dc21cceb93eaf9a8e',
       baseImageUrl: 'https://image.tmdb.org/t/p/w300',
       baseYoutubeUrl: 'https://www.youtube.com/embed/',
+      isLoading: false,
       // Movie
       title: '',
       originalTitle: '',
@@ -231,6 +228,7 @@ export default {
       overview: '',
       id: '',
       genre: '',
+      nowOrUpcoming: '',
       language: 'en-US',
       videoType: {
         behindTheScenes: { type: 'Behind the Scenes', content: [] },
@@ -243,24 +241,81 @@ export default {
       // add to Cartstatus: {
       status: {
         loadingItemsID: ''
-      },
-      subscribeMonth: 1
+      }
     };
   },
   methods: {
     async getProductDetails() {
-      // this.isLoading = true;
+      this.isLoading = true;
+
+      // api
       const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/product/${this.productID}`;
       const response = await this.$http
         .get(api)
         .catch((err) => console.log(err));
       console.log('getProductDetails', response);
 
+      // 產品在 TMDB api 中 的id
       this.id = response.data.product.content.split('|')[0];
-      this.genre = response.data.product.category.split('|')[0];
 
+      // 產品屬於 movie 或 tv 類別
+      this.genre = response.data.product.category.split('|')[0];
+      this.nowOrUpcoming = response.data.product.category.split('|')[1];
+
+      // 再透過 TMDB api 獲得更多產品資料
       await this.getData();
-      // this.isLoading = false;
+
+      this.isLoading = false;
+    },
+    async getData() {
+      // TMDB api
+      const response = await this.$http.get(
+        `https://api.themoviedb.org/3/${this.genre}/${this.id}?api_key=${this.key}&language=${this.language}&append_to_response=videos,images`
+      );
+      console.log('getData', response);
+
+      if (this.genre === 'movie') this.getMovieDetail(response);
+      if (this.genre === 'tv') this.getTVDetail(response);
+
+      this.posterUrl = response.data.poster_path;
+      this.genres = response.data.genres;
+      this.overview = response.data.overview;
+
+      this.popularity = response.data.popularity;
+      this.voteAverage = response.data.vote_average;
+      // video 分類
+      this.arrangeVideoType(response.data.videos.results);
+
+      // 預設呈現 trailers (因為 videoType.trailers.content[0].key 抓不到值)
+      this.trailers = response.data.videos.results.filter((item) => {
+        return item.type === 'Trailer';
+      });
+
+      // 如果沒有 trailers 就呈現 teasers
+      this.teasers = response.data.videos.results.filter((item) => {
+        return item.type === 'Teaser';
+      });
+    },
+    getMovieDetail(response) {
+      this.title = response.data.title;
+      this.originalTitle = response.data.original_title;
+      this.releaseDate = response.data.release_date;
+
+      this.runTime.hour = Math.floor(response.data.runtime / 60);
+      this.runTime.minute = response.data.runtime % 60;
+      // this.arrangeVideoType(response.data.videos.results);
+      this.trailers = response.data.videos.results.filter((item) => {
+        return item.type === 'Trailer';
+      });
+    },
+    getTVDetail(response) {
+      this.title = response.data.name;
+      this.originalTitle = response.data.original_name;
+      this.releaseDate = response.data.first_air_date;
+      this.seasons = response.data.seasons;
+      this.createdBy = response.data.created_by;
+      this.runTime.hour = Math.floor(response.data.episode_run_time / 60);
+      this.runTime.minute = response.data.episode_run_time % 60;
     },
     arrangeVideoType(types) {
       types.forEach((item) => {
@@ -278,68 +333,6 @@ export default {
           this.videoType.others.content.push(item);
         }
       });
-    },
-    getMovieDetail(response) {
-      this.title = response.data.title;
-      this.originalTitle = response.data.original_title;
-      this.releaseDate = response.data.release_date;
-
-      this.runTime.hour = Math.floor(response.data.runtime / 60);
-      this.runTime.minute = response.data.runtime % 60;
-      // this.arrangeVideoType(response.data.videos.results);
-      this.trailers = response.data.videos.results.filter((item) => {
-        return item.type === 'Trailer';
-      });
-    },
-    async getData() {
-      const response = await this.$http.get(
-        `https://api.themoviedb.org/3/${this.genre}/${this.id}?api_key=${this.key}&language=${this.language}&append_to_response=videos,images`
-      );
-      console.log('getData', response);
-
-      if (this.genre === 'movie') this.getMovieDetail(response);
-      if (this.genre === 'tv') this.getTVDetail(response);
-      if (this.genre === 'person') {
-        this.getPersonDetail(response);
-        return;
-      }
-
-      this.popularity = response.data.popularity;
-      this.voteAverage = response.data.vote_average;
-      this.posterUrl = response.data.poster_path;
-      this.genres = response.data.genres;
-      this.overview = response.data.overview;
-
-      // video 分類
-      this.arrangeVideoType(response.data.videos.results);
-
-      // 預設呈現 trailers (因為 videoType.trailers.content[0].key 抓不到值)
-      this.trailers = response.data.videos.results.filter((item) => {
-        return item.type === 'Trailer';
-      });
-
-      // 如果沒有 trailers 就呈現 teasers
-      this.teasers = response.data.videos.results.filter((item) => {
-        return item.type === 'Teaser';
-      });
-
-      console.log('trailers', this.trailers);
-      console.log('teasers', this.teasers);
-      console.log('videoType', this.videoType);
-
-      // console.log('getData', response.data);
-      // console.log(
-      //   'videoType',
-      //   this.title,
-      //   this.videoType.trailers.content[0].key
-      // );
-
-      // console.log('teaser', teaser);
-      // console.log('trailer', trailer);
-      // console.log('featurette', featurette);
-
-      // this.getYoutube();
-      // this.getVideo();
     },
     async addProductToCart() {
       try {

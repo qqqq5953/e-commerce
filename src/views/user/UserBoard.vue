@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar navbar-expand-sm navbar-dark bg-primary">
+  <!-- <nav class="navbar navbar-expand-sm navbar-dark bg-primary">
     <div class="container-fluid">
       <a class="navbar-brand" href="#">Navbar</a>
       <button
@@ -16,7 +16,9 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <router-link class="nav-link active" to="/">Home</router-link>
+            <router-link class="nav-link active" :to="{ name: 'UserCMDB' }"
+              >Home</router-link
+            >
           </li>
           <li class="nav-item">
             <router-link class="nav-link" :to="{ name: 'UserBoard' }"
@@ -41,20 +43,24 @@
         </ul>
       </div>
     </div>
-  </nav>
+  </nav> -->
   <!-- <div class="container-fluid position-relative"></div> -->
+  <Navbar></Navbar>
+
   <router-view />
   <ToastMessage></ToastMessage>
 </template>
 
 <script>
+import Navbar from '@/components/Navbar.vue';
 import emitter from '@/methods/emitter';
 import sortData from '@/methods/sortData';
 import ToastMessage from '@/components/ToastMessage.vue';
 
 export default {
   components: {
-    ToastMessage
+    ToastMessage,
+    Navbar
   },
   provide() {
     return {

@@ -9,7 +9,7 @@
       <a
         href="#"
         class="d-block text-decoration-none h-100"
-        @click.prevent="getCardDetail(item.id)"
+        @click.prevent="getProductDetails(item.id)"
       >
         <div class="position-relative h-100">
           <img
@@ -70,15 +70,8 @@ export default {
     };
   },
   methods: {
-    getCardDetail(id) {
-      this.$router.push({
-        name: 'Details',
-        query: {
-          language: this.language,
-          id: id,
-          genre: this.genre
-        }
-      });
+    getProductDetails(id) {
+      this.$router.push({ name: 'UserProduct', params: { productID: id } });
     }
   }
 };
