@@ -95,6 +95,11 @@ const routes = [
         component: () => import('../views/user/Cart.vue')
       },
       {
+        path: 'userCMDB',
+        name: 'UserCMDB',
+        component: () => import('../views/user/UserCMDB.vue')
+      },
+      {
         path: 'products',
         name: 'UserProducts',
         component: () => import('../views/user/ProductList.vue')

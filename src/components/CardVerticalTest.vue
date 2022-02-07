@@ -13,8 +13,8 @@
       >
         <div class="position-relative h-100">
           <img
-            v-if="item.poster_path"
-            :src="baseImageUrl + item.poster_path"
+            v-if="item.imageUrl"
+            :src="item.imageUrl"
             class="img-fluid d-block h-100 w-100"
             :alt="item.title"
             style="object-fit: cover; object-position: center center"
@@ -31,9 +31,9 @@
                 {{ item.title }}
               </h3>
 
-              <p class="mt-auto">{{ item.overview }}</p>
+              <p class="mt-auto">{{ item.description }}</p>
               <small class="d-block fs-6 text-end">{{
-                item.release_date
+                item.content.split('|')[2]
               }}</small>
             </div>
             <!-- <div class="d-flex flex-column h-50 text-white movie-intro">

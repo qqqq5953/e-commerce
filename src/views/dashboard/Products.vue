@@ -1,8 +1,17 @@
 <template>
   <Loading :active="isLoading"></Loading>
   <div class="text-end mt-3">
-    <button type="button" class="btn btn-primary" @click="openModal(true)">
+    <button
+      type="button"
+      class="btn btn-primary disabled"
+      @click="openModal(true)"
+    >
       新增產品
+    </button>
+  </div>
+  <div class="text-end mt-3">
+    <button type="button" class="btn btn-danger" @click="getNowPlaying">
+      快速新增產品
     </button>
   </div>
   <Pagination
@@ -82,7 +91,7 @@ export default {
     DeleteModal,
     Pagination
   },
-  inject: ['emitter', 'pushMessageState'],
+  inject: ['emitter', 'pushMessageState', 'sortData'],
   data() {
     return {
       products: [],
@@ -90,10 +99,16 @@ export default {
       tempProduct: {},
       tempDeleteProduct: {},
       isNew: false,
-      isLoading: false
+      isLoading: false,
       // ref
       // editModal: {},
       // deleteModal: {}
+      // CMDB
+      top20nowPlaying: [],
+      language: 'en-US',
+      region: 'US',
+      baseImageUrl: 'https://image.tmdb.org/t/p/w300',
+      key: '7bbe6005cfda593dc21cceb93eaf9a8e'
     };
   },
   methods: {
@@ -154,6 +169,84 @@ export default {
         console.log(err);
       }
     },
+    async getNowPlaying() {
+      const response = await this.$http.get(
+        `https://api.themoviedb.org/3/movie/now_playing?api_key=${this.key}&language=${this.language}&region=${this.region}&page=1`
+      );
+      console.log('getNowPlaying', response);
+
+      const totalPages = response.data.total_pages;
+
+      let allData;
+      if (totalPages > 1) {
+        allData = await this.getAllNowPlayingData();
+      } else {
+        allData = response.data.results;
+      }
+      console.log('totalPages', totalPages);
+      console.log('allData', allData);
+
+      const todayDate = this.getTodayDate();
+
+      // 篩選出今天日期以前的電影
+      const filterDate = allData.filter((item) => {
+        return new Date(item.release_date) <= new Date(todayDate);
+      });
+
+      // 取前 20
+      this.top20nowPlaying = this.sortData(filterDate, 'popularity').slice(
+        0,
+        20
+      );
+
+      // let tempArr = [];
+      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product`;
+
+      for (let i = 0; i < 2; i++) {
+        this.tempProduct = {};
+        this.tempProduct.title = this.top20nowPlaying[i].title;
+        this.tempProduct.category = 'movie|nowplaying';
+        this.tempProduct.origin_price = 330;
+        this.tempProduct.price = 300;
+        this.tempProduct.unit = '月';
+        this.tempProduct.description = this.top20nowPlaying[i].overview;
+        this.tempProduct.is_enabled = true;
+        this.tempProduct.imageUrl =
+          this.baseImageUrl + this.top20nowPlaying[i].poster_path;
+        // 透過content傳送其餘資料
+        this.tempProduct.content = `${this.top20nowPlaying[i].id}|${this.top20nowPlaying[i].popularity}|${this.top20nowPlaying[i].release_date}`;
+        const response = await this.$http.post(api, {
+          data: this.tempProduct
+        });
+
+        console.log('測試寫入', response);
+      }
+
+      // 重新渲染畫面
+      await this.getProducts();
+    },
+    async getAllNowPlayingData() {
+      const temp = [];
+      for (let page = 1; page <= 2; page++) {
+        const response = await this.$http.get(
+          `https://api.themoviedb.org/3/movie/now_playing?api_key=7bbe6005cfda593dc21cceb93eaf9a8e&language=${this.language}&region=${this.region}&page=${page}`
+        );
+
+        response.data.results.forEach((item) => {
+          temp.push(item);
+        });
+      }
+      // console.log('temp', temp);
+
+      return temp;
+    },
+    getTodayDate() {
+      const today = new Date();
+      const dd = String(today.getDate()).padStart(2, '0');
+      const mm = String(today.getMonth() + 1).padStart(2, '0');
+      const yyyy = today.getFullYear();
+      return yyyy + '-' + mm + '-' + dd;
+    },
     async deleteProduct(item) {
       try {
         // axios
@@ -192,6 +285,7 @@ export default {
   },
   created() {
     this.getProducts();
+    // this.getNowPlaying();
   },
   mounted() {
     // this.editModal = this.$refs.editModal;

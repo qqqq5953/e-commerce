@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar navbar-expand-sm navbar-light bg-light">
+  <nav class="navbar navbar-expand-sm navbar-dark bg-primary">
     <div class="container-fluid">
       <a class="navbar-brand" href="#">Navbar</a>
       <button
@@ -42,14 +42,14 @@
       </div>
     </div>
   </nav>
-  <div class="container-fluid position-relative">
-    <router-view />
-  </div>
+  <!-- <div class="container-fluid position-relative"></div> -->
+  <router-view />
   <ToastMessage></ToastMessage>
 </template>
 
 <script>
 import emitter from '@/methods/emitter';
+import sortData from '@/methods/sortData';
 import ToastMessage from '@/components/ToastMessage.vue';
 
 export default {
@@ -58,7 +58,8 @@ export default {
   },
   provide() {
     return {
-      emitter
+      emitter,
+      sortData
     };
   }
 };
