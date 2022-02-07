@@ -116,6 +116,11 @@
 import Pagination from '@/components/Pagination.vue';
 
 export default {
+  props: {
+    genre: {
+      type: String
+    }
+  },
   components: {
     Pagination
   },
@@ -129,7 +134,8 @@ export default {
       isLoading: false,
       baseImageUrl: 'https://image.tmdb.org/t/p/w200',
       key: '7bbe6005cfda593dc21cceb93eaf9a8e',
-      pagination: {}
+      pagination: {},
+      genrePassIn: ''
     };
   },
   methods: {
@@ -143,8 +149,21 @@ export default {
       });
 
       // 資料存入
-      this.products = response.data.products;
       this.pagination = response.data.pagination;
+
+      if (this.genrePassIn === 'nowplaying') {
+        // 首頁傳來為 NowPlaying
+        this.products = response.data.products.filter((item) => {
+          const genre = item.category.split('|')[1];
+          return genre === 'nowplaying';
+        });
+      } else {
+        // 首頁傳來為 Upcoming
+        this.products = response.data.products.filter((item) => {
+          const genre = item.category.split('|')[1];
+          return genre === 'upcoming';
+        });
+      }
 
       this.isLoading = false;
       console.log('res', response.data);
@@ -154,6 +173,7 @@ export default {
     }
   },
   created() {
+    this.genrePassIn = this.$route.params.genre;
     this.getProducts();
   }
 };

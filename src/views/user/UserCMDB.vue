@@ -6,7 +6,7 @@
       <h2 class="h1">
         <a
           href="#"
-          @click.prevent="moreResultsOfCMDB"
+          @click.prevent="moreResultsOfCMDB('nowplaying')"
           class="text-white text-decoration-none d-block"
         >
           Now Playing
@@ -21,7 +21,7 @@
       <h2 class="h1">
         <a
           href="#"
-          @click.prevent="moreResultsOfCMDB('upComing')"
+          @click.prevent="moreResultsOfCMDB('upcoming')"
           class="text-white text-decoration-none d-block"
         >
           Upcoming
@@ -55,8 +55,8 @@ export default {
     };
   },
   methods: {
-    moreResultsOfCMDB() {
-      this.$router.push({ name: 'UserProducts' });
+    moreResultsOfCMDB(genre) {
+      this.$router.push({ name: 'UserProducts', params: { genre } });
     },
     async getProducts(page = 1) {
       this.isLoading = true;

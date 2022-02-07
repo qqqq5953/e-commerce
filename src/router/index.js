@@ -18,13 +18,13 @@ const routes = [
       //   }
       // }
       {
-        path: 'CMDB',
-        name: 'CMDB',
+        path: 'CMDBDepreciate',
+        name: 'CMDBDepreciate',
         component: () => import('../views/CMDB.vue')
       },
       {
-        path: 'all-results',
-        name: 'AllResults',
+        path: 'all-resultsDepreciate',
+        name: 'AllResultsDepreciate',
         component: () => import('../views/AllResults.vue'),
         props: (route) => {
           // query 跟 params 差在前者不用在path帶參數
@@ -37,8 +37,8 @@ const routes = [
         }
       },
       {
-        path: 'details',
-        name: 'Details',
+        path: 'detailsDepreciate',
+        name: 'DetailsDepreciate',
         component: () => import('../views/Details.vue'),
         props: (route) => {
           // query 跟 params 差在前者不用在path帶參數
@@ -95,14 +95,20 @@ const routes = [
         component: () => import('../views/user/Cart.vue')
       },
       {
-        path: 'userCMDB',
+        path: 'CMDB',
         name: 'UserCMDB',
         component: () => import('../views/user/UserCMDB.vue')
       },
       {
-        path: 'products',
+        path: 'all-results/:genre',
         name: 'UserProducts',
-        component: () => import('../views/user/ProductList.vue')
+        component: () => import('../views/user/ProductList.vue'),
+        props: (route) => {
+          console.log('route', route);
+          return {
+            genre: route.params.genre
+          };
+        }
       },
       {
         path: 'coupon',

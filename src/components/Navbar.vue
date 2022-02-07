@@ -39,11 +39,11 @@
               >Cart</router-link
             >
           </li> -->
-          <li class="nav-item">
+          <!-- <li class="nav-item">
             <router-link class="nav-link" :to="{ name: 'UserProducts' }"
               >ProductList</router-link
             >
-          </li>
+          </li> -->
           <li class="nav-item">
             <router-link class="nav-link" :to="{ name: 'Login' }"
               >Admin</router-link
