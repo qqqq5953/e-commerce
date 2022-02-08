@@ -28,7 +28,7 @@
               style="top: 150px"
             >
               <h3 class="text-white text-center">
-                {{ item.title }}
+                {{ item.title }} {{ item.content.split('|')[1] }}
               </h3>
 
               <p class="mt-auto">{{ item.description }}</p>

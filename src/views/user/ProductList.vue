@@ -139,6 +139,22 @@ export default {
       genrePassIn: ''
     };
   },
+  computed: {
+    queriesChange() {
+      return this.$route.params.genre;
+    }
+  },
+  watch: {
+    queriesChange(newVal) {
+      const newGenre = newVal;
+
+      // 防止跳回首頁會更新資料
+      if (this.$route.name === 'UserProducts') {
+        this.genrePassIn = newGenre.toLowerCase();
+        this.getProducts();
+      }
+    }
+  },
   methods: {
     async getProducts(page = 1) {
       this.isLoading = true;
@@ -174,6 +190,8 @@ export default {
             .match(this.genrePassIn.toUpperCase());
         });
       }
+
+      this.products.reverse();
 
       this.isLoading = false;
       console.log('res', response.data);
