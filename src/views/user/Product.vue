@@ -80,7 +80,11 @@
                 <span class="h3 text-danger ms-3">NT$330</span>
               </div>
               <!-- PURCHASE or subscribe -->
-              <div class="btn-group mt-auto" role="group">
+              <div
+                class="btn-group"
+                :class="{ 'mt-auto': nowOrUpcoming === 'upcoming' }"
+                role="group"
+              >
                 <button
                   type="button"
                   class="btn btn-outline-light text-center fw-light"

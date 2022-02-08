@@ -174,6 +174,7 @@ export default {
       match: []
     };
   },
+  inject: ['emitter'],
   methods: {
     async getProducts() {
       this.isLoading = true;
@@ -194,14 +195,11 @@ export default {
       if (!this.keywords) return;
 
       this.match = this.products.filter((item) => {
-        if (item.title) {
-          // console.log('有 title', item.title);
-          return item.title
-            .split('-')
-            .join(' ')
-            .toUpperCase()
-            .match(this.keywords.toUpperCase());
-        }
+        return item.title
+          .split('-')
+          .join(' ')
+          .toUpperCase()
+          .match(this.keywords.toUpperCase());
       });
     },
     selectGenre(genre) {
@@ -231,7 +229,7 @@ export default {
       this.$router.push({
         name: 'UserProducts',
         params: {
-          genre: 'all'
+          genre: this.keywords
         }
       });
       this.clearSearchBar();

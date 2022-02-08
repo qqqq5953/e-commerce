@@ -124,6 +124,7 @@ export default {
   components: {
     Pagination
   },
+  inject: ['emitter'],
   data() {
     return {
       products: [],
@@ -165,7 +166,13 @@ export default {
         });
       } else {
         // see all results
-        this.products = response.data.products;
+        this.products = response.data.products.filter((item) => {
+          return item.title
+            .split('-')
+            .join(' ')
+            .toUpperCase()
+            .match(this.genrePassIn.toUpperCase());
+        });
       }
 
       this.isLoading = false;

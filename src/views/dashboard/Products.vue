@@ -1,11 +1,7 @@
 <template>
   <Loading :active="isLoading"></Loading>
   <div class="text-end mt-3">
-    <button
-      type="button"
-      class="btn btn-primary disabled"
-      @click="openModal(true)"
-    >
+    <button type="button" class="btn btn-primary" @click="openModal(true)">
       新增產品
     </button>
     <button type="button" class="btn btn-success" @click="getNowPlaying">
@@ -146,7 +142,7 @@ export default {
       // 暫時 for 快速新增
       const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product`;
 
-      for (let i = 0; i < 2; i++) {
+      for (let i = 0; i < 5; i++) {
         this.tempProduct = {};
         this.tempProduct.title = this.top20nowPlaying[i].title;
         this.tempProduct.category = 'movie|nowplaying';
@@ -213,7 +209,7 @@ export default {
       // 暫時 for 快速新增
       const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product`;
 
-      for (let i = 0; i < 2; i++) {
+      for (let i = 0; i < 5; i++) {
         this.tempProduct = {};
         this.tempProduct.title = this.top20upComing[i].title;
         this.tempProduct.category = 'movie|upcoming';

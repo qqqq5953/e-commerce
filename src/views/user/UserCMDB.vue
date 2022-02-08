@@ -3,7 +3,7 @@
   <div class="bg-dark">
     <div class="container py-5">
       <!-- Playing Now -->
-      <h2 class="h1">
+      <h2 class="h1 d-inline-block">
         <a
           href="#"
           @click.prevent="moreResultsOfCMDB('nowplaying')"
@@ -18,7 +18,7 @@
       </section>
 
       <!-- UpComing -->
-      <h2 class="h1">
+      <h2 class="h1 d-inline-block">
         <a
           href="#"
           @click.prevent="moreResultsOfCMDB('upcoming')"
@@ -44,7 +44,6 @@ export default {
   data() {
     return {
       basrUrl: 'https://api.themoviedb.org/3/',
-
       key: '7bbe6005cfda593dc21cceb93eaf9a8e',
       products: [],
       nowPlaying: [],
