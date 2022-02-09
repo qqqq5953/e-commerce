@@ -1,6 +1,14 @@
 <template>
   <div class="bg-dark">
     <div class="container py-4">
+      <!-- test -->
+      <!-- <ul class="">
+        <li v-for="item in videoType" :key="item.title">
+          <button class="" type="button">
+            {{ item }}
+          </button>
+        </li>
+      </ul> -->
       <header
         class="d-flex justify-content-between align-items-center border-bottom pb-4"
       >
@@ -8,7 +16,7 @@
           <span class="flex-shrink-0 h1 mb-0 text-white">Video Gallery：</span>
           <span class="flex-shrink-0 h4 mb-0 text-white"
             >{{ titlePassIn }}
-            <span class="text-muted me-2"
+            <span class="text-muted me-2" v-if="product.release_date"
               >({{ product.release_date.split('-')[0] }})</span
             ></span
           >
@@ -40,22 +48,22 @@
         </div>
       </header>
 
-      <main class="py-4">
+      <main class="pt-4">
         <ul class="text-white list-unstyled row justify-content-between">
-          <li
-            v-for="item in videoType[selectedVideoType.toLowerCase()].content"
-            :key="item"
-            class="col-6 mb-3"
-          >
+          <li v-for="item in videoContent" :key="item" class="col-6 mb-3">
             <h4 class="text-white bg-primary py-2 px-3">
-              {{ item.name.split(' | ')[2] || item.name }}
+              {{
+                item.name.split(' | ')[2] ||
+                item.name.split(' | ')[1] ||
+                item.name.split(' | ')[0] ||
+                item.name
+              }}
             </h4>
-
             <iframe
               type="text/html"
               allowfullscreen
               width="100%"
-              height="270px"
+              height="325px"
               :src="baseYoutubeUrl + item.key"
             >
             </iframe>
@@ -97,7 +105,7 @@ export default {
       selectedVideoType: '',
       product: [],
       videoType: {
-        behindTheScenes: { type: 'Behind the Scenes', content: [] },
+        behind: { type: 'Behind the Scenes', content: [] },
         clips: { type: 'Clips', content: [] },
         teasers: { type: 'Teasers', content: [] },
         trailers: { type: 'Trailers', content: [] },
@@ -105,6 +113,18 @@ export default {
         others: { type: 'Others', content: [] }
       }
     };
+  },
+  computed: {
+    videoContent() {
+      let temp = [];
+      if (this.selectedVideoType === 'Behind the Scenes') {
+        temp = this.videoType.behind.content;
+      } else {
+        temp = this.videoType[this.selectedVideoType.toLowerCase()].content;
+      }
+
+      return temp.reverse();
+    }
   },
   methods: {
     selectVideoType(type) {
@@ -132,7 +152,7 @@ export default {
         } else if (item.type === 'Featurette') {
           this.videoType.featurettes.content.push(item);
         } else if (item.type === 'Behind the Scenes') {
-          this.videoType.behindTheScenes.content.push(item);
+          this.videoType.behind.content.push(item);
         } else {
           this.videoType.others.content.push(item);
         }
