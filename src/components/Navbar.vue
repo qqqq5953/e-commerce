@@ -31,96 +31,75 @@
           </li>
         </ul>
         <form class="d-flex flex-grow-1">
-          <div class="input-group">
-            <button
-              class="btn btn-outline-secondary dropdown-toggle"
-              type="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
+          <div class="flex-grow-1 position-relative">
+            <!-- search bar -->
+            <input
+              class="form-control h-100"
+              type="search"
+              placeholder="Search"
+              v-model.trim="keywords"
+              aria-label="Search with dropdown button"
+              ref="searchBar"
+              @input="searchInput"
+            />
+            <a
+              href="#"
+              class="position-absolute end-0 top-0 bottom-0 p-4 d-flex align-items-center"
+              @click.prevent="clearSearchBar"
             >
-              {{ selectedGenre }}
-            </button>
-            <ul class="dropdown-menu dropdown-menu-dark">
-              <li v-for="genre in searchBy" :key="genre">
-                <button
-                  class="dropdown-item"
-                  type="button"
-                  @click="selectGenre(genre)"
-                >
-                  {{ genre }}
-                </button>
-              </li>
-            </ul>
-            <div class="flex-grow-1 position-relative">
-              <!-- search bar -->
-              <input
-                class="form-control h-100"
-                type="search"
-                placeholder="Search"
-                v-model.trim="keywords"
-                aria-label="Search with dropdown button"
-                ref="searchBar"
-                @input="searchInput"
-              />
-              <a
-                href="#"
-                class="position-absolute end-0 top-0 bottom-0 p-4 d-flex align-items-center"
-                @click.prevent="clearSearchBar"
-              >
-                <i class="bi bi-x-lg"></i>
-              </a>
+              <i class="bi bi-x-lg"></i>
+            </a>
 
-              <!-- 搜尋結果 :class="{ 'd-none': !keywords.length }"-->
-              <ul
-                class="text-white list-unstyled position-absolute bg-dark mb-0 start-0 end-0 pt-3 search-list"
-                ref="searchList"
-                v-if="keywords"
-              >
-                <Loading :active="isLoading" :is-full-page="false"></Loading>
-                <template v-if="match.length">
-                  <li
-                    class="px-4 py-2 search-item"
-                    v-for="item in match"
-                    :key="item"
+            <!-- 搜尋結果 :class="{ 'd-none': !keywords.length }"-->
+            <ul
+              class="text-white list-unstyled position-absolute bg-dark mb-0 start-0 end-0 pt-3 search-list"
+              ref="searchList"
+              v-if="keywords"
+            >
+              <Loading :active="isLoading" :is-full-page="false"></Loading>
+              <template v-if="match.length">
+                <li
+                  class="px-4 py-2 search-item"
+                  v-for="item in match"
+                  :key="item"
+                >
+                  <router-link
+                    :to="{
+                      name: 'UserProduct',
+                      params: {
+                        productID: item.id
+                      }
+                    }"
+                    class="text-decoration-none d-flex"
+                    @click="clearSearchBar"
                   >
-                    <router-link
-                      :to="{
-                        name: 'UserProduct',
-                        params: {
-                          productID: item.id
-                        }
-                      }"
-                      class="text-decoration-none d-flex"
-                      @click="clearSearchBar"
-                    >
-                      <img
-                        v-if="item.imageUrl"
-                        :src="item.imageUrl"
-                        class="card-img-top img-fluid d-block"
-                        :alt="item.title"
-                      />
-                      <div class="ms-3 text-light">
-                        <h5 class="text-light mb-0">
-                          {{ item.title }}
-                        </h5>
-                        <small class="text-light">{{
-                          item.content.split('|')[2]
-                        }}</small>
-                      </div>
-                    </router-link>
-                  </li>
-                  <li><hr class="dropdown-divider my-0" /></li>
-                  <li class="px-4 py-3 search-item">
-                    <a href="#" class="text-light" @click.prevent="toAllResult"
-                      >See all results</a
-                    >
-                  </li>
-                </template>
-                <template v-else>
-                  <li class="px-4 pb-3 search-item">no result</li>
-                </template>
-              </ul>
-            </div>
+                    <img
+                      v-if="item.imageUrl"
+                      :src="item.imageUrl"
+                      class="card-img-top img-fluid d-block"
+                      :alt="item.title"
+                    />
+                    <div class="ms-3 text-light">
+                      <h5 class="text-light mb-0">
+                        {{ item.title }}
+                      </h5>
+                      <small class="text-light">{{
+                        item.content.split('|')[2]
+                      }}</small>
+                    </div>
+                  </router-link>
+                </li>
+                <li><hr class="dropdown-divider my-0" /></li>
+                <li class="px-4 py-3 search-item">
+                  <a href="#" class="text-light" @click.prevent="toAllResult"
+                    >See all results</a
+                  >
+                </li>
+              </template>
+              <template v-else>
+                <li class="px-4 pb-3 search-item">no result</li>
+              </template>
+            </ul>
           </div>
         </form>
       </div>
@@ -165,8 +144,6 @@ export default {
     return {
       baseImageUrl: 'https://image.tmdb.org/t/p/w200',
       keywords: '',
-      searchBy: ['Movie', 'TV', 'Person'],
-      selectedGenre: '' || 'Movie',
       language: '',
       isLoading: false,
       // new
@@ -201,10 +178,6 @@ export default {
           .toUpperCase()
           .match(this.keywords.toUpperCase());
       });
-    },
-    selectGenre(genre) {
-      this.selectedGenre = genre;
-      this.clearSearchBar();
     },
     toggleSearchMenu() {
       window.addEventListener('click', (e) => {

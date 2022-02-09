@@ -111,6 +111,20 @@ const routes = [
         }
       },
       {
+        path: 'all-videos/:movieID/:videoType/:movieTitle',
+        name: 'AllVideos',
+        component: () => import('../views/user/AllVideos.vue'),
+        props: (route) => {
+          console.log('route', route);
+          return {
+            // key 可以自訂，要與UserProduct的props變數一致
+            movieID: route.params.movieID,
+            movieTitle: route.params.movieTitle,
+            movieVideoType: route.params.videoType
+          };
+        }
+      },
+      {
         path: 'coupon',
         name: 'UserCoupon',
         component: () => import('../views/user/Coupon.vue')

@@ -1,7 +1,7 @@
 <template>
   <Loading :active="isLoading"></Loading>
   <div class="bg-dark">
-    <div class="container py-5">
+    <div class="container py-4">
       <header class="text-white d-none">
         <section class="row">
           <div class="col-8">
@@ -113,10 +113,9 @@
           </section>
 
           <aside
-            class="col-3 rounded-3 p-3"
+            class="col-3 p-3"
             style="
               background: rgba(179, 167, 167, 0.15);
-              border-radius: 16px;
               box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
               backdrop-filter: blur(9px);
               -webkit-backdrop-filter: blur(5.9px);
@@ -144,7 +143,7 @@
               class="d-flex flex-column justify-content-between list-unstyled more-video-list"
             >
               <li
-                class="rounded-3 mb-2"
+                class="mb-2"
                 v-for="item in Object.values(videoType)"
                 :key="item"
               >
@@ -152,6 +151,7 @@
                   href="#"
                   class="btn d-flex justify-content-between text-white w-100 p-3 text-decoration-none fs-6"
                   :class="{ disabled: !item.content.length }"
+                  @click.prevent="moreVideos(item.type)"
                 >
                   {{ item.type.toUpperCase() }} ({{ item.content.length }})
                   <i class="bi bi-chevron-compact-right"></i>
@@ -209,6 +209,7 @@ export default {
       type: String
     }
   },
+  inject: ['emitter'],
   data() {
     return {
       temp: null,
@@ -259,12 +260,32 @@ export default {
       }
     };
   },
+  computed: {
+    queriesChange() {
+      return this.$route.params.productID;
+    }
+  },
+  watch: {
+    queriesChange(newVal) {
+      // 防止跳回首頁會更新資料
+      if (this.$route.name === 'UserProduct') {
+        this.idPassIn = newVal;
+        this.getProductDetails();
+      }
+    }
+  },
   methods: {
+    moreVideos(type) {
+      this.$router.push({
+        name: 'AllVideos',
+        params: { movieID: this.id, movieTitle: this.title, videoType: type }
+      });
+    },
     async getProductDetails() {
       this.isLoading = true;
 
       // api
-      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/product/${this.productID}`;
+      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/product/${this.idPassIn}`;
       const response = await this.$http
         .get(api)
         .catch((err) => console.log(err));
@@ -351,10 +372,10 @@ export default {
     },
     async addProductToCart() {
       try {
-        this.status.loadingItemsID = this.productID;
+        this.status.loadingItemsID = this.idPassIn;
         const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/cart`;
         const response = await this.$http.post(api, {
-          data: { product_id: this.productID, qty: 1 }
+          data: { product_id: this.idPassIn, qty: 1 }
         });
         this.status.loadingItemsID = {};
         console.log('addProductToCart', response.data);
@@ -363,8 +384,8 @@ export default {
       }
     }
   },
-
   created() {
+    this.idPassIn = this.productID;
     this.getProductDetails();
   }
 };
