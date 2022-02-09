@@ -30,125 +30,136 @@
           </div>
         </section>
       </header>
-      <main class="row text-white mt-4">
-        <section class="col-9">
-          <div class="row">
-            <!-- poster -->
-            <div class="col-4">
-              <div class="rounded-3 h-100">
-                <img
-                  v-if="posterUrl"
-                  class="img-fluid rounded-3 h-100"
-                  style="object-fit: cover"
-                  :src="baseImageUrl + posterUrl"
-                  :alt="title"
-                />
-              </div>
-            </div>
-
-            <section class="col-8 d-flex flex-column">
-              <h2 class="h1 text-white mb-2">{{ title }}</h2>
-              <h3 class="h6 text-white mb-1">
-                Original title:
-                <span class="fw-normal">{{ originalTitle }}</span>
-              </h3>
-              <div>
-                <span class="fs-6 me-2">{{ releaseDate.split('-')[0] }}</span> |
-                <span class="fs-6 ms-2"
-                  >{{ runTime.hour }}H {{ runTime.minute }}M</span
-                >
+      <main class="text-white mt-4">
+        <div class="row">
+          <section class="col-9">
+            <div class="row h-100 w-100">
+              <!-- poster -->
+              <div class="col-5">
+                <div class="rounded-3 h-100 w-100">
+                  <img
+                    v-if="posterUrl"
+                    class="img-fluid rounded-3 h-100 w-100"
+                    style="object-fit: cover"
+                    :src="baseImageUrl + posterUrl"
+                    :alt="title"
+                  />
+                </div>
               </div>
 
-              <!-- overview -->
-              <p class="mt-3 fs-6">{{ overview }}</p>
-              <!-- badge -->
-              <div class="d-flex pb-3">
-                <span
-                  class="badge rounded-pill border-secondary me-2"
-                  v-for="item in genres"
-                  :key="item"
-                  >{{ item.name }}</span
-                >
-              </div>
-              <!-- price -->
+              <section class="col-7 d-flex flex-column">
+                <h2 class="h1 text-white mb-2">{{ title }}</h2>
+                <h3 class="h6 text-white mb-1">
+                  Original title:
+                  <span class="fw-normal">{{ originalTitle }}</span>
+                </h3>
+                <div>
+                  <span class="fs-6 me-2">{{ releaseDate.split('-')[0] }}</span>
+                  |
+                  <span class="fs-6 ms-2"
+                    >{{ runTime.hour }}H {{ runTime.minute }}M</span
+                  >
+                </div>
 
-              <div
-                class="d-flex justify-content-between align-items-center ms-auto mt-auto mb-3"
-                v-if="nowOrUpcoming === 'nowplaying'"
-              >
-                <span>Subscribe:</span>
-                <span class="h3 text-danger ms-3">NT$330</span>
-              </div>
-              <!-- PURCHASE or subscribe -->
-              <div
-                class="btn-group"
-                :class="{ 'mt-auto': nowOrUpcoming === 'upcoming' }"
-                role="group"
-              >
-                <button
-                  type="button"
-                  class="btn btn-outline-light text-center fw-light"
-                >
-                  <i class="bi bi-plus-lg me-2"></i>
-                  Watchlist
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-outline-light text-center text-warning"
-                  :disabled="status.loadingItemsID === productID"
-                  @click="addProductToCart"
+                <!-- overview -->
+                <p class="mt-3 fs-6">{{ overview }}</p>
+                <!-- badge -->
+                <div class="d-flex pb-3">
+                  <span
+                    class="badge rounded-pill border-secondary me-2"
+                    v-for="item in genres"
+                    :key="item"
+                    >{{ item.name }}</span
+                  >
+                </div>
+                <!-- price -->
+                <div
+                  class="d-flex justify-content-between align-items-center ms-auto mt-auto mb-3"
                   v-if="nowOrUpcoming === 'nowplaying'"
                 >
-                  <span
-                    class="spinner-border spinner-grow-sm"
-                    v-if="status.loadingItemsID === productID"
-                  ></span>
-                  <i class="bi bi-arrow-right-circle"></i>
-                  SUBSCRIBE
-                </button>
-              </div>
-            </section>
-          </div>
-        </section>
+                  <span>Subscribe:</span>
+                  <span class="h3 text-danger ms-3">NT$330</span>
+                </div>
+                <!-- PURCHASE or subscribe -->
+                <div
+                  class="btn-group"
+                  :class="{ 'mt-auto': nowOrUpcoming === 'upcoming' }"
+                  role="group"
+                >
+                  <button
+                    type="button"
+                    class="btn btn-outline-light text-center fw-light"
+                  >
+                    <i class="bi bi-plus-lg me-2"></i>
+                    Watchlist
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-outline-light text-center text-warning"
+                    :disabled="status.loadingItemsID === productID"
+                    @click="addProductToCart"
+                    v-if="nowOrUpcoming === 'nowplaying'"
+                  >
+                    <span
+                      class="spinner-border spinner-grow-sm"
+                      v-if="status.loadingItemsID === productID"
+                    ></span>
+                    <i class="bi bi-arrow-right-circle"></i>
+                    SUBSCRIBE
+                  </button>
+                </div>
+              </section>
+            </div>
+          </section>
 
-        <aside class="col-3">
-          <div class="row mb-3">
-            <!-- popularity -->
-            <div class="col d-flex flex-column">
-              <h4 class="h6 text-white text-end">popularity</h4>
-              <div class="text-end mt-auto">
-                <i class="bi bi-star-fill text-warning me-2"></i>
-                <span>{{ popularity }}</span>
-              </div>
-            </div>
-            <!-- vote -->
-            <div class="col d-flex flex-column">
-              <h4 class="h6 text-white text-end">Vote Average</h4>
-              <div class="text-end mt-auto">
-                <i class="bi bi-people-fill text-info me-2"></i>
-                <span>{{ voteAverage }}</span>
-              </div>
-            </div>
-          </div>
-          <ul
-            class="d-flex flex-column justify-content-between list-unstyled more-video-list"
+          <aside
+            class="col-3 rounded-3 p-3"
+            style="
+              background: rgba(179, 167, 167, 0.15);
+              border-radius: 16px;
+              box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+              backdrop-filter: blur(9px);
+              -webkit-backdrop-filter: blur(5.9px);
+            "
           >
-            <li
-              class="rounded-3 mb-2"
-              v-for="item in Object.values(videoType)"
-              :key="item"
+            <div class="row mb-3">
+              <!-- popularity -->
+              <div class="col d-flex flex-column">
+                <h4 class="h6 text-white text-end">popularity</h4>
+                <div class="text-end mt-auto">
+                  <i class="bi bi-star-fill text-warning me-2"></i>
+                  <span>{{ popularity }}</span>
+                </div>
+              </div>
+              <!-- vote -->
+              <div class="col d-flex flex-column">
+                <h4 class="h6 text-white text-end">Vote Average</h4>
+                <div class="text-end mt-auto">
+                  <i class="bi bi-people-fill text-info me-2"></i>
+                  <span>{{ voteAverage }}</span>
+                </div>
+              </div>
+            </div>
+            <ul
+              class="d-flex flex-column justify-content-between list-unstyled more-video-list"
             >
-              <a
-                href="#"
-                class="d-flex justify-content-between text-white w-100 p-3 text-decoration-none fs-6"
-                :class="{ disabled: !item.content.length }"
+              <li
+                class="rounded-3 mb-2"
+                v-for="item in Object.values(videoType)"
+                :key="item"
               >
-                {{ item.type.toUpperCase() }} ({{ item.content.length }})
-                <i class="bi bi-chevron-compact-right"></i>
-              </a>
-            </li>
-          </ul>
-        </aside>
+                <a
+                  href="#"
+                  class="btn d-flex justify-content-between text-white w-100 p-3 text-decoration-none fs-6"
+                  :class="{ disabled: !item.content.length }"
+                >
+                  {{ item.type.toUpperCase() }} ({{ item.content.length }})
+                  <i class="bi bi-chevron-compact-right"></i>
+                </a>
+              </li>
+            </ul>
+          </aside>
+        </div>
 
         <section class="row mt-5">
           <!-- video -->
@@ -365,8 +376,8 @@ export default {
     background-color: rgba(26, 26, 26, 0.4);
   }
 
-  li:hover {
-    background-color: rgba(81, 84, 87, 0.4);
+  li a:hover {
+    background-color: rgba(0, 0, 0, 0.4);
   }
 }
 </style>
