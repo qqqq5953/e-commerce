@@ -113,7 +113,7 @@
           </section>
 
           <aside
-            class="col-3 p-3"
+            class="col-3 p-3 rounded-3"
             style="
               background: rgba(179, 167, 167, 0.15);
               box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
@@ -143,7 +143,7 @@
               class="d-flex flex-column justify-content-between list-unstyled more-video-list"
             >
               <li
-                class="mb-2"
+                class="mb-2 rounded-3 bg-dark"
                 v-for="item in Object.values(videoType)"
                 :key="item"
               >
@@ -393,12 +393,9 @@ export default {
 
 <style lang="scss" scoped>
 .more-video-list {
-  li {
-    background-color: rgba(26, 26, 26, 0.4);
-  }
-
   li a:hover {
     background-color: rgba(0, 0, 0, 0.4);
+    border-radius: 0.3rem;
   }
 }
 </style>
