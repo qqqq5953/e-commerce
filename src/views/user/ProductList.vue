@@ -68,7 +68,7 @@
                 <!-- card -->
                 <div class="movie-card">
                   <div class="info_section">
-                    <div class="p-4" style="width: 65%">
+                    <div class="p-4" style="width: 60%">
                       <div class="row">
                         <div class="col-3">
                           <img
@@ -117,101 +117,6 @@
                     class="backdrop_image"
                     :style="{ backgroundImage: `url(${item.imageUrl[1]})` }"
                   ></div>
-
-                  <!-- 第二版 -->
-                  <!-- <div class="d-flex">
-                    <div class="flex-shrink-0">
-                      <img
-                        v-if="item.imageUrl[0]"
-                        :src="item.imageUrl[0]"
-                        class="card-img-top img-fluid"
-                        style="
-                          object-fit: cover;
-                          object-position: center center;
-                          aspect-ratio: 2 / 3;
-                          max-height: 250px;
-                        "
-                        :alt="item.title"
-                      />
-                    </div>
-
-                    <div
-                      class="card-body d-flex flex-column"
-                      style="height: auto"
-                    >
-                      
-                      <div class="d-flex align-items-center">
-                        <h3 class="card-title mb-1">
-                          {{ item.title }}
-                        </h3>
-                        <small class="ms-auto text-dark flex-shrink-0"
-                          >popularity:
-                          <span class="fs-5">{{
-                            parseFloat(item.content.split('|')[1]).toFixed(0)
-                          }}</span></small
-                        >
-                      </div>
-
-                      
-                      <div class="card-text">
-                        <small class="text-dark">{{
-                          item.content.split('|')[2]
-                        }}</small>
-
-                        <p class="mt-3">{{ item.description }}</p>
-                      </div>
-
-                      
-                      <div class="text-end mt-auto px-2">
-                        <span> &#171; see more &#187;</span>
-                      </div>
-                    </div>
-                  </div> -->
-
-                  <!-- 原版 -->
-                  <!-- <div class="row g-0 h-100">
-                    <div class="col-3 h-100">
-                      <div class="h-100">
-                        <img
-                          v-if="item.imageUrl"
-                          :src="item.imageUrl"
-                          class="card-img-top img-fluid d-block h-100"
-                          style="object-fit: cover; object-position: center center"
-                          :alt="item.title"
-                        />
-                      </div>
-                    </div>
-                    <div class="col-9">
-                      <div class="card-body h-100 d-flex flex-column">
-                        
-                        <div class="d-flex align-items-center">
-                          <h3 class="card-title mb-1">
-                            {{ item.title }}
-                          </h3>
-                          <small class="ms-auto text-dark flex-shrink-0"
-                            >popularity:
-                            <span class="fs-5">{{
-                              parseFloat(item.content.split('|')[1]).toFixed(0)
-                            }}</span></small
-                          >
-                        </div>
-
-                        
-                        <div class="card-text">
-                          <small class="text-dark">{{
-                            item.content.split('|')[2]
-                          }}</small>
-
-                          <p class="mt-3">{{ item.description }}</p>
-                        </div>
-
-                        
-                        <div class="text-end mt-auto px-2">
-                          <span> &#171; see more &#187;</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div> -->
                 </div>
               </a>
             </li>
@@ -332,7 +237,7 @@ export default {
   }
 
   .info_section {
-    background: linear-gradient(to right, #e5e6e6 50%, transparent 100%);
+    background: linear-gradient(to right, #e5e6e6 50%, transparent 90%);
     background-blend-mode: multiply;
     position: relative;
     width: 100%;
@@ -351,23 +256,6 @@ export default {
     z-index: 1;
     height: 100%;
     width: 80%;
-  }
-}
-
-ul a:hover {
-  .card {
-    // background-color: #343a40;
-    // background-color: rgb(255, 255, 255);
-    // color: #fff;
-    box-shadow: 0px 0px 2px 2px rgba(238, 237, 237, 0.9);
-  }
-
-  .card-body {
-    // box-shadow: 2px 0px 1px 1px rgba(164, 164, 164, 0.9);
-  }
-
-  & small {
-    // color: #fff !important;
   }
 }
 

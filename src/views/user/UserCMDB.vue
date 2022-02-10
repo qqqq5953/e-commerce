@@ -13,9 +13,15 @@
           <i class="bi bi-chevron-right"></i>
         </a>
       </h2>
-      <section class="overflow-auto mt-3 mb-5 card-scrollbar">
-        <CardVertical :results="nowPlaying" :language="language"></CardVertical>
-      </section>
+      <div class="position-relative mt-3 mb-5">
+        <section class="overflow-auto card-scrollbar position-relative">
+          <CardVertical
+            :results="nowPlaying"
+            :language="language"
+          ></CardVertical>
+        </section>
+        <div class="position-absolute right-blur"></div>
+      </div>
 
       <!-- UpComing -->
       <h2 class="h1 d-inline-block">
@@ -28,9 +34,14 @@
           <i class="bi bi-chevron-right"></i>
         </a>
       </h2>
-      <section class="overflow-auto mt-3 mb-5 card-scrollbar">
-        <CardVertical :results="upComing" :language="language"></CardVertical>
-      </section>
+      <div class="position-relative mt-3 mb-5">
+        <section
+          class="overflow-auto mt-3 mb-5 card-scrollbar position-relative"
+        >
+          <CardVertical :results="upComing" :language="language"></CardVertical>
+        </section>
+        <div class="position-absolute right-blur"></div>
+      </div>
     </div>
   </div>
 </template>
@@ -98,6 +109,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.right-blur {
+  width: 2rem;
+  height: 435px;
+  top: 0;
+  right: 0;
+  z-index: 10;
+  background: linear-gradient(to left, #343a40 15%, transparent 100%);
+  // background: linear-gradient(to left, red 5%, transparent 100%);
+}
+
 .card-scrollbar {
   scroll-snap-type: x mandatory;
   overscroll-behavior-inline: contain;
@@ -113,12 +134,13 @@ export default {
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: rgba(26, 26, 26, 1);
+    background-color: rgba(255, 255, 255, 0.7);
+
     border-radius: 100vw;
     border: 2px solid rgba(85, 89, 92, 1);
 
     &:hover {
-      background-color: rgba(255, 255, 255, 0.7);
+      background-color: rgba(26, 26, 26, 1);
     }
   }
 }
