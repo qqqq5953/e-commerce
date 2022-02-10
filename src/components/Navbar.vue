@@ -74,8 +74,8 @@
                     @click="clearSearchBar"
                   >
                     <img
-                      v-if="item.imageUrl"
-                      :src="item.imageUrl"
+                      v-if="item.imageUrl[0]"
+                      :src="item.imageUrl[0]"
                       class="card-img-top img-fluid d-block"
                       :alt="item.title"
                     />
@@ -228,7 +228,7 @@ img {
 }
 
 .search-list {
-  z-index: 2;
+  z-index: 3;
 }
 
 .search-item:hover {

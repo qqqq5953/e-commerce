@@ -50,6 +50,8 @@
 
   <div class="bg-light">
     <div class="container py-5">
+      <h2>Displaying {{ products.length }} results for: {{ genrePassIn }}</h2>
+
       <Pagination
         :pages="pagination"
         @change-page="getProducts"

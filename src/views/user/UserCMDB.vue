@@ -1,5 +1,29 @@
 <template>
   <Loading :active="isLoading"></Loading>
+  <Navbar></Navbar>
+  <header
+    class="header"
+    style="
+      background: url('https://images.unsplash.com/photo-1478720568477-152d9b164e26?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&h=800&q=80');
+    "
+  >
+    <div class=""></div>
+  </header>
+  <!-- <header
+    class="header"
+    style="
+      background: url('https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&h=400&q=80');
+      min-height: 400px;
+    "
+  ></header> -->
+  <!-- <header
+    class="header"
+    style="
+      background: url('https://images.unsplash.com/photo-1542204165-65bf26472b9b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1374&h=300&q=80');
+      min-height: 300px;
+    "
+  ></header> -->
+
   <div class="bg-dark">
     <div class="container py-5">
       <!-- Playing Now -->
@@ -48,9 +72,10 @@
 
 <script>
 import CardVertical from '@/components/CardVerticalTest.vue';
+import Navbar from '@/components/Navbar.vue';
 
 export default {
-  components: { CardVertical },
+  components: { CardVertical, Navbar },
   inject: ['sortData', 'emitter'],
   data() {
     return {
@@ -109,6 +134,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.header {
+  background-repeat: no-repeat !important;
+  background-position: 0% 60% !important;
+  background-size: cover !important;
+  height: 100vh;
+  -moz-transform: scaleX(-1);
+  -webkit-transform: scaleX(-1);
+  -o-transform: scaleX(-1);
+  transform: scaleX(-1);
+}
+
 .right-blur {
   width: 2rem;
   height: 435px;

@@ -33,3 +33,48 @@ sortResultByDate() {
   });
   console.log('test', test);
 },
+
+// // {
+      // //   path: 'movie/:title',
+      // //   name: 'SearchResult',
+      // //   component: () => import('../views/SearchResult.vue'),
+      // //   props: (route) => {
+      // //     // query 跟 params 差在前者不用在path帶參數
+      // //     return {
+      // //       keywords: route.params.title
+      // //     };
+      // //   }
+      // // }
+      // {
+      //   path: 'CMDBDepreciate',
+      //   name: 'CMDBDepreciate',
+      //   component: () => import('../views/CMDB.vue')
+      // },
+      // {
+      //   path: 'all-resultsDepreciate',
+      //   name: 'AllResultsDepreciate',
+      //   component: () => import('../views/AllResults.vue'),
+      //   props: (route) => {
+      //     // query 跟 params 差在前者不用在path帶參數
+      //     return {
+      //       genre: route.query.genre,
+      //       keywords: route.query.title,
+      //       language: route.query.language,
+      //       region: route.query.region
+      //     };
+      //   }
+      // },
+      // {
+      //   path: 'detailsDepreciate',
+      //   name: 'DetailsDepreciate',
+      //   component: () => import('../views/Details.vue'),
+      //   props: (route) => {
+      //     // query 跟 params 差在前者不用在path帶參數
+      //     console.log(route);
+      //     return {
+      //       language: route.query.language,
+      //       id: route.query.id,
+      //       genre: route.query.genre
+      //     };
+      //   }
+      // },
