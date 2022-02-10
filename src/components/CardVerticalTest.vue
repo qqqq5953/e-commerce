@@ -13,8 +13,8 @@
       >
         <div class="position-relative h-100">
           <img
-            v-if="item.imageUrl"
-            :src="item.imageUrl"
+            v-if="item.imageUrl[0]"
+            :src="item.imageUrl[0]"
             class="img-fluid d-block h-100 w-100"
             :alt="item.title"
             style="object-fit: cover; object-position: center center"

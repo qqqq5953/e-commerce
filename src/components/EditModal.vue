@@ -25,14 +25,30 @@
             <div class="col-sm-4">
               <div class="mb-3">
                 <label for="image" class="form-label">輸入圖片網址</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="image"
-                  ref="imageInput"
-                  placeholder="請輸入圖片連結"
-                  v-model="tempProduct.imageUrl"
-                />
+                <div class="mb-3 input-group">
+                  <input
+                    type="url"
+                    id="image"
+                    class="form-control"
+                    placeholder="請輸入一個或多個連結"
+                    ref="multipleImages"
+                  />
+                  <button
+                    type="button"
+                    class="btn btn-outline-danger"
+                    @click="removeImages"
+                  >
+                    移除
+                  </button>
+                </div>
+                <div class="">
+                  <button
+                    class="btn btn-outline-primary btn-sm d-block w-100"
+                    @click="addImages"
+                  >
+                    新增圖片
+                  </button>
+                </div>
               </div>
               <div class="mb-3">
                 <label for="customFile" class="form-label"
@@ -47,25 +63,13 @@
                   @change="uploadFile"
                 />
               </div>
-              <img class="img-fluid" :src="tempProduct.imageUrl" alt="" />
-              <!-- 延伸技巧，多圖 -->
-              <div class="mt-5">
-                <div class="mb-3 input-group">
-                  <input
-                    type="url"
-                    class="form-control form-control"
-                    placeholder="請輸入連結"
-                  />
-                  <button type="button" class="btn btn-outline-danger">
-                    移除
-                  </button>
-                </div>
-                <div>
-                  <button class="btn btn-outline-primary btn-sm d-block w-100">
-                    新增圖片
-                  </button>
-                </div>
-              </div>
+              <img
+                v-for="item in tempProduct.imageUrl"
+                :key="item"
+                class="img-fluid"
+                :src="item"
+                alt=""
+              />
             </div>
             <div class="col-sm-8">
               <div class="mb-3">
@@ -206,7 +210,9 @@ export default {
   data() {
     return {
       modal: {},
-      tempProduct: {}
+      tempProduct: {
+        imageUrl: [1, 2, 3]
+      }
     };
   },
   watch: {
@@ -216,6 +222,19 @@ export default {
     }
   },
   methods: {
+    addImages() {
+      if (!this.$refs.multipleImages.value) return;
+
+      if (this.tempProduct.imageUrl === undefined) {
+        this.tempProduct.imageUrl = [];
+      }
+
+      this.tempProduct.imageUrl.push(this.$refs.multipleImages.value);
+      this.$refs.multipleImages.value = '';
+    },
+    removeImages() {
+      this.tempProduct.imageUrl.pop();
+    },
     uploadFile() {
       const uploadedFile = this.$refs.fileInput.files[0];
       const formData = new FormData();

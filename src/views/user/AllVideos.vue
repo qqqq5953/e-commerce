@@ -117,7 +117,9 @@ export default {
   computed: {
     videoContent() {
       let temp = [];
+
       if (this.selectedVideoType === 'Behind the Scenes') {
+        // 選擇 hehind the scenes 之調整
         temp = this.videoType.behind.content;
       } else {
         temp = this.videoType[this.selectedVideoType.toLowerCase()].content;

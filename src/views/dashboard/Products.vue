@@ -142,7 +142,7 @@ export default {
       // 暫時 for 快速新增
       const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product`;
 
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < 2; i++) {
         this.tempProduct = {};
         this.tempProduct.title = this.top20nowPlaying[i].title;
         this.tempProduct.category = 'movie|nowplaying';
@@ -151,8 +151,10 @@ export default {
         this.tempProduct.unit = '月';
         this.tempProduct.description = this.top20nowPlaying[i].overview;
         this.tempProduct.is_enabled = true;
-        this.tempProduct.imageUrl =
-          this.baseImageUrl + this.top20nowPlaying[i].poster_path;
+        this.tempProduct.imageUrl = [
+          this.baseImageUrl + this.top20nowPlaying[i].poster_path,
+          this.baseImageUrl + this.top20nowPlaying[i].backdrop_path
+        ];
         // 透過content傳送其餘資料
         this.tempProduct.content = `${this.top20nowPlaying[i].id}|${this.top20nowPlaying[i].popularity}|${this.top20nowPlaying[i].release_date}`;
         const response = await this.$http.post(api, {
@@ -209,7 +211,7 @@ export default {
       // 暫時 for 快速新增
       const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product`;
 
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < 2; i++) {
         this.tempProduct = {};
         this.tempProduct.title = this.top20upComing[i].title;
         this.tempProduct.category = 'movie|upcoming';
@@ -218,8 +220,10 @@ export default {
         this.tempProduct.unit = '月';
         this.tempProduct.description = this.top20upComing[i].overview;
         this.tempProduct.is_enabled = true;
-        this.tempProduct.imageUrl =
-          this.baseImageUrl + this.top20upComing[i].poster_path;
+        this.tempProduct.imageUrl = [
+          this.baseImageUrl + this.top20upComing[i].poster_path,
+          this.baseImageUrl + this.top20upComing[i].backdrop_path
+        ];
         // 透過content傳送其餘資料
         this.tempProduct.content = `${this.top20upComing[i].id}|${this.top20upComing[i].popularity}|${this.top20upComing[i].release_date}`;
         const response = await this.$http.post(api, {

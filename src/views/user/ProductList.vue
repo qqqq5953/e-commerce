@@ -47,68 +47,130 @@
       </tr>
     </tbody>
   </table>
-  <Pagination
-    :pages="pagination"
-    @change-page="getProducts"
-    @previous-page="getProducts"
-    @next-page="getProducts"
-  ></Pagination>
-  <div class="container py-5">
-    <ul class="row list-unstyled">
-      <li class="col-9 mb-4" v-for="item in products" :key="item.id">
-        <a
-          href="#"
-          class="text-decoration-none d-block"
-          @click.prevent="getProductDetails(item.id)"
-        >
-          <div class="card mb-3 border-dark" style="height: 250px">
-            <div class="row g-0 h-100">
-              <div class="col-3 h-100">
-                <div class="h-100">
-                  <img
-                    v-if="item.imageUrl"
-                    :src="item.imageUrl"
-                    class="card-img-top img-fluid d-block h-100"
-                    style="object-fit: cover"
-                    :alt="item.title"
-                  />
-                </div>
-              </div>
-              <div class="col-9">
-                <div class="card-body h-100 d-flex flex-column">
-                  <!-- title -->
-                  <div class="d-flex align-items-center">
-                    <h3 class="card-title mb-1">
-                      {{ item.title }}
-                    </h3>
-                    <small class="ms-auto text-dark flex-shrink-0"
-                      >popularity:
-                      <span class="fs-5">{{
-                        parseFloat(item.content.split('|')[1]).toFixed(0)
-                      }}</span></small
+
+  <div class="bg-dark">
+    <div class="container py-5">
+      <Pagination
+        :pages="pagination"
+        @change-page="getProducts"
+        @previous-page="getProducts"
+        @next-page="getProducts"
+      ></Pagination>
+      <div class="row justify-content-center">
+        <div class="col-9">
+          <ul class="list-unstyled">
+            <li
+              class="mb-3"
+              v-for="item in products"
+              :key="item.id"
+              style="height: auto"
+            >
+              <a
+                href="#"
+                class="text-decoration-none d-block"
+                @click.prevent="getProductDetails(item.id)"
+              >
+                <div class="card border-0">
+                  <div class="d-flex">
+                    <div class="flex-shrink-0">
+                      <img
+                        v-if="item.imageUrl[0]"
+                        :src="item.imageUrl[0]"
+                        class="card-img-top img-fluid"
+                        style="
+                          object-fit: cover;
+                          object-position: center center;
+                          aspect-ratio: 2 / 3;
+                          max-height: 250px;
+                        "
+                        :alt="item.title"
+                      />
+                    </div>
+
+                    <div
+                      class="card-body d-flex flex-column"
+                      style="height: auto"
                     >
+                      <!-- title -->
+                      <div class="d-flex align-items-center">
+                        <h3 class="card-title mb-1">
+                          {{ item.title }}
+                        </h3>
+                        <small class="ms-auto text-dark flex-shrink-0"
+                          >popularity:
+                          <span class="fs-5">{{
+                            parseFloat(item.content.split('|')[1]).toFixed(0)
+                          }}</span></small
+                        >
+                      </div>
+
+                      <!-- overview -->
+                      <div class="card-text">
+                        <small class="text-dark">{{
+                          item.content.split('|')[2]
+                        }}</small>
+
+                        <p class="mt-3">{{ item.description }}</p>
+                      </div>
+
+                      <!-- see more -->
+                      <div class="text-end mt-auto px-2">
+                        <span> &#171; see more &#187;</span>
+                      </div>
+                    </div>
                   </div>
 
-                  <!-- overview -->
-                  <div class="card-text">
-                    <small class="text-dark">{{
-                      item.content.split('|')[2]
-                    }}</small>
+                  <!-- 原版 -->
+                  <!-- <div class="row g-0 h-100">
+                    <div class="col-3 h-100">
+                      <div class="h-100">
+                        <img
+                          v-if="item.imageUrl"
+                          :src="item.imageUrl"
+                          class="card-img-top img-fluid d-block h-100"
+                          style="object-fit: cover; object-position: center center"
+                          :alt="item.title"
+                        />
+                      </div>
+                    </div>
+                    <div class="col-9">
+                      <div class="card-body h-100 d-flex flex-column">
+                        
+                        <div class="d-flex align-items-center">
+                          <h3 class="card-title mb-1">
+                            {{ item.title }}
+                          </h3>
+                          <small class="ms-auto text-dark flex-shrink-0"
+                            >popularity:
+                            <span class="fs-5">{{
+                              parseFloat(item.content.split('|')[1]).toFixed(0)
+                            }}</span></small
+                          >
+                        </div>
 
-                    <p class="mt-3">{{ item.description }}</p>
-                  </div>
+                        
+                        <div class="card-text">
+                          <small class="text-dark">{{
+                            item.content.split('|')[2]
+                          }}</small>
 
-                  <!-- see more -->
-                  <div class="text-end mt-auto px-2">
-                    <span> &#171; see more &#187;</span>
-                  </div>
+                          <p class="mt-3">{{ item.description }}</p>
+                        </div>
+
+                        
+                        <div class="text-end mt-auto px-2">
+                          <span> &#171; see more &#187;</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div> -->
                 </div>
-              </div>
-            </div>
-          </div>
-        </a>
-      </li>
-    </ul>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -210,20 +272,19 @@ export default {
 <style lang="scss" scoped>
 ul a:hover {
   .card {
-    background-color: #343a40;
-    background-color: #55595c;
-    color: #fff;
+    // background-color: #343a40;
+    // background-color: rgb(255, 255, 255);
+    // color: #fff;
+    box-shadow: 0px 0px 2px 2px rgba(238, 237, 237, 0.9);
+  }
+
+  .card-body {
+    // box-shadow: 2px 0px 1px 1px rgba(164, 164, 164, 0.9);
   }
 
   & small {
-    color: #fff !important;
+    // color: #fff !important;
   }
-}
-
-img {
-  // height: 500px;
-  object-fit: cover;
-  object-position: top center;
 }
 
 .card-text p {

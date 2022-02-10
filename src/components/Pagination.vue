@@ -4,7 +4,7 @@
       <!-- 上一頁 -->
       <li class="page-item" :class="{ disabled: !pages.has_pre }">
         <a
-          class="page-link"
+          class="page-link bg-dark"
           href="#"
           @click.prevent="onPreviousPage(pages.current_page)"
           aria-label="Previous"
@@ -21,9 +21,12 @@
             v-for="page in pages.total_pages"
             :key="page"
           >
-            <a class="page-link" href="#" @click.prevent="onChangePage(page)">{{
-              page
-            }}</a>
+            <a
+              class="page-link bg-dark border"
+              href="#"
+              @click.prevent="onChangePage(page)"
+              >{{ page }}</a
+            >
           </li>
         </ul>
       </li>
@@ -31,7 +34,7 @@
       <!-- 下一頁 -->
       <li class="page-item" :class="{ disabled: !pages.has_next }">
         <a
-          class="page-link"
+          class="page-link bg-dark"
           href="#"
           @click.prevent="onNextPage(pages.current_page)"
           aria-label="Next"
