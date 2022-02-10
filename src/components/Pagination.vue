@@ -4,7 +4,7 @@
       <!-- 上一頁 -->
       <li class="page-item" :class="{ disabled: !pages.has_pre }">
         <a
-          class="page-link bg-dark"
+          class="page-link"
           href="#"
           @click.prevent="onPreviousPage(pages.current_page)"
           aria-label="Previous"
@@ -34,7 +34,7 @@
       <!-- 下一頁 -->
       <li class="page-item" :class="{ disabled: !pages.has_next }">
         <a
-          class="page-link bg-dark"
+          class="page-link"
           href="#"
           @click.prevent="onNextPage(pages.current_page)"
           aria-label="Next"
