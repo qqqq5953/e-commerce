@@ -1,6 +1,6 @@
 <template>
   <Loading :active="isLoading"></Loading>
-  <div class="bg-dark">
+  <div class="bg-primary">
     <div class="container py-4">
       <header class="text-white d-none">
         <section class="row">
@@ -36,7 +36,10 @@
             <div class="row h-100 w-100">
               <!-- poster -->
               <div class="col-5">
-                <div class="rounded-3 h-100 w-100">
+                <div
+                  class="rounded-3 h-100 w-100 position-relative poster-box-shadow"
+                  style=""
+                >
                   <img
                     v-if="posterUrl"
                     class="img-fluid rounded-3 h-100 w-100"
@@ -44,6 +47,10 @@
                     :src="baseImageUrl + posterUrl"
                     :alt="title"
                   />
+                  <div
+                    class="position-absolute top-0 bottom-0 w-100 rounded-3"
+                    style="background: rgba(255, 255, 255, 0.1)"
+                  ></div>
                 </div>
               </div>
 
@@ -53,7 +60,7 @@
                   Original title:
                   <span class="fw-normal">{{ originalTitle }}</span>
                 </h3>
-                <div>
+                <div class="text-muted">
                   <span class="fs-6 me-2">{{ releaseDate.split('-')[0] }}</span>
                   |
                   <span class="fs-6 ms-2"
@@ -62,7 +69,7 @@
                 </div>
 
                 <!-- overview -->
-                <p class="mt-3 fs-6">{{ overview }}</p>
+                <p class="mt-3 fs-5">{{ overview }}</p>
                 <!-- badge -->
                 <div class="d-flex pb-3">
                   <span
@@ -88,14 +95,14 @@
                 >
                   <button
                     type="button"
-                    class="btn btn-outline-light text-center fw-light"
+                    class="btn btn-outline-light text-center fw-light rounded-start"
                   >
                     <i class="bi bi-plus-lg me-2"></i>
                     Watchlist
                   </button>
                   <button
                     type="button"
-                    class="btn btn-outline-light text-center text-warning"
+                    class="btn btn-outline-warning text-center text-warning rounded-end"
                     :disabled="status.loadingItemsID === productID"
                     @click="addProductToCart"
                     v-if="nowOrUpcoming === 'nowplaying'"
@@ -112,15 +119,7 @@
             </div>
           </section>
 
-          <aside
-            class="col-3 p-3 rounded-3"
-            style="
-              background: rgba(179, 167, 167, 0.15);
-              box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-              backdrop-filter: blur(9px);
-              -webkit-backdrop-filter: blur(5.9px);
-            "
-          >
+          <aside class="col-3 p-3 rounded-3 aside-background" style="">
             <div class="row mb-3">
               <!-- popularity -->
               <div class="col d-flex flex-column">
@@ -161,9 +160,14 @@
           </aside>
         </div>
 
-        <section class="row mt-5">
+        <div class="row mt-5">
           <!-- video -->
-          <div class="col-9">
+          <h2 class="text-white d-flex align-items-center">
+            <i class="bi bi-camera-reels text-warning me-3 fs-4"></i>Watch
+            Trailer
+          </h2>
+
+          <section class="col-9 mt-2">
             <iframe
               type="text/html"
               allowfullscreen
@@ -176,7 +180,7 @@
               "
             >
             </iframe>
-          </div>
+          </section>
           <div class="col-3">
             <!-- <ul
               class="h-100 d-flex flex-column justify-content-evenly list-unstyled border more-video-list"
@@ -196,7 +200,7 @@
               </li>
             </ul> -->
           </div>
-        </section>
+        </div>
       </main>
     </div>
   </div>
@@ -392,10 +396,34 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.poster-box-shadow {
+  // box-shadow: rgba(223, 223, 223, 0.24) 1px 1px 20px 2px;
+  box-shadow: rgba(178, 198, 206, 0.12) 0px 2px 4px 2px,
+    rgba(174, 188, 194, 0.32) 0px 2px 16px 2px;
+}
+
+.aside-background {
+  // background: rgba(255, 255, 255, 0.194);
+  // box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  // backdrop-filter: blur(9px);
+  // -webkit-backdrop-filter: blur(5.9px);
+  background: rgba(255, 255, 255, 0.05);
+  background: rgba(52, 58, 64, 0.3);
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(13.5px);
+  -webkit-backdrop-filter: blur(13.5px);
+}
+
+.btn-outline-warning:hover {
+  color: #000 !important;
+}
+
 .more-video-list {
   li a:hover {
     background-color: rgba(0, 0, 0, 0.4);
     border-radius: 0.3rem;
+    outline: 1px solid rgba(255, 255, 255, 0.9);
   }
 }
 </style>
