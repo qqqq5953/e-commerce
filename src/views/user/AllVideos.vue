@@ -10,47 +10,54 @@
         </li>
       </ul> -->
       <header
-        class="d-flex justify-content-between align-items-center border-bottom pb-4"
+        class="d-flex justify-content-md-between flex-wrap align-items-center border-bottom pb-4"
       >
-        <h2 class="text-white mb-0 d-flex flex-wrap align-items-center">
-          <span class="flex-shrink-0 h1 mb-0 text-white">Video Gallery：</span>
-          <span class="flex-shrink-0 h4 mb-0 text-white"
-            >{{ titlePassIn }}
+        <div class="col text-white d-flex flex-wrap align-items-lg-center">
+          <h2 class="flex-shrink-0 h1 mb-lg-0 text-white">Video Gallery：</h2>
+          <h3 class="flex-shrink-0 h4 mb-md-0 mb-3 text-white">
+            {{ titlePassIn }}
             <span class="text-muted me-2" v-if="product.release_date"
               >({{ product.release_date.split('-')[0] }})</span
-            ></span
-          >
-        </h2>
-        <div class="dropdown ms-auto w-25">
-          <button
-            class="btn btn-secondary btn-sm w-100 d-flex justify-content-between dropdown-toggle"
-            type="button"
-            id="videoTypeButton"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-          >
-            <span>{{ selectedVideoType }}</span>
-            <i class="bi bi-caret-down-fill"></i>
-          </button>
-          <ul class="dropdown-menu w-100" aria-labelledby="videoTypeButton">
-            <li v-for="item in videoType" :key="item.title">
-              <template v-if="item.content.length">
-                <button
-                  class="dropdown-item py-2"
-                  type="button"
-                  @click="selectVideoType(item.type)"
-                >
-                  {{ item.type }}
-                </button>
-              </template>
-            </li>
-          </ul>
+            >
+          </h3>
+        </div>
+
+        <div class="col-xl-2 col-lg-3 col-md-4 col-12 align-self-end">
+          <div class="dropdown">
+            <button
+              class="btn btn-secondary btn-sm w-100 d-flex justify-content-between dropdown-toggle"
+              type="button"
+              id="videoTypeButton"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <span>{{ selectedVideoType }}</span>
+              <i class="bi bi-caret-down-fill"></i>
+            </button>
+            <ul class="dropdown-menu w-100" aria-labelledby="videoTypeButton">
+              <li v-for="item in videoType" :key="item.title">
+                <template v-if="item.content.length">
+                  <button
+                    class="dropdown-item py-2"
+                    type="button"
+                    @click="selectVideoType(item.type)"
+                  >
+                    {{ item.type }}
+                  </button>
+                </template>
+              </li>
+            </ul>
+          </div>
         </div>
       </header>
 
       <main class="pt-4">
         <ul class="text-white list-unstyled row justify-content-between">
-          <li v-for="item in videoContent" :key="item" class="col-6 mb-3">
+          <li
+            v-for="item in videoContent"
+            :key="item"
+            class="col-md-6 mb-md-3 mb-4"
+          >
             <h4 class="text-white bg-primary py-2 px-3">
               {{
                 item.name.split(' | ')[2] ||

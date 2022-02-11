@@ -55,7 +55,7 @@
               </div>
 
               <section class="col-7 d-flex flex-column">
-                <h2 class="h1 text-white mb-2">{{ title }}</h2>
+                <h2 class="display-5 text-white mb-2">{{ title }}</h2>
                 <h3 class="h6 text-white mb-1">
                   Original title:
                   <span class="fw-normal">{{ originalTitle }}</span>
@@ -89,37 +89,45 @@
                 </div>
                 <!-- PURCHASE or subscribe -->
                 <div
-                  class="btn-group"
+                  class="row justify-content-between"
                   :class="{ 'mt-auto': nowOrUpcoming === 'upcoming' }"
                   role="group"
                 >
-                  <button
-                    type="button"
-                    class="btn btn-outline-light text-center fw-light rounded-start"
-                  >
-                    <i class="bi bi-plus-lg me-2"></i>
-                    Watchlist
-                  </button>
-                  <button
-                    type="button"
-                    class="btn btn-outline-warning text-center text-warning rounded-end"
-                    :disabled="status.loadingItemsID === productID"
-                    @click="addProductToCart"
-                    v-if="nowOrUpcoming === 'nowplaying'"
-                  >
-                    <span
-                      class="spinner-border spinner-grow-sm"
-                      v-if="status.loadingItemsID === productID"
-                    ></span>
-                    <i class="bi bi-arrow-right-circle"></i>
-                    SUBSCRIBE
-                  </button>
+                  <div class="col">
+                    <button
+                      type="button"
+                      class="btn btn-outline-light text-center fw-light rounded-3 w-100"
+                    >
+                      <i class="bi bi-plus-lg me-2"></i>
+                      Watchlist
+                    </button>
+                  </div>
+                  <div class="col" v-if="nowOrUpcoming === 'nowplaying'">
+                    <button
+                      type="button"
+                      class="btn btn-outline-warning text-center text-warning rounded-3 w-100"
+                      :disabled="status.loadingItemsID === productID"
+                      @click="addProductToCart"
+                    >
+                      <span
+                        class="spinner-border spinner-grow-sm"
+                        v-if="status.loadingItemsID === productID"
+                      ></span>
+                      <i
+                        v-if="status.loadingItemsID !== productID"
+                        class="bi bi-arrow-right-circle me-2"
+                      ></i>
+                      SUBSCRIBE
+                    </button>
+                  </div>
                 </div>
               </section>
             </div>
           </section>
 
-          <aside class="col-3 p-3 rounded-3 aside-background" style="">
+          <aside
+            class="col-3 p-3 rounded-3 d-flex flex-column aside-background"
+          >
             <div class="row mb-3">
               <!-- popularity -->
               <div class="col d-flex flex-column">
@@ -139,10 +147,10 @@
               </div>
             </div>
             <ul
-              class="d-flex flex-column justify-content-between list-unstyled more-video-list"
+              class="d-flex flex-column justify-content-between flex-grow-1 list-unstyled more-video-list mb-0"
             >
               <li
-                class="mb-2 rounded-3 bg-dark"
+                class="rounded-3 bg-dark"
                 v-for="item in Object.values(videoType)"
                 :key="item"
               >
@@ -152,7 +160,11 @@
                   :class="{ disabled: !item.content.length }"
                   @click.prevent="moreVideos(item.type)"
                 >
-                  {{ item.type.toUpperCase() }} ({{ item.content.length }})
+                  <div>
+                    {{ item.type }}
+                    <span> ({{ item.content.length }}) </span>
+                  </div>
+
                   <i class="bi bi-chevron-compact-right"></i>
                 </a>
               </li>
@@ -162,12 +174,12 @@
 
         <div class="row mt-5">
           <!-- video -->
-          <h2 class="text-white d-flex align-items-center">
+          <h2 class="h1 text-white d-flex align-items-center">
             <i class="bi bi-camera-reels text-warning me-3 fs-4"></i>Watch
             Trailer
           </h2>
 
-          <section class="col-9 mt-2">
+          <section class="col-9">
             <iframe
               type="text/html"
               allowfullscreen
@@ -258,7 +270,7 @@ export default {
         featurettes: { type: 'Featurettes', content: [] },
         others: { type: 'Others', content: [] }
       },
-      // add to Cartstatus: {
+      // add to Cart status: {
       status: {
         loadingItemsID: ''
       }
