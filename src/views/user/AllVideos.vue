@@ -56,9 +56,9 @@
           <li
             v-for="item in videoContent"
             :key="item"
-            class="col-md-6 mb-md-3 mb-4"
+            class="col-md-6 mb-md-3 mb-4 d-flex flex-column justify-content-between"
           >
-            <h4 class="text-white bg-primary py-2 px-3">
+            <h4 class="text-white bg-primary py-2 px-3 flex-grow-1">
               {{
                 item.name.split(' | ')[2] ||
                 item.name.split(' | ')[1] ||
