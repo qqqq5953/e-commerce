@@ -12,6 +12,11 @@ const routes = [
         component: () => import('../views/user/Cart.vue')
       },
       {
+        path: 'watchlist',
+        name: 'Watchlist',
+        component: () => import('../views/user/Watchlist.vue')
+      },
+      {
         path: 'CMDB',
         name: 'UserCMDB',
         component: () => import('../views/user/UserCMDB.vue')

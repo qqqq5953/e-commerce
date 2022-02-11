@@ -97,6 +97,7 @@
                     <button
                       type="button"
                       class="btn btn-outline-light text-center fw-light rounded-3 w-100"
+                      @click="addToWatchList"
                     >
                       <i class="bi bi-plus-lg me-2"></i>
                       Watchlist
@@ -228,10 +229,14 @@ export default {
   inject: ['emitter'],
   data() {
     return {
-      temp: null,
       key: '7bbe6005cfda593dc21cceb93eaf9a8e',
+      sessionID: 'd13bca7b7450c217c5af3127e3a0a984db98ccb2',
+      account_id: 'qqqq5953',
       baseImageUrl: 'https://image.tmdb.org/t/p/w300',
       baseYoutubeUrl: 'https://www.youtube.com/embed/',
+      // watchlist
+      watchListStatus: '',
+      watchListStatusMessage: '',
       isLoading: false,
       // Movie
       title: '',
@@ -246,11 +251,6 @@ export default {
       // TV
       seasons: [],
       createdBy: [],
-      // person
-      biography: '',
-      birthday: '',
-      personName: '',
-      profileImgage: '',
       // 共用
       releaseDate: '',
       popularity: '',
@@ -398,6 +398,23 @@ export default {
       } catch (err) {
         console.log(err);
       }
+    },
+    async addToWatchList() {
+      const api = `https://api.themoviedb.org/3/account/${this.account_id}/watchlist?api_key=${this.key}&session_id=${this.sessionID}`;
+
+      const requestBody = {
+        media_type: 'movie',
+        media_id: this.id,
+        watchlist: true
+      };
+
+      const response = await this.$http.post(api, requestBody).catch((err) => {
+        console.log(err);
+      });
+
+      this.watchListStatus = response.data.success;
+      this.watchListStatusMessage = response.data.status_message;
+      console.log('addToWatchList', response);
     }
   },
   created() {
@@ -417,10 +434,6 @@ export default {
 }
 
 .aside-background {
-  // background: rgba(255, 255, 255, 0.194);
-  // box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-  // backdrop-filter: blur(9px);
-  // -webkit-backdrop-filter: blur(5.9px);
   background: rgba(255, 255, 255, 0.05);
   background: rgba(52, 58, 64, 0.3);
   border-radius: 16px;
