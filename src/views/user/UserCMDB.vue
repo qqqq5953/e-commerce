@@ -217,14 +217,14 @@ h2:hover {
   }
 
   &::-webkit-scrollbar-track {
-    background-color: rgba(85, 89, 92, 1);
+    // background-color: rgba(85, 89, 92, 1);
+    background-color: rgba(69, 67, 56, 0.7);
     border-radius: 100vw;
     margin-inline: 10vw;
   }
 
   &::-webkit-scrollbar-thumb {
     background-color: rgba(255, 255, 255, 0.7);
-    // background-color: #f0ad4e;
 
     border-radius: 100vw;
     border: 2px solid rgba(85, 89, 92, 1);

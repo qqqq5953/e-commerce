@@ -317,6 +317,8 @@ export default {
 
       // 產品屬於 movie 或 tv 類別
       this.genre = response.data.product.category.split('|')[0];
+
+      // 產品屬於 nowplaying 或 Upcoming 類別
       this.nowOrUpcoming = response.data.product.category.split('|')[1];
 
       // 再透過 TMDB api 獲得更多產品資料
@@ -337,9 +339,9 @@ export default {
       this.posterUrl = response.data.poster_path;
       this.genres = response.data.genres;
       this.overview = response.data.overview;
-
       this.popularity = response.data.popularity;
       this.voteAverage = response.data.vote_average;
+
       // video 分類
       this.arrangeVideoType(response.data.videos.results);
 
