@@ -401,6 +401,8 @@ export default {
     }
   },
   created() {
+    window.scrollTo(0, -1000);
+
     this.idPassIn = this.productID;
     this.getProductDetails();
   }

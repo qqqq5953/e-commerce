@@ -4,4 +4,7 @@
 
 <style lang="scss">
 @import './assets/all';
+body {
+  scroll-behavior: smooth;
+}
 </style>
