@@ -97,7 +97,8 @@
                     <button
                       type="button"
                       class="btn btn-outline-light text-center fw-light rounded-3 w-100"
-                      @click="addToWatchList"
+                      :disabled="listStatus === true"
+                      @click="addToList"
                     >
                       <i class="bi bi-plus-lg me-2"></i>
                       Watchlist
@@ -121,6 +122,7 @@
                       SUBSCRIBE
                     </button>
                   </div>
+                  <div>listStatus:{{ listStatus }}</div>
                 </div>
               </section>
             </div>
@@ -232,11 +234,14 @@ export default {
       key: '7bbe6005cfda593dc21cceb93eaf9a8e',
       sessionID: 'd13bca7b7450c217c5af3127e3a0a984db98ccb2',
       account_id: 'qqqq5953',
+      list_id: '8191517',
       baseImageUrl: 'https://image.tmdb.org/t/p/w300',
       baseYoutubeUrl: 'https://www.youtube.com/embed/',
       // watchlist
       watchListStatus: '',
       watchListStatusMessage: '',
+      listStatus: '',
+      listStatusMessage: '',
       isLoading: false,
       // Movie
       title: '',
@@ -415,6 +420,21 @@ export default {
       this.watchListStatus = response.data.success;
       this.watchListStatusMessage = response.data.status_message;
       console.log('addToWatchList', response);
+    },
+    async addToList() {
+      const api = `https://api.themoviedb.org/3/list/${this.list_id}/add_item?api_key=${this.key}&session_id=${this.sessionID}`;
+
+      const requestBody = {
+        media_id: this.id
+      };
+
+      const response = await this.$http.post(api, requestBody).catch((err) => {
+        console.log(err);
+      });
+
+      this.listStatus = response.data.success;
+      this.listStatusMessage = response.data.status_message;
+      console.log('addToList', response);
     }
   },
   created() {

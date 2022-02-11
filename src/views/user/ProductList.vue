@@ -230,7 +230,6 @@ export default {
 .movie-card {
   position: relative;
   overflow: hidden;
-  transition: all 0.4s;
   border-radius: 10px;
   box-shadow: 0px 0px 120px -20px rgba(0, 0, 0, 0.5);
   // box-shadow: 0px 0px 80px -25px rgba(0, 0, 0, 0.5);

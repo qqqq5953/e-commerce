@@ -79,7 +79,7 @@
       <h2 class="h1 d-inline-block">
         <a
           href="#"
-          @click.prevent="moreResultsOfCMDB('nowplaying')"
+          @click.prevent="moreResultsOfCMDB('upcoming')"
           class="text-white text-decoration-none d-flex align-items-center"
         >
           <i class="bi bi-camera-reels text-warning me-3 fs-4"></i>
@@ -232,6 +232,7 @@ h2:hover {
     &:hover {
       background-color: rgba(26, 26, 26, 1);
       background-color: #f0ad4e;
+      border: 2px solid rgba(255, 255, 255, 0.7);
     }
   }
 }
