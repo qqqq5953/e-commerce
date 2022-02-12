@@ -224,15 +224,17 @@ h2:hover {
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.7);
+    background-color: rgba(255, 255, 255, 0.75);
 
     border-radius: 100vw;
     border: 2px solid rgba(85, 89, 92, 1);
 
     &:hover {
       background-color: rgba(26, 26, 26, 1);
-      background-color: #f0ad4e;
+
+      // background-color: #f0ad4e;
       border: 2px solid rgba(255, 255, 255, 0.7);
+      border: 2px solid #f0ad4e;
     }
   }
 }
