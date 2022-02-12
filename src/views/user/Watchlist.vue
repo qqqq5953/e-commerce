@@ -10,11 +10,20 @@
       <main class="mt-4">
         <ul class="row flex-wrap list-unstyled mb-0">
           <li class="col-3 mb-4" v-for="item in listResult" :key="item.id">
-            <div class="card rounded-3 border-0 card-img-box-shadow h-100">
+            <div
+              class="card rounded-3 border-0 card-img-box-shadow h-100 position-relative"
+            >
+              <a
+                href="#"
+                @click.prevent="removeProductFromList(item.id)"
+                class="position-absolute watchlist-item-delete d-block"
+              >
+                <i class="bi bi-x-lg"></i>
+              </a>
               <a
                 href="#"
                 class="text-decoration-none d-block overflow-hidden"
-                @click.prevent="getID(item.id)"
+                @click.prevent="getProductID(item.id)"
               >
                 <div
                   class="card-background rounded-3 card-img-border-adjusted"
@@ -23,6 +32,7 @@
                   }"
                 ></div>
               </a>
+
               <div class="card-body d-flex flex-column">
                 <h5 class="card-title h4">{{ item.title }}</h5>
                 <small class="mt-auto">{{ item.release_date }}</small>
@@ -88,13 +98,13 @@ export default {
       key: '7bbe6005cfda593dc21cceb93eaf9a8e',
       baseImageUrl: 'https://image.tmdb.org/t/p/w300',
       list_id: '8191517',
+      sessionID: 'd13bca7b7450c217c5af3127e3a0a984db98ccb2',
       listResult: null,
+      listStatusMessage: '',
       products: [],
-      temp: null,
       productID: '',
       // test
       requestToken: '',
-      sessionID: 'd13bca7b7450c217c5af3127e3a0a984db98ccb2',
       approvedPageUrl: '',
       listResponse: '',
       listResponseMessage: '',
@@ -126,7 +136,7 @@ export default {
       console.log('getProducts', response.data);
       this.products = response.data.products;
     },
-    getID(id) {
+    getProductID(id) {
       const filterProductArray = this.products.filter((item) => {
         return item.content.split('|')[0] === id.toString();
       });
@@ -139,6 +149,24 @@ export default {
           productID: this.productID
         }
       });
+    },
+    async removeProductFromList(id) {
+      // api
+      const api = `https://api.themoviedb.org/3/list/${this.list_id}/remove_item?api_key=${this.key}&session_id=${this.sessionID}`;
+
+      const requestBody = {
+        media_id: id
+      };
+
+      const response = await this.$http.post(api, requestBody).catch((err) => {
+        console.log(err);
+      });
+
+      console.log('removeProductFromList', response);
+
+      this.listStatusMessage = response.data.status_message;
+
+      this.getList();
     },
     // test
     async getRequestToken() {
@@ -223,6 +251,26 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.watchlist-item-delete {
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+
+  color: rgba(255, 255, 255, 0.5);
+  padding: 4px 7px 3px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(3.5px);
+  -webkit-backdrop-filter: blur(3.5px);
+
+  // pointer-events: none !important;
+
+  &:hover {
+    color: white;
+  }
+}
+
 .card:hover {
   transform: scale(1.02);
   box-shadow: 0px 0px 80px -25px rgba(0, 0, 0, 0.5);
