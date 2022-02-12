@@ -11,12 +11,12 @@
     <div class="position-absolute top-0 bottom-0 w-100">
       <div
         class="row align-items-center m-auto h-100"
-        style="background: rgba(255, 255, 255, 0.3)"
+        style="background: rgba(255, 255, 255, 0.2)"
       >
         <div class="col-5">
           <h2
             class="display-5 p-4 mb-0 ms-3 text-white"
-            style="background: rgba(0, 0, 0, 0.6)"
+            style="background: rgba(0, 0, 0, 0.5)"
           >
             Offer
             <span class="text-warning">unequaled entertainment experience</span>

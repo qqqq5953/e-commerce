@@ -97,10 +97,22 @@
                     <button
                       type="button"
                       class="btn btn-outline-light text-center fw-light rounded-3 w-100"
-                      :disabled="listStatus === true"
-                      @click="addToList"
+                      :class="{
+                        active: status.isProductInList || status.isAdded
+                      }"
+                      @click="addProductToList"
                     >
-                      <i class="bi bi-plus-lg me-2"></i>
+                      <span
+                        class="spinner-border spinner-grow-sm"
+                        v-if="status.watchlistProductID === productID"
+                      ></span>
+                      <span v-else>
+                        <i
+                          class="bi bi-bookmark-plus me-2"
+                          v-if="!status.isProductInList"
+                        ></i>
+                        <i class="bi bi-bookmark-check-fill me-2" v-else></i>
+                      </span>
                       Watchlist
                     </button>
                   </div>
@@ -108,21 +120,20 @@
                     <button
                       type="button"
                       class="btn btn-outline-warning text-center text-warning rounded-3 w-100"
-                      :disabled="status.loadingItemsID === productID"
+                      :disabled="status.subscribeProductID === productID"
                       @click="addProductToCart"
                     >
                       <span
                         class="spinner-border spinner-grow-sm"
-                        v-if="status.loadingItemsID === productID"
+                        v-if="status.subscribeProductID === productID"
                       ></span>
                       <i
-                        v-if="status.loadingItemsID !== productID"
+                        v-if="status.subscribeProductID !== productID"
                         class="bi bi-arrow-right-circle me-2"
                       ></i>
                       SUBSCRIBE
                     </button>
                   </div>
-                  <div>listStatus:{{ listStatus }}</div>
                 </div>
               </section>
             </div>
@@ -238,8 +249,6 @@ export default {
       baseImageUrl: 'https://image.tmdb.org/t/p/w300',
       baseYoutubeUrl: 'https://www.youtube.com/embed/',
       // watchlist
-      watchListStatus: '',
-      watchListStatusMessage: '',
       listStatus: '',
       listStatusMessage: '',
       isLoading: false,
@@ -277,7 +286,9 @@ export default {
       },
       // add to Cart status: {
       status: {
-        loadingItemsID: ''
+        subscribeProductID: '',
+        watchlistProductID: '',
+        isProductInList: ''
       }
     };
   },
@@ -394,36 +405,68 @@ export default {
       });
     },
     async addProductToCart() {
-      try {
-        this.status.loadingItemsID = this.idPassIn;
-        const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/cart`;
-        const response = await this.$http.post(api, {
-          data: { product_id: this.idPassIn, qty: 1 }
-        });
-        this.status.loadingItemsID = {};
-        console.log('addProductToCart', response.data);
-      } catch (err) {
-        console.log(err);
-      }
-    },
-    async addToWatchList() {
-      const api = `https://api.themoviedb.org/3/account/${this.account_id}/watchlist?api_key=${this.key}&session_id=${this.sessionID}`;
+      // spinner on
+      this.status.subscribeProductID = this.idPassIn;
+
+      // api
+      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/cart`;
 
       const requestBody = {
-        media_type: 'movie',
-        media_id: this.id,
-        watchlist: true
+        data: { product_id: this.idPassIn, qty: 1 }
+      };
+
+      const response = await this.$http.post(api, requestBody).catch((err) => {
+        console.log(err);
+      });
+      console.log('addProductToCart', response.data);
+
+      // spinner off
+      this.status.subscribeProductID = '';
+    },
+    async checkProductStatus() {
+      const api = `https://api.themoviedb.org/3/list/${this.list_id}/item_status?api_key=${this.key}&movie_id=${this.id}`;
+
+      const response = await this.$http.get(api).catch((err) => {
+        console.log(err);
+      });
+
+      this.status.isProductInList = response.data.item_present;
+      console.log('checkProductStatus', response);
+    },
+    async removeProductFromList() {
+      // spinner on
+      this.status.watchlistProductID = this.idPassIn;
+
+      // api
+      const api = `https://api.themoviedb.org/3/list/${this.list_id}/remove_item?api_key=${this.key}&session_id=${this.sessionID}`;
+
+      const requestBody = {
+        media_id: this.id
       };
 
       const response = await this.$http.post(api, requestBody).catch((err) => {
         console.log(err);
       });
 
-      this.watchListStatus = response.data.success;
-      this.watchListStatusMessage = response.data.status_message;
-      console.log('addToWatchList', response);
+      console.log('removeProductFromList', response);
+      this.status.isProductInList = !response.data.success;
+      this.listStatusMessage = response.data.status_message;
+
+      // spinner off
+      this.status.watchlistProductID = '';
     },
-    async addToList() {
+    async addProductToList() {
+      // spinner on
+      this.status.watchlistProductID = this.idPassIn;
+
+      // 檢查是否已經加入 watchlist
+      await this.checkProductStatus();
+      if (this.status.isProductInList) {
+        await this.removeProductFromList();
+        return;
+      }
+
+      // api
       const api = `https://api.themoviedb.org/3/list/${this.list_id}/add_item?api_key=${this.key}&session_id=${this.sessionID}`;
 
       const requestBody = {
@@ -434,16 +477,20 @@ export default {
         console.log(err);
       });
 
-      this.listStatus = response.data.success;
+      console.log('addProductToList', response);
+      this.status.isProductInList = response.data.success;
       this.listStatusMessage = response.data.status_message;
-      console.log('addToList', response);
+
+      // spinner off
+      this.status.watchlistProductID = '';
     }
   },
-  created() {
+  async created() {
     window.scrollTo(0, -1000);
 
     this.idPassIn = this.productID;
-    this.getProductDetails();
+    await this.getProductDetails();
+    this.checkProductStatus();
   }
 };
 </script>
