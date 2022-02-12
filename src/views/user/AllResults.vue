@@ -2,16 +2,24 @@
   <Loading :active="isLoading"></Loading>
   <div class="bg-light">
     <div class="container py-5">
-      <h2>Displaying {{ products.length }} results for: {{ genrePassIn }}</h2>
+      <h2>
+        Displaying {{ allProducts.length }} results for: {{ genrePassIn }}
+      </h2>
 
-      <Pagination
-        :pages="pagination"
-        @change-page="getProducts"
-        @previous-page="getProducts"
-        @next-page="getProducts"
-      ></Pagination>
+      <PaginationForResults
+        :totalPages="totalPages"
+        :currentPage="currentPage"
+        @change-page="setPagination"
+        @previous-page="setPagination"
+        @next-page="setPagination"
+      ></PaginationForResults>
       <div class="row justify-content-center">
         <div class="col-8">
+          <!-- <ul>
+            <li v-for="item in products" :key="item.id">
+              {{ item.title }}
+            </li>
+          </ul> -->
           <ul class="list-unstyled">
             <li class="mb-5" v-for="item in products" :key="item.id">
               <a
@@ -19,7 +27,6 @@
                 class="text-decoration-none d-block"
                 @click.prevent="getProductDetails(item.id)"
               >
-                <!-- card -->
                 <div class="movie-card">
                   <div class="info_section">
                     <div class="p-4" style="width: 60%">
@@ -82,7 +89,7 @@
 </template>
 
 <script>
-import Pagination from '@/components/Pagination.vue';
+import PaginationForResults from '@/components/PaginationForResults.vue';
 
 export default {
   props: {
@@ -91,11 +98,12 @@ export default {
     }
   },
   components: {
-    Pagination
+    PaginationForResults
   },
   inject: ['emitter'],
   data() {
     return {
+      allProducts: [],
       products: [],
       cart: [],
       status: {
@@ -105,7 +113,10 @@ export default {
       baseImageUrl: 'https://image.tmdb.org/t/p/w200',
       key: '7bbe6005cfda593dc21cceb93eaf9a8e',
       pagination: {},
-      genrePassIn: ''
+      genrePassIn: '',
+      totalPages: undefined,
+      currentPage: 1,
+      perPage: 10
     };
   },
   computed: {
@@ -125,33 +136,44 @@ export default {
     }
   },
   methods: {
-    async getProducts(page = 1) {
+    setPagination(page = 1) {
+      this.currentPage = page;
+
+      this.totalPages = Math.ceil(this.allProducts.length / this.perPage);
+
+      const startPage = this.currentPage * this.perPage - this.perPage;
+      const endPage = startPage + this.perPage;
+
+      this.products = this.allProducts.slice(startPage, endPage);
+    },
+    async getProducts() {
       this.isLoading = true;
 
       // api
-      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/products?page=${page}`;
+      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/products/all`;
       const response = await this.$http.get(api).catch((err) => {
         console.log(err);
       });
 
-      // 資料存入
-      this.pagination = response.data.pagination;
-
       if (this.genrePassIn === 'nowplaying') {
         // 首頁傳來為 NowPlaying
-        this.products = response.data.products.filter((item) => {
+        this.allProducts = response.data.products.filter((item) => {
           const genre = item.category.split('|')[1];
           return genre === 'nowplaying';
         });
+
+        console.log('nowplaying', this.allProducts);
       } else if (this.genrePassIn === 'upcoming') {
         // 首頁傳來為 Upcoming
-        this.products = response.data.products.filter((item) => {
+        this.allProducts = response.data.products.filter((item) => {
           const genre = item.category.split('|')[1];
           return genre === 'upcoming';
         });
+
+        console.log('upcoming', this.allProducts);
       } else {
         // see all results
-        this.products = response.data.products.filter((item) => {
+        this.allProducts = response.data.products.filter((item) => {
           return item.title
             .split('-')
             .join(' ')
@@ -160,7 +182,9 @@ export default {
         });
       }
 
-      this.products.reverse();
+      this.setPagination();
+
+      // this.allProducts.reverse();
 
       this.isLoading = false;
       console.log('res', response.data);

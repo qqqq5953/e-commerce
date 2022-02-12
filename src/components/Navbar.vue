@@ -100,6 +100,11 @@
               </router-link>
             </li>
             <li class="nav-item">
+              <router-link class="nav-link" :to="{ name: 'AllProducts' }">
+                <span>Products</span>
+              </router-link>
+            </li>
+            <li class="nav-item">
               <router-link class="nav-link" :to="{ name: 'Watchlist' }"
                 >Watchlist</router-link
               >
@@ -194,7 +199,7 @@ export default {
       const response = await this.$http.get(api).catch((err) => {
         console.log(err);
       });
-      console.log('res', response.data);
+      // console.log('res', response.data);
 
       // 儲存資料
       this.products = response.data.products;
@@ -242,8 +247,6 @@ export default {
     }
   },
   mounted() {
-    console.log('navbar mounted');
-
     this.toggleSearchMenu();
     this.getProducts();
     this.getCartProductNumber();

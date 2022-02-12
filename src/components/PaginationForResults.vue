@@ -2,11 +2,11 @@
   <nav aria-label="Page navigation example">
     <ul class="pagination justify-content-center align-items-center">
       <!-- 上一頁 -->
-      <li class="page-item" :class="{ disabled: !pages.has_pre }">
+      <li class="page-item" :class="{ disabled: currentPage === 1 }">
         <a
           class="page-link"
           href="#"
-          @click.prevent="onPreviousPage(pages.current_page)"
+          @click.prevent="onPreviousPage(currentPage)"
           aria-label="Previous"
         >
           <i class="bi bi-chevron-double-left fs-2"></i>
@@ -17,8 +17,8 @@
         <ul class="pagination justify-content-center flex-wrap">
           <li
             class="page-item"
-            :class="{ active: page === pages.current_page }"
-            v-for="page in pages.total_pages"
+            :class="{ active: page === currentPage }"
+            v-for="page in totalPages"
             :key="page"
           >
             <a
@@ -32,11 +32,11 @@
       </li>
 
       <!-- 下一頁 -->
-      <li class="page-item" :class="{ disabled: !pages.has_next }">
+      <li class="page-item" :class="{ disabled: currentPage === totalPages }">
         <a
           class="page-link"
           href="#"
-          @click.prevent="onNextPage(pages.current_page)"
+          @click.prevent="onNextPage(currentPage)"
           aria-label="Next"
         >
           <i class="bi bi-chevron-double-right fs-2"></i>
@@ -49,10 +49,20 @@
 <script>
 export default {
   props: {
-    pages: {
-      type: Object
+    totalPages: {
+      type: Number
+    },
+    currentPage: {
+      type: Number,
+      default: 1
     }
   },
+  data() {
+    return {
+      tempProducts: []
+    };
+  },
+  emits: ['change-page', 'previous-page', 'next-page'],
   methods: {
     onChangePage(page) {
       this.$emit('change-page', page);
