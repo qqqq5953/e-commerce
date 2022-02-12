@@ -242,6 +242,7 @@ export default {
   inject: ['emitter'],
   data() {
     return {
+      // TMDB
       key: '7bbe6005cfda593dc21cceb93eaf9a8e',
       sessionID: 'd13bca7b7450c217c5af3127e3a0a984db98ccb2',
       account_id: 'qqqq5953',
@@ -266,6 +267,7 @@ export default {
       seasons: [],
       createdBy: [],
       // 共用
+      idPassIn: '',
       releaseDate: '',
       popularity: '',
       voteAverage: '',

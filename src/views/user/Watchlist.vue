@@ -8,10 +8,14 @@
         </div>
       </header>
       <main class="mt-4">
-        <ul class="row flex-wrap list-unstyled">
+        <ul class="row flex-wrap list-unstyled mb-0">
           <li class="col-3 mb-4" v-for="item in listResult" :key="item.id">
             <div class="card rounded-3 border-0 card-img-box-shadow h-100">
-              <a href="#" class="text-decoration-none d-block overflow-hidden">
+              <a
+                href="#"
+                class="text-decoration-none d-block overflow-hidden"
+                @click.prevent="getID(item.id)"
+              >
                 <div
                   class="card-background rounded-3 card-img-border-adjusted"
                   :style="{
@@ -83,9 +87,11 @@ export default {
     return {
       key: '7bbe6005cfda593dc21cceb93eaf9a8e',
       baseImageUrl: 'https://image.tmdb.org/t/p/w300',
-
       list_id: '8191517',
       listResult: null,
+      products: [],
+      temp: null,
+      productID: '',
       // test
       requestToken: '',
       sessionID: 'd13bca7b7450c217c5af3127e3a0a984db98ccb2',
@@ -108,8 +114,33 @@ export default {
       });
 
       this.listResult = response.data.items;
-      console.log('getMovieWatchList', response);
+      console.log('getList', response);
     },
+    async getProducts() {
+      // api
+      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/products/all`;
+      const response = await this.$http.get(api).catch((err) => {
+        console.log(err);
+      });
+
+      console.log('getProducts', response.data);
+      this.products = response.data.products;
+    },
+    getID(id) {
+      const filterProductArray = this.products.filter((item) => {
+        return item.content.split('|')[0] === id.toString();
+      });
+
+      this.productID = filterProductArray[0].id;
+
+      this.$router.push({
+        name: 'UserProduct',
+        params: {
+          productID: this.productID
+        }
+      });
+    },
+    // test
     async getRequestToken() {
       // api
       const api = `https://api.themoviedb.org/3/authentication/token/new?api_key=${this.key}`;
@@ -186,6 +217,7 @@ export default {
   created() {
     console.log('this.$route', this.$route);
     this.getList();
+    this.getProducts();
   }
 };
 </script>
@@ -201,7 +233,7 @@ export default {
   background-repeat: no-repeat;
   background-position: center center;
   background-size: cover;
-  height: 350px;
+  height: 357px;
 }
 
 .card-img-box-shadow {
