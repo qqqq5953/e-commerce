@@ -286,7 +286,7 @@ export default {
         featurettes: { type: 'Featurettes', content: [] },
         others: { type: 'Others', content: [] }
       },
-      // add to Cart status: {
+      // add to Cart status
       status: {
         subscribeProductID: '',
         watchlistProductID: '',
@@ -422,6 +422,10 @@ export default {
       });
       console.log('addProductToCart', response.data);
 
+      // 更新購物車產品數量
+      const cartLength = await this.getCartProductNumber();
+      this.emitter.emit('calculate-product-number', cartLength);
+
       // spinner off
       this.status.subscribeProductID = '';
     },
@@ -485,6 +489,16 @@ export default {
 
       // spinner off
       this.status.watchlistProductID = '';
+    },
+    async getCartProductNumber() {
+      // axios
+      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/cart`;
+      const response = await this.$http.get(api).catch((err) => {
+        console.log(err);
+      });
+
+      // 儲存回傳資料
+      return response.data.data.carts.length;
     }
   },
   async created() {
@@ -493,6 +507,9 @@ export default {
     this.idPassIn = this.productID;
     await this.getProductDetails();
     this.checkProductStatus();
+  },
+  updated() {
+    console.log('update');
   }
 };
 </script>

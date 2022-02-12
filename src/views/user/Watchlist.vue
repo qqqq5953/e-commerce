@@ -243,7 +243,6 @@ export default {
     }
   },
   created() {
-    console.log('this.$route', this.$route);
     this.getList();
     this.getProducts();
   }

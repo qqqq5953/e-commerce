@@ -17,101 +17,113 @@
       >
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <router-link class="nav-link" :to="{ name: 'Pricing' }"
-              >Pricing</router-link
-            >
-          </li>
-          <li class="nav-item">
-            <router-link class="nav-link" :to="{ name: 'Cart' }"
-              >Cart</router-link
-            >
-          </li>
-          <li class="nav-item">
-            <router-link class="nav-link" :to="{ name: 'Watchlist' }"
-              >Watchlist</router-link
-            >
-          </li>
-          <li class="nav-item">
-            <router-link class="nav-link" :to="{ name: 'Login' }"
-              >Admin</router-link
-            >
-          </li>
-        </ul>
-        <form class="d-flex flex-grow-1">
-          <div class="flex-grow-1 position-relative">
-            <!-- search bar -->
-            <input
-              class="form-control h-100"
-              type="search"
-              placeholder="Search"
-              v-model.trim="keywords"
-              aria-label="Search with dropdown button"
-              ref="searchBar"
-              @input="searchInput"
-            />
-            <a
-              href="#"
-              class="position-absolute end-0 top-0 bottom-0 p-4 d-flex align-items-center"
-              @click.prevent="clearSearchBar"
-            >
-              <i class="bi bi-x-lg"></i>
-            </a>
+      <div class="collapse navbar-collapse row" id="navbarSupportedContent">
+        <div class="col">
+          <form class="d-flex">
+            <div class="position-relative w-100">
+              <!-- search bar -->
+              <input
+                class="form-control form-control-sm h-100"
+                type="search"
+                placeholder="Search"
+                v-model.trim="keywords"
+                aria-label="Search with dropdown button"
+                ref="searchBar"
+                @input="searchInput"
+              />
+              <a
+                href="#"
+                class="position-absolute end-0 top-0 bottom-0 p-3 d-flex align-items-center"
+                @click.prevent="clearSearchBar"
+              >
+                <i class="bi bi-x-lg"></i>
+              </a>
 
-            <!-- 搜尋結果 :class="{ 'd-none': !keywords.length }"-->
-            <ul
-              class="text-white list-unstyled position-absolute bg-dark mb-0 start-0 end-0 pt-3 search-list"
-              ref="searchList"
-              v-if="keywords"
-            >
-              <Loading :active="isLoading" :is-full-page="false"></Loading>
-              <template v-if="match.length">
-                <li
-                  class="px-4 py-2 search-item"
-                  v-for="item in match"
-                  :key="item"
-                >
-                  <router-link
-                    :to="{
-                      name: 'UserProduct',
-                      params: {
-                        productID: item.id
-                      }
-                    }"
-                    class="text-decoration-none d-flex"
-                    @click="clearSearchBar"
+              <!-- 搜尋結果 :class="{ 'd-none': !keywords.length }"-->
+              <ul
+                class="text-white list-unstyled position-absolute bg-dark mb-0 start-0 end-0 pt-3 search-list"
+                ref="searchList"
+                v-if="keywords"
+              >
+                <Loading :active="isLoading" :is-full-page="false"></Loading>
+                <template v-if="match.length">
+                  <li
+                    class="px-4 py-2 search-item"
+                    v-for="item in match"
+                    :key="item"
                   >
-                    <img
-                      v-if="item.imageUrl[0]"
-                      :src="item.imageUrl[0]"
-                      class="card-img-top img-fluid d-block"
-                      :alt="item.title"
-                    />
-                    <div class="ms-3 text-light">
-                      <h5 class="text-light mb-0">
-                        {{ item.title }}
-                      </h5>
-                      <small class="text-light">{{
-                        item.content.split('|')[2]
-                      }}</small>
-                    </div>
-                  </router-link>
-                </li>
-                <li><hr class="dropdown-divider my-0" /></li>
-                <li class="px-4 py-3 search-item">
-                  <a href="#" class="text-light" @click.prevent="toAllResult"
-                    >See all results</a
+                    <router-link
+                      :to="{
+                        name: 'UserProduct',
+                        params: {
+                          productID: item.id
+                        }
+                      }"
+                      class="text-decoration-none d-flex"
+                      @click="clearSearchBar"
+                    >
+                      <img
+                        v-if="item.imageUrl[0]"
+                        :src="item.imageUrl[0]"
+                        class="card-img-top img-fluid d-block"
+                        :alt="item.title"
+                      />
+                      <div class="ms-3 text-light">
+                        <h5 class="text-light mb-0">
+                          {{ item.title }}
+                        </h5>
+                        <small class="text-light">{{
+                          item.content.split('|')[2]
+                        }}</small>
+                      </div>
+                    </router-link>
+                  </li>
+                  <li><hr class="dropdown-divider my-0" /></li>
+                  <li class="px-4 py-3 search-item">
+                    <a href="#" class="text-light" @click.prevent="toAllResult"
+                      >See all results</a
+                    >
+                  </li>
+                </template>
+                <template v-else>
+                  <li class="px-4 pb-3 search-item">no result</li>
+                </template>
+              </ul>
+            </div>
+          </form>
+        </div>
+        <div class="col d-flex">
+          <ul class="navbar-nav ms-auto mb-2 mb-md-0 align-items-center">
+            <li class="nav-item">
+              <router-link class="nav-link" :to="{ name: 'Pricing' }">
+                <span>Pricing</span>
+              </router-link>
+            </li>
+            <li class="nav-item">
+              <router-link class="nav-link" :to="{ name: 'Watchlist' }"
+                >Watchlist</router-link
+              >
+            </li>
+            <li class="nav-item">
+              <router-link class="nav-link" :to="{ name: 'Cart' }">
+                <i class="bi bi-cart2 fs-3 position-relative">
+                  <span
+                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark fs-6"
                   >
-                </li>
-              </template>
-              <template v-else>
-                <li class="px-4 pb-3 search-item">no result</li>
-              </template>
-            </ul>
-          </div>
-        </form>
+                    {{ cartLength }}
+                    <span class="visually-hidden">items in cart</span>
+                  </span>
+                </i></router-link
+              >
+            </li>
+
+            <li class="nav-item">
+              <router-link class="nav-link" :to="{ name: 'Login' }"
+                >Admin</router-link
+              >
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   </nav>
@@ -158,11 +170,22 @@ export default {
       isLoading: false,
       // new
       products: [],
-      match: []
+      match: [],
+      cartLength: ''
     };
   },
   inject: ['emitter'],
   methods: {
+    async getCartProductNumber() {
+      // axios
+      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/cart`;
+      const response = await this.$http.get(api).catch((err) => {
+        console.log(err);
+      });
+
+      // 儲存回傳資料
+      this.cartLength = response.data.data.carts.length;
+    },
     async getProducts() {
       this.isLoading = true;
 
@@ -219,8 +242,15 @@ export default {
     }
   },
   mounted() {
+    console.log('navbar mounted');
+
     this.toggleSearchMenu();
     this.getProducts();
+    this.getCartProductNumber();
+
+    this.emitter.on('calculate-product-number', (data) => {
+      this.cartLength = data;
+    });
   }
 };
 </script>

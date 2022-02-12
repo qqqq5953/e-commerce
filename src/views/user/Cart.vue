@@ -349,7 +349,7 @@ export default {
         this.cart = response.data.data.carts;
 
         this.isLoading = false;
-        console.log('getCartProduct', response.data.data.carts);
+        console.log('getCartProduct', response);
         console.log('cart', this.cart);
       } catch (err) {
         console.log(err);
