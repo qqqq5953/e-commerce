@@ -23,8 +23,8 @@ const routes = [
       },
       {
         path: 'all-results/:genre',
-        name: 'UserProducts',
-        component: () => import('../views/user/ProductList.vue'),
+        name: 'AllResults',
+        component: () => import('../views/user/AllResults.vue'),
         props: (route) => {
           console.log('route', route);
           return {
@@ -33,9 +33,9 @@ const routes = [
         }
       },
       {
-        path: 'all-videos/:movieID/:videoType/:movieTitle',
-        name: 'AllVideos',
-        component: () => import('../views/user/AllVideos.vue'),
+        path: 'product-videos/:movieID/:videoType/:movieTitle',
+        name: 'ProductVideos',
+        component: () => import('../views/user/ProductVideos.vue'),
         props: (route) => {
           console.log('route', route);
           return {
@@ -52,8 +52,13 @@ const routes = [
         component: () => import('../views/user/Coupon.vue')
       },
       {
+        path: 'products',
+        name: 'AllProducts',
+        component: () => import('../views/user/AllProducts.vue')
+      },
+      {
         path: 'product/:productID',
-        name: 'UserProduct',
+        name: 'Product',
         component: () => import('../views/user/Product.vue'),
         props: (route) => {
           console.log('route', route);

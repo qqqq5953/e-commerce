@@ -124,7 +124,7 @@ export default {
   },
   methods: {
     moreResultsOfCMDB(genre) {
-      this.$router.push({ name: 'UserProducts', params: { genre } });
+      this.$router.push({ name: 'AllResults', params: { genre } });
     },
     async getProducts() {
       this.isLoading = true;

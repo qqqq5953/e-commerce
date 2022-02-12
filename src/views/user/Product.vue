@@ -311,7 +311,7 @@ export default {
   methods: {
     moreVideos(type) {
       this.$router.push({
-        name: 'AllVideos',
+        name: 'ProductVideos',
         params: { movieID: this.id, movieTitle: this.title, videoType: type }
       });
     },
@@ -507,9 +507,6 @@ export default {
     this.idPassIn = this.productID;
     await this.getProductDetails();
     this.checkProductStatus();
-  },
-  updated() {
-    console.log('update');
   }
 };
 </script>

@@ -144,7 +144,7 @@ export default {
       this.productID = filterProductArray[0].id;
 
       this.$router.push({
-        name: 'UserProduct',
+        name: 'Product',
         params: {
           productID: this.productID
         }

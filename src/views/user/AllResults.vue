@@ -1,53 +1,5 @@
 <template>
   <Loading :active="isLoading"></Loading>
-  <table class="table d-none">
-    <thead>
-      <tr>
-        <th scope="col">圖片</th>
-        <th scope="col">商品名稱</th>
-        <th scope="col" class="text-end">價格</th>
-        <th scope="col"></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="item in products" :key="item.id">
-        <th scope="row" style="width: 200px">
-          <div
-            style="
-              height: 100px;
-              background-size: cover;
-              background-position: center;
-            "
-            :style="{ backgroundImage: `url(${item.imageUrl})` }"
-          ></div>
-        </th>
-        <td>
-          <router-link :to="{ name: 'UserProducts' }" class="text-dark">{{
-            item.title
-          }}</router-link>
-        </td>
-        <td>
-          <div class="h5" v-if="!item.price">{{ item.origin_price }}</div>
-          <del class="h5" v-if="item.price"
-            >原價 {{ item.origin_price }} 元</del
-          >
-          <div class="h5" v-if="item.price">現在只要 {{ item.price }} 元</div>
-        </td>
-        <td>
-          <div class="btn-group" role="group">
-            <button
-              type="button"
-              class="btn btn-outline-secondary"
-              @click="getProductDetails(item.id)"
-            >
-              查看更多
-            </button>
-          </div>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-
   <div class="bg-light">
     <div class="container py-5">
       <h2>Displaying {{ products.length }} results for: {{ genrePassIn }}</h2>
@@ -214,7 +166,7 @@ export default {
       console.log('res', response.data);
     },
     getProductDetails(id) {
-      this.$router.push({ name: 'UserProduct', params: { productID: id } });
+      this.$router.push({ name: 'Product', params: { productID: id } });
     }
   },
   created() {

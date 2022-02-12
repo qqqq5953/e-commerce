@@ -54,7 +54,7 @@
                   >
                     <router-link
                       :to="{
-                        name: 'UserProduct',
+                        name: 'Product',
                         params: {
                           productID: item.id
                         }
@@ -233,7 +233,7 @@ export default {
     toAllResult() {
       if (!this.keywords) return;
       this.$router.push({
-        name: 'UserProducts',
+        name: 'AllResults',
         params: {
           genre: this.keywords
         }

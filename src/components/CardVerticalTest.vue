@@ -71,7 +71,7 @@ export default {
   },
   methods: {
     getProductDetails(id) {
-      this.$router.push({ name: 'UserProduct', params: { productID: id } });
+      this.$router.push({ name: 'Product', params: { productID: id } });
     }
   }
 };
