@@ -12,12 +12,18 @@
           <i class="bi bi-chevron-double-left fs-2"></i>
         </a>
       </li>
-      <!-- 數字 -->
+      <!-- 數字 'd-none':
+                page !== currentPage - 1 &&
+                page !== currentPage + 1 &&
+                page !== currentPage &&
+                !(currentPage === 1 && page === 3)-->
       <li class="w-50">
         <ul class="pagination justify-content-center flex-wrap">
           <li
             class="page-item"
-            :class="{ active: page === currentPage }"
+            :class="{
+              active: page === currentPage
+            }"
             v-for="page in totalPages"
             :key="page"
           >
@@ -30,6 +36,25 @@
           </li>
         </ul>
       </li>
+      <!-- <li class="w-50">
+        <ul class="pagination justify-content-center flex-wrap">
+          <li
+            class="page-item"
+            :class="{
+              active: page === currentPage
+            }"
+            v-for="page in slicePages"
+            :key="page"
+          >
+            <a
+              class="page-link border"
+              href="#"
+              @click.prevent="onChangePage(page)"
+              >{{ page }}</a
+            >
+          </li>
+        </ul>
+      </li> -->
 
       <!-- 下一頁 -->
       <li class="page-item" :class="{ disabled: currentPage === totalPages }">
@@ -49,6 +74,9 @@
 <script>
 export default {
   props: {
+    // slicePages: {
+    //   type: Array
+    // },
     totalPages: {
       type: Number
     },

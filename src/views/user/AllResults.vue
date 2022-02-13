@@ -15,11 +15,6 @@
       ></PaginationForResults>
       <div class="row justify-content-center">
         <div class="col-8">
-          <!-- <ul>
-            <li v-for="item in products" :key="item.id">
-              {{ item.title }}
-            </li>
-          </ul> -->
           <ul class="list-unstyled">
             <li class="mb-5" v-for="item in products" :key="item.id">
               <a
@@ -114,9 +109,11 @@ export default {
       key: '7bbe6005cfda593dc21cceb93eaf9a8e',
       pagination: {},
       genrePassIn: '',
+      slicePages: undefined,
       totalPages: undefined,
       currentPage: 1,
-      perPage: 10
+      perPage: 3,
+      lastPage: undefined
     };
   },
   computed: {
@@ -136,11 +133,41 @@ export default {
     }
   },
   methods: {
+    setMaxViewButtons() {
+      if (this.currentPage === 1 && this.totalPages === 1) {
+        this.slicePages = [1];
+        console.log('第一頁，共一頁');
+      }
+      if (this.currentPage === 1 && this.totalPages !== 1) {
+        this.slicePages = [
+          this.currentPage,
+          this.currentPage + 1,
+          this.currentPage + 2
+        ];
+        console.log('第一頁，不只一頁');
+      }
+      if (this.currentPage !== 1 && this.currentPage !== this.totalPages) {
+        this.slicePages = [
+          this.currentPage - 1,
+          this.currentPage,
+          this.currentPage + 1
+        ];
+        console.log('在中間頁');
+      }
+      if (this.currentPage !== 1 && this.currentPage === this.totalPages) {
+        this.slicePages = [
+          this.totalPages - 2,
+          this.totalPages - 1,
+          this.totalPages
+        ];
+        console.log('在最後一頁');
+      }
+      this.lastPage = this.slicePages[this.slicePages.length - 1];
+    },
     setPagination(page = 1) {
       this.currentPage = page;
 
       this.totalPages = Math.ceil(this.allProducts.length / this.perPage);
-
       const startPage = this.currentPage * this.perPage - this.perPage;
       const endPage = startPage + this.perPage;
 
