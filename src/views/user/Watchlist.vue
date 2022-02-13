@@ -271,16 +271,18 @@ export default {
 }
 
 .card:hover {
-  transform: scale(1.02);
+  transform: scale(1.05);
   box-shadow: 0px 0px 80px -25px rgba(0, 0, 0, 0.5);
   transition: all 0.4s;
+  border: 1px solid rgba(255, 255, 255, 0.6) !important;
 }
 
 .card-background {
   background-repeat: no-repeat;
   background-position: center center;
   background-size: cover;
-  height: 357px;
+  // height: 344px;
+  padding: 65.8% 0;
 }
 
 .card-img-box-shadow {

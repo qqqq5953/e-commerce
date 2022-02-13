@@ -13,8 +13,8 @@
               <h2 class="h1 mb-0">Our Movies</h2>
             </div>
           </header>
-          <ul class="mt-3 list-unstyled">
-            <li class="mb-5" v-for="item in products" :key="item.id">
+          <ul class="mt-4 list-unstyled">
+            <li class="mb-4" v-for="item in products" :key="item.id">
               <a
                 href="#"
                 class="text-decoration-none d-block"
@@ -106,22 +106,6 @@ export default {
       // genrePassIn: ''
     };
   },
-  // computed: {
-  //   queriesChange() {
-  //     return this.$route.params.genre;
-  //   }
-  // },
-  // watch: {
-  //   queriesChange(newVal) {
-  //     const newGenre = newVal;
-
-  //     // 防止跳回首頁會更新資料
-  //     if (this.$route.name === 'UserProducts') {
-  //       this.genrePassIn = newGenre.toLowerCase();
-  //       this.getProducts();
-  //     }
-  //   }
-  // },
   methods: {
     async getProducts(page = 1) {
       this.isLoading = true;

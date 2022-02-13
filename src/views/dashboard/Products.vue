@@ -10,6 +10,9 @@
     <button type="button" class="btn btn-danger" @click="getUpcoming">
       快速新增 upComing
     </button>
+    <button type="button" class="btn btn-danger" @click="getAllProducts">
+      快速刪除全部產品
+    </button>
   </div>
   <Pagination
     :pages="pagination"
@@ -133,7 +136,7 @@ export default {
         return new Date(item.release_date) <= new Date(todayDate);
       });
 
-      // 取前 20
+      // 依照熱門度排序 取前 20
       this.top20nowPlaying = this.sortData(filterDate, 'popularity').slice(
         0,
         20
@@ -202,11 +205,8 @@ export default {
         return new Date(item.release_date) >= new Date(todayDate);
       });
 
-      // 依照熱門度排序
-      this.upComing = this.sortData(filterDate, 'popularity');
-
-      // 取前 20
-      this.top20upComing = this.upComing.slice(0, 20);
+      // 依照熱門度排序 取前 20
+      this.top20upComing = this.sortData(filterDate, 'popularity').slice(0, 20);
 
       // 暫時 for 快速新增
       const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product`;
@@ -315,6 +315,24 @@ export default {
         console.log(err);
       }
     },
+    // async getAllProducts() {
+    //   // api
+    //   const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/products/all`;
+    //   const response = await this.$http.get(api).catch((err) => {
+    //     console.log(err);
+    //   });
+    //   console.log('res', response.data);
+
+    //   // 儲存資料
+    //   this.deleteAllProducts(response.data.products);
+    // },
+    // async deleteAllProducts(items) {
+    //   for (let i = 0; i < items.length; i++) {
+    //     const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product/${items[i].id}`;
+    //     const response = await this.$http.delete(api);
+    //     console.log('deleteAllProducts', response.data);
+    //   }
+    // },
     async deleteProduct(item) {
       try {
         // axios
