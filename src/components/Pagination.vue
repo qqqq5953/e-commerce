@@ -1,5 +1,5 @@
 <template>
-  <nav aria-label="Page navigation example">
+  <nav aria-label="Page navigation example ">
     <ul class="pagination justify-content-center align-items-center">
       <!-- 上一頁 -->
       <li class="page-item" :class="{ disabled: !pages.has_pre }">
